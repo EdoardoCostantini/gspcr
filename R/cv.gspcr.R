@@ -295,7 +295,7 @@ cv.gspcr <- function(
   }
 
   # Average selected score across folds
-  scor.list <- average.scores(cv_array = map_kfcv, test = test)
+  scor.list <- cv.scores(cv_array = map_kfcv, test = test)
 
   # Make a decision based on the CV measures
   cv_sol <- cv.choice(

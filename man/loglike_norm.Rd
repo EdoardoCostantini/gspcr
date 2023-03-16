@@ -12,7 +12,7 @@ loglike_norm(r, s)
 \item{s}{Residual standard deviation}
 }
 \value{
-A matrix of the infile
+The log-likelihood value
 }
 \description{
 Computes the normal log-likelihood

@@ -6,7 +6,7 @@
 #' @param s Residual standard deviation
 #' @details
 #' Given 
-#' @return A matrix of the infile
+#' @return The log-likelihood value
 #' @author Edoardo Costantini, 2022
 #' @references
 #'

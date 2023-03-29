@@ -5,6 +5,8 @@
 # Modified:  2023-03-29
 # Notes: 
 
+# Test length of output is as expected -----------------------------------------
+
 # Use the functions with a given method
 out1 <- cv.gspcr(
     dv = GSPCRexdata$y,

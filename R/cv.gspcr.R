@@ -48,6 +48,21 @@ cv.gspcr <- function(
   # max.features = ncol(ivs)
   # min.features = 1
 
+  # Save the call
+  gspcr.call <- list(
+    dv = dv,
+    ivs = ivs,
+    fam = fam,
+    thrs = thrs,
+    nthrs = nthrs,
+    maxnpcs = maxnpcs,
+    K = K,
+    test = test,
+    max.features = max.features,
+    min.features = min.features,
+    oneSE = oneSE
+  )
+
   # Sample size
   n <- nrow(ivs)
 
@@ -316,7 +331,8 @@ cv.gspcr <- function(
     scor        = scor.list$scor,
     scor.lwr    = scor.list$scor.lwr,
     scor.upr    = scor.list$scor.upr,
-    pred.map    = pred.map
+    pred.map    = pred.map,
+    gspcr.call  = gspcr.call
   )
 
 }

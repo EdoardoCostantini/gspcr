@@ -22,7 +22,13 @@ out1 <- cv.gspcr(
 )
 
 # Use the plotting function
-plot_output <- plot.gspcr(out1, print = FALSE)
+plot_output <- plot.gspcr(
+    gspcr.out = out1,
+    labels = TRUE, 
+    errorBars = FALSE, 
+    discretize = TRUE,
+    print = FALSE # not needed for test
+)
 
 # Perform the test
 testthat::expect_true(ggplot2::is.ggplot(plot_output))

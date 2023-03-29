@@ -21,6 +21,9 @@ plot.gspcr <- function(gspcr.out, labels = TRUE, errorBars = FALSE, discretize =
         varnames = c("npcs", gspcr.out$gspcr.call$thrs)
     )
 
+    # Make npcs a factor
+    gspcr.out.long$npcs <- factor(gspcr.out.long$npcs)
+
     # Make the X-axis into factor if required
     if(discretize == TRUE){
         gspcr.out.long[, gspcr.out$gspcr.call$thrs] <- factor(
@@ -37,10 +40,10 @@ plot.gspcr <- function(gspcr.out, labels = TRUE, errorBars = FALSE, discretize =
     store_plot <- gspcr.out.long %>%
         ggplot2::ggplot(
             ggplot2::aes(
-                x = ggplot2::.data[[gspcr.out$gspcr.call$thrs]],
-                y = ggplot2::.data[[gspcr.out$gspcr.call$test]],
-                group = factor(npcs),
-                label = factor(npcs)
+                x = .data[[gspcr.out$gspcr.call$thrs]],
+                y = .data[[gspcr.out$gspcr.call$test]],
+                group = .data$npcs,
+                label = .data$npcs
             )
         ) + 
         ggplot2::geom_point() + 
@@ -64,8 +67,8 @@ plot.gspcr <- function(gspcr.out, labels = TRUE, errorBars = FALSE, discretize =
         store_plot <- store_plot +
             ggplot2::geom_errorbar(
                 ggplot2::aes(
-                    ymin = low,
-                    ymax = high
+                    ymin = .data$low,
+                    ymax = .data$high
                 ),
                 width = .2
             )

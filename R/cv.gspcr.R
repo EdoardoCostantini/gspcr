@@ -144,23 +144,23 @@ cv.gspcr <- function(
     numer <- sxy / sxx
 
     # Compute sd?
-    sd <- sqrt((syy / sxx - numer^2) / (n - 2))
+    stdev <- sqrt((syy / sxx - numer^2) / (n - 2))
 
     # add "fudge"(?) to the denominator
     if (is.null(s0.perc)) {
-      fudge <- stats::median(sd)
+      fudge <- stats::median(stdev)
     }
     if (!is.null(s0.perc)) {
       if (s0.perc >= 0) {
-        fudge <- stats::quantile(sd, s0.perc)
+        fudge <- stats::quantile(stdev, s0.perc)
       }
       if (s0.perc < 0) {
         fudge <- 0
       }
     }
 
-    # Ratio between numerator and sd
-    tt <- numer / (sd + fudge)
+    # Ratio between numerator and stdev
+    tt <- numer / (stdev + fudge)
 
     # Store the normalized correlation scores
     ascores <- abs(tt)[, 1]

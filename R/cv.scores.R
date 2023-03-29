@@ -23,7 +23,7 @@ cv.scores <- function(cv_array, test) {
     # - test = "F"
 
     # How many folds?
-    K <- tail(dim(cv_array), 1)
+    K <- utils::tail(dim(cv_array), 1)
 
     # Average selected score across folds
     if (test == "F") {

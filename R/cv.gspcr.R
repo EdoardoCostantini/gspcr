@@ -67,16 +67,16 @@ cv.gspcr <- function(
   n <- nrow(ivs)
 
   # Fit null model
-  glm0 <- glm(dv ~ 1, family = fam)
+  glm0 <- stats::glm(dv ~ 1, family = fam)
 
   # Fit univariate models
   glm.fits <- lapply(1:ncol(ivs), function(j) {
-    glm(dv ~ ivs[, j], family = fam)
+    stats::glm(dv ~ ivs[, j], family = fam)
   })
 
   # Extract Log-likelihood values
-  ll0 <- as.numeric(logLik(glm0))
-  lls <- sapply(glm.fits, function(m) as.numeric(logLik(m)))
+  ll0 <- as.numeric(stats::logLik(glm0))
+  lls <- sapply(glm.fits, function(m) as.numeric(stats::logLik(m)))
 
   # Create active sets based on threshold type
 
@@ -106,8 +106,8 @@ cv.gspcr <- function(
     ascores <- sqrt(CNR2)
 
     # Define upper and lower bounds of the association
-    lower <- quantile(ascores, 1 - (max.features / ncol(ivs)))
-    upper <- quantile(ascores, 1 - (min.features / ncol(ivs)))
+    lower <- stats::quantile(ascores, 1 - (max.features / ncol(ivs)))
+    upper <- stats::quantile(ascores, 1 - (min.features / ncol(ivs)))
 
   }
 
@@ -133,14 +133,8 @@ cv.gspcr <- function(
     # Compute the diagonal of the cross-product matrix between variables
     sxx <- ((x - as.vector(xbar))^2) %*% rep(1, n)
 
-    # Which is the mid step for variance
-    cbind(sxx, apply(x - as.vector(xbar), 1, var) * (n - 1))
-
     # Compute the cross-product matrix between X and Y
     sxy <- (x - as.vector(xbar)) %*% (y - mean(y))
-
-    # Which is the mid step for covariance between the two
-    cbind(sxx, apply(x - as.vector(xbar), 1, var) * (n - 1))
 
     # Total sum of squares
     syy <- sum((y - mean(y))^2)
@@ -153,11 +147,11 @@ cv.gspcr <- function(
 
     # add "fudge"(?) to the denominator
     if (is.null(s0.perc)) {
-      fudge <- median(sd)
+      fudge <- stats::median(sd)
     }
     if (!is.null(s0.perc)) {
       if (s0.perc >= 0) {
-        fudge <- quantile(sd, s0.perc)
+        fudge <- stats::quantile(sd, s0.perc)
       }
       if (s0.perc < 0) {
         fudge <- 0
@@ -171,8 +165,8 @@ cv.gspcr <- function(
     ascores <- abs(tt)[, 1]
 
     # Define upper and lower bounds of the normalized correlation
-    lower <- quantile(abs(ascores), 1 - (max.features / nrow(x)))
-    upper <- quantile(abs(ascores), 1 - (min.features / nrow(x)))
+    lower <- stats::quantile(abs(ascores), 1 - (max.features / nrow(x)))
+    upper <- stats::quantile(abs(ascores), 1 - (min.features / nrow(x)))
 
   }
 
@@ -251,21 +245,21 @@ cv.gspcr <- function(
           # Q <- 1
 
           # Train GLM model and baseline model
-          glm_fit_tr <- glm(ytr ~ PC_tr.eff[, 1:Q], family = fam)
+          glm_fit_tr <- stats::glm(ytr ~ PC_tr.eff[, 1:Q], family = fam)
 
           # Store the baseline GLM model
-          glm_null_tr <- glm(ytr ~ 1, family = fam)
+          glm_null_tr <- stats::glm(ytr ~ 1, family = fam)
           
           # Obtain prediction based on new data
-          yhat_va <- cbind(1, PC_va.eff[, 1:Q]) %*% coef(glm_fit_tr)
+          yhat_va <- cbind(1, PC_va.eff[, 1:Q]) %*% stats::coef(glm_fit_tr)
 
           # Obtain validation residuals
           r_va_mod <- (yva - yhat_va)
           r_va_null <- yva - mean(ytr)
 
           # Store the estimate of the sigma
-          s_va_mod <- sqrt(sum(resid(glm_fit_tr)^2) / (length(ytr))) # maximum likelihood version
-          s_va_null <- sqrt(sum(resid(glm_null_tr)^2) / (length(ytr))) # maximum likelihood version
+          s_va_mod <- sqrt(sum(stats::resid(glm_fit_tr)^2) / (length(ytr))) # maximum likelihood version
+          s_va_null <- sqrt(sum(stats::resid(glm_null_tr)^2) / (length(ytr))) # maximum likelihood version
 
           # Compute validation data log-likelihood under the null model
           loglik_va_null <- loglike_norm(r = r_va_null, s = s_va_null)

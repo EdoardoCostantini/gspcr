@@ -9,18 +9,18 @@ cv.choice(scor, scor.lwr, scor.upr, K, test)
 \arguments{
 \item{scor}{A description of the first argument}
 
-\item{scor.lwr}{A description of the second argument}
+\item{scor.lwr}{A vector of score lower bounds.}
 
-\item{scor.upr}{A description}
+\item{scor.upr}{A vector of score upper bounds.}
 
-\item{K}{A description}
+\item{K}{The number of folds used for K-fold cross-validation.}
 
-\item{Test}{A description}
+\item{test}{The type of score to compute for the cross-validation procedure.}
 }
 \value{
 A list of two unit vectors:
 \itemize{
-\item default = The default choice,
+\item default = The default choice.
 \item oneSE = The choice based on the one standard error rule.
 }
 }
@@ -29,9 +29,6 @@ Extracting the CV choices of SPCR parameters.
 }
 \details{
 Given a matrix of npcs * thrsh, returns the best choice based on the type of test (best overall and 1se rule versions)
-}
-\references{
-Such, S. (2006). Such and such. Journal such and such, 101(473), 119-137.
 }
 \author{
 Edoardo Costantini, 2023

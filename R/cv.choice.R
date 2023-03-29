@@ -3,19 +3,16 @@
 #' Extracting the CV choices of SPCR parameters.
 #'
 #' @param scor A description of the first argument
-#' @param scor.lwr A description of the second argument
-#' @param scor.upr A description
-#' @param K A description
-#' @param Test A description
+#' @param scor.lwr A vector of score lower bounds.
+#' @param scor.upr A vector of score upper bounds.
+#' @param K The number of folds used for K-fold cross-validation.
+#' @param test The type of score to compute for the cross-validation procedure.
 #' @details
 #' Given a matrix of npcs * thrsh, returns the best choice based on the type of test (best overall and 1se rule versions)
 #' @return A list of two unit vectors:
-#' - default = The default choice,
+#' - default = The default choice.
 #' - oneSE = The choice based on the one standard error rule.
 #' @author Edoardo Costantini, 2023
-#' @references
-#'
-#' Such, S. (2006). Such and such. Journal such and such, 101(473), 119-137.
 #'
 #' @export
 cv.choice <- function(scor, scor.lwr, scor.upr, K, test) {

@@ -2,13 +2,13 @@
 #'
 #' Extracting the CV choices of SPCR parameters.
 #'
-#' @param scor A description of the first argument
-#' @param scor.lwr A vector of score lower bounds.
-#' @param scor.upr A vector of score upper bounds.
+#' @param scor A \eqn{npcs \times nthrs} matrix of K-fold CV scores.
+#' @param scor.lwr A \eqn{npcs \times nthrs} matrix of score lower bounds.
+#' @param scor.upr A \eqn{npcs \times nthrs} matrix of score upper bounds.
 #' @param K The number of folds used for K-fold cross-validation.
 #' @param test The type of score to compute for the cross-validation procedure.
 #' @details
-#' Given a matrix of npcs * thrsh, returns the best choice based on the type of test (best overall and 1se rule versions)
+#' Given a matrix of \eqn{npcs \times nthrs}, returns the best choice based on the type of test (best overall and 1se rule versions)
 #' @return A list of two unit vectors:
 #' - default = The default choice.
 #' - oneSE = The choice based on the one standard error rule.

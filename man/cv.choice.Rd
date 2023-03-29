@@ -7,11 +7,11 @@
 cv.choice(scor, scor.lwr, scor.upr, K, test)
 }
 \arguments{
-\item{scor}{A description of the first argument}
+\item{scor}{A \eqn{npcs \times nthrs} matrix of K-fold CV scores.}
 
-\item{scor.lwr}{A vector of score lower bounds.}
+\item{scor.lwr}{A \eqn{npcs \times nthrs} matrix of score lower bounds.}
 
-\item{scor.upr}{A vector of score upper bounds.}
+\item{scor.upr}{A \eqn{npcs \times nthrs} matrix of score upper bounds.}
 
 \item{K}{The number of folds used for K-fold cross-validation.}
 
@@ -28,7 +28,7 @@ A list of two unit vectors:
 Extracting the CV choices of SPCR parameters.
 }
 \details{
-Given a matrix of npcs * thrsh, returns the best choice based on the type of test (best overall and 1se rule versions)
+Given a matrix of \eqn{npcs \times nthrs}, returns the best choice based on the type of test (best overall and 1se rule versions)
 }
 \author{
 Edoardo Costantini, 2023

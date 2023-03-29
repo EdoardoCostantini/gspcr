@@ -31,7 +31,7 @@ cv.scores <- function(cv_array, test) {
         lscor <- apply(log(cv_array), c(1, 2), mean, na.rm = FALSE)
 
         # Compute standard error for each
-        lscor.sd <- apply(log(cv_array), c(1, 2), sd, na.rm = FALSE) / sqrt(K)
+        lscor.sd <- apply(log(cv_array), c(1, 2), stats::sd, na.rm = FALSE) / sqrt(K)
 
         # Revert to original scale and compute upper lower bounds
         scor <- exp(lscor)
@@ -42,7 +42,7 @@ cv.scores <- function(cv_array, test) {
         scor <- apply(cv_array, c(1, 2), mean, na.rm = FALSE)
 
         # Compute the standard errors
-        scor.sd <- apply(cv_array, c(1, 2), sd, na.rm = FALSE) / sqrt(K)
+        scor.sd <- apply(cv_array, c(1, 2), stats::sd, na.rm = FALSE) / sqrt(K)
 
         # Compute the upper and lower bounds
         scor.upr <- scor + scor.sd

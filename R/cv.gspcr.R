@@ -47,6 +47,7 @@ cv.gspcr <- function(
   # test = c("LRT", "F", "MSE")[2]
   # max.features = ncol(ivs)
   # min.features = 1
+  # oneSE = TRUE
 
   # Save the call
   gspcr.call <- list(

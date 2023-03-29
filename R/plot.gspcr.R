@@ -37,8 +37,8 @@ plot.gspcr <- function(gspcr.out, labels = TRUE, errorBars = FALSE, discretize =
     store_plot <- gspcr.out.long %>%
         ggplot2::ggplot(
             ggplot2::aes(
-                x = .data[[gspcr.out$gspcr.call$thrs]],
-                y = .data[[gspcr.out$gspcr.call$test]],
+                x = ggplot2::.data[[gspcr.out$gspcr.call$thrs]],
+                y = ggplot2::.data[[gspcr.out$gspcr.call$test]],
                 group = factor(npcs),
                 label = factor(npcs)
             )

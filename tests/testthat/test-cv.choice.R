@@ -21,7 +21,7 @@ K <- 10
 test <- "F"
 
 # Apply function
-cv.choice.out <- cv.choice(
+cv_choose.out <- cv_choose(
   scor = scor,
   scor.lwr = scor.lwr,
   scor.upr = scor.upr,
@@ -30,10 +30,10 @@ cv.choice.out <- cv.choice(
 )
 
 # Check default results for an F test
-testthat::expect_equal(as.vector(cv.choice.out$default), c(3, 2))
+testthat::expect_equal(as.vector(cv_choose.out$default), c(3, 2))
 
 # Check 1SE results for an F test
-testthat::expect_equal(as.vector(cv.choice.out$oneSE), c(2, 2))
+testthat::expect_equal(as.vector(cv_choose.out$oneSE), c(2, 2))
 
 # Low score (e.g., MSE) --------------------------------------------------------
 
@@ -41,7 +41,7 @@ testthat::expect_equal(as.vector(cv.choice.out$oneSE), c(2, 2))
 test <- "MSE"
 
 # Apply function
-cv.choice.out <- cv.choice(
+cv_choose.out <- cv_choose(
   scor = scor,
   scor.lwr = scor.lwr,
   scor.upr = scor.upr,
@@ -50,7 +50,7 @@ cv.choice.out <- cv.choice(
 )
 
 # Check default results for an F test
-testthat::expect_equal(as.vector(cv.choice.out$default), c(1, 1))
+testthat::expect_equal(as.vector(cv_choose.out$default), c(1, 1))
 
 # Check 1SE results for an F test
-testthat::expect_equal(as.vector(cv.choice.out$oneSE), c(2, 1))
+testthat::expect_equal(as.vector(cv_choose.out$oneSE), c(2, 1))

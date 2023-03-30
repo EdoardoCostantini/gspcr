@@ -15,7 +15,7 @@
 #' @author Edoardo Costantini, 2023
 #'
 #' @export
-cv.choice <- function(scor, scor.lwr, scor.upr, K, test) {
+cv_choose <- function(scor, scor.lwr, scor.upr, K, test) {
 
     # Decide if you need the max or the min
     if (test == "F" | test == "LRT" | test == "PR2") {

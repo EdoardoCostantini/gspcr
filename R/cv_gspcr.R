@@ -22,7 +22,7 @@
 #' Such, S. (2006). Such and such. Journal such and such, 101(473), 119-137.
 #'
 #' @export
-cv.gspcr <- function(
+cv_gspcr <- function(
   dv, 
   ivs, 
   fam = "gaussian",
@@ -305,10 +305,10 @@ cv.gspcr <- function(
   }
 
   # Average selected score across folds
-  scor.list <- cv.scores(cv_array = map_kfcv, test = test)
+  scor.list <- cv_collect(cv_array = map_kfcv, test = test)
 
   # Make a decision based on the CV measures
-  cv_sol <- cv.choice(
+  cv_sol <- cv_choose(
     scor = scor.list$scor,
     scor.lwr = scor.list$scor.lwr,
     scor.upr = scor.list$scor.upr,
@@ -331,7 +331,7 @@ cv.gspcr <- function(
   )
 
   # Assign class to object
-  class(out) <- c("gspcr", "list")
+  class(out) <- c("gspcrout", "list")
 
   # Return gspcr object
   return(out)

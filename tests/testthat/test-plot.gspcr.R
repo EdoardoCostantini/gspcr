@@ -1,5 +1,5 @@
 # Project:   gspcr
-# Objective: Testing the plot.gspcr function
+# Objective: Testing the plot.gspcrout function
 # Author:    Edoardo Costantini
 # Created:   2023-03-29
 # Modified:  2023-03-30
@@ -8,7 +8,7 @@
 # Does the function produce a ggplot output? -----------------------------------
 
 # Train the GSPCR model
-out1 <- cv.gspcr(
+out1 <- cv_gspcr(
     dv = GSPCRexdata$y,
     ivs = GSPCRexdata[, -1],
     fam = "gaussian",

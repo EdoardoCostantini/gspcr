@@ -1,12 +1,12 @@
 # Project:   gspcr
-# Objective: Test the cv.gspcr function
+# Objective: Test the cv_gspcr function
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
 # Modified:  2023-03-30
 # Notes: 
 
 # Use the functions with a given method
-out1 <- cv.gspcr(
+out1 <- cv_gspcr(
     dv = GSPCRexdata$y,
     ivs = GSPCRexdata[, -1],
     fam = "gaussian",
@@ -23,4 +23,4 @@ out1 <- cv.gspcr(
 testthat::expect_equal(length(out1), 10)
 
 # Test the class of the output
-testthat::expect_equal(class(out1), c("gspcr", "list"))
+testthat::expect_equal(class(out1), c("gspcrout", "list"))

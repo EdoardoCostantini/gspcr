@@ -16,7 +16,6 @@
 #'
 #' @export
 plot.gspcr <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discretize = TRUE, print = TRUE, ...) {
-
     # Check y
     if (is.null(y)) {
         y <- x$gspcr.call$test
@@ -40,7 +39,7 @@ plot.gspcr <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discretize
     x.long$npcs <- factor(x.long$npcs)
 
     # Make the X-axis into factor if required
-    if(discretize == TRUE){
+    if (discretize == TRUE) {
         x.long[, x$gspcr.call$thrs] <- factor(
             x = round(x.long[, x$gspcr.call$thrs], 3),
             levels = round(x$thr, 3)
@@ -60,11 +59,11 @@ plot.gspcr <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discretize
                 group = .data$npcs,
                 label = .data$npcs
             )
-        ) + 
-        ggplot2::geom_point() + 
+        ) +
+        ggplot2::geom_point() +
         ggplot2::geom_line() +
         ggplot2::theme_bw()
-    
+
     # Avoid dropping empty levels if the X-axis is discrete
     if (discretize == TRUE) {
         store_plot <- store_plot +

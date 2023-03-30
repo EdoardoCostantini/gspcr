@@ -16,7 +16,7 @@
 #' Such, S. (2006). Such and such. Journal such and such, 101(473), 119-137.
 #'
 #' @export
-cv_collect <- function(cv_array, fit_measure) {
+cv_average <- function(cv_array, fit_measure) {
     # Description: given an array of npcs * thrsh * K dimensions, returns its average
     # Example internals:
     # - cv_array = array(abs(rnorm(10 * 3 * 2)), dim = c(10, 3, 2))

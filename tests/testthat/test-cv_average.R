@@ -1,5 +1,5 @@
 # Project:   gspcr
-# Objective: Testing the cv_collect function
+# Objective: Testing the cv_average function
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
 # Modified:  2023-03-16
@@ -23,22 +23,22 @@ cv_array <- array(
 )
 
 # Compute the cv scores
-cv_collect.out <- cv_collect(
+cv_average.out <- cv_average(
     cv_array = cv_array,
     fit_measure = "F"
 )
 
 # Check output is list
-testthat::expect_true(is.list(cv_collect.out))
+testthat::expect_true(is.list(cv_average.out))
 
 # Check list is three elements long
-testthat::expect_true(length(cv_collect.out) == 3)
+testthat::expect_true(length(cv_average.out) == 3)
 
 # Check score has expected dimensionality
-testthat::expect_true(all(dim(cv_collect.out$scor) == c(npcs, ntrhes)))
+testthat::expect_true(all(dim(cv_average.out$scor) == c(npcs, ntrhes)))
 
 # Check score.upr has expected dimensionality
-testthat::expect_true(all(dim(cv_collect.out$score.upr) == c(npcs, ntrhes)))
+testthat::expect_true(all(dim(cv_average.out$score.upr) == c(npcs, ntrhes)))
 
 # Check score.lwr has expected dimensionality
-testthat::expect_true(all(dim(cv_collect.out$score.lrw) == c(npcs, ntrhes)))
+testthat::expect_true(all(dim(cv_average.out$score.lrw) == c(npcs, ntrhes)))

@@ -18,21 +18,21 @@
 plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discretize = TRUE, print = TRUE, ...) {
     # Check y
     if (is.null(y)) {
-        y <- x$gspcr.call$fit_measure
+        y <- x$gspcr_call$fit_measure
     } else {
         # Define the message
         message_wrongy <- paste0(y, " was not used as the score in the CV procedure. If you want to plot the ", y, " scores, run cv_gspcr again and change the `fit_measure` argument to ", y, ".")
         # Return it
         warning(message_wrongy)
         # And use the fit_measure called by spcr
-        y <- x$gspcr.call$fit_measure
+        y <- x$gspcr_call$fit_measure
     }
 
     # Make scores from wide to long
     x.long <- reshape2::melt(
         data = x$scor,
-        value.name = x$gspcr.call$fit_measure,
-        varnames = c("npcs", x$gspcr.call$thrs)
+        value.name = x$gspcr_call$fit_measure,
+        varnames = c("npcs", x$gspcr_call$thrs)
     )
 
     # Make npcs a factor
@@ -40,22 +40,22 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
 
     # Make the X-axis into factor if required
     if (discretize == TRUE) {
-        x.long[, x$gspcr.call$thrs] <- factor(
-            x = round(x.long[, x$gspcr.call$thrs], 3),
+        x.long[, x$gspcr_call$thrs] <- factor(
+            x = round(x.long[, x$gspcr_call$thrs], 3),
             levels = round(x$thr, 3)
         )
     }
 
     # Add error bounds
-    x.long$low <- reshape2::melt(data = x$scor.lwr)[, "value"]
-    x.long$high <- reshape2::melt(x$scor.upr)[, "value"]
+    x.long$low <- reshape2::melt(data = x$scor_lwr)[, "value"]
+    x.long$high <- reshape2::melt(x$scor_upr)[, "value"]
 
     # Make baseline plot
     store_plot <- x.long %>%
         ggplot2::ggplot(
             ggplot2::aes(
-                x = .data[[x$gspcr.call$thrs]],
-                y = .data[[x$gspcr.call$fit_measure]],
+                x = .data[[x$gspcr_call$thrs]],
+                y = .data[[x$gspcr_call$fit_measure]],
                 group = .data$npcs,
                 label = .data$npcs
             )

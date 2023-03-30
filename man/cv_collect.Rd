@@ -15,8 +15,8 @@ cv_collect(cv_array, fit_measure)
 A list of three q nt matrices.
 \itemize{
 \item scor: contains the average CV scores across the K folds
-\item scor.upr: contains the average CV scores across the K folds + 1 standard deviation
-\item scor.lwr: contains the average CV scores across the K folds - 1 standard deviation
+\item scor_upr: contains the average CV scores across the K folds + 1 standard deviation
+\item scor_lwr: contains the average CV scores across the K folds - 1 standard deviation
 }
 }
 \description{

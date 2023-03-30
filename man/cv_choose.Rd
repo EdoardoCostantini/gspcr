@@ -4,14 +4,14 @@
 \alias{cv_choose}
 \title{Cross-validation choice}
 \usage{
-cv_choose(scor, scor.lwr, scor.upr, K, fit_measure)
+cv_choose(scor, scor_lwr, scor_upr, K, fit_measure)
 }
 \arguments{
 \item{scor}{A \eqn{npcs \times nthrs} matrix of K-fold CV scores.}
 
-\item{scor.lwr}{A \eqn{npcs \times nthrs} matrix of score lower bounds.}
+\item{scor_lwr}{A \eqn{npcs \times nthrs} matrix of score lower bounds.}
 
-\item{scor.upr}{A \eqn{npcs \times nthrs} matrix of score upper bounds.}
+\item{scor_upr}{A \eqn{npcs \times nthrs} matrix of score upper bounds.}
 
 \item{K}{The number of folds used for K-fold cross-validation.}
 

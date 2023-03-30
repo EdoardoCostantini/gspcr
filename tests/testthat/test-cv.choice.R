@@ -9,8 +9,8 @@
 
 # Score matrices
 scor <- matrix(c(1, 2, 3, 4, 5, 6), nrow = 3, ncol = 2)
-scor.lwr <- matrix(c(1, 2, 3, 4, 5, 6) - 1.5, nrow = 3, ncol = 2)
-scor.upr <- matrix(c(1, 2, 3, 4, 5, 6) + 1.5, nrow = 3, ncol = 2)
+scor_lwr <- matrix(c(1, 2, 3, 4, 5, 6) - 1.5, nrow = 3, ncol = 2)
+scor_upr <- matrix(c(1, 2, 3, 4, 5, 6) + 1.5, nrow = 3, ncol = 2)
 
 # Number of folds
 K <- 10
@@ -23,8 +23,8 @@ fit_measure <- "F"
 # Apply function
 cv_choose.out <- cv_choose(
   scor = scor,
-  scor.lwr = scor.lwr,
-  scor.upr = scor.upr,
+  scor_lwr = scor_lwr,
+  scor_upr = scor_upr,
   K = K,
   fit_measure = fit_measure
 )
@@ -43,8 +43,8 @@ fit_measure <- "MSE"
 # Apply function
 cv_choose.out <- cv_choose(
   scor = scor,
-  scor.lwr = scor.lwr,
-  scor.upr = scor.upr,
+  scor_lwr = scor_lwr,
+  scor_upr = scor_upr,
   K = K,
   fit_measure = fit_measure
 )

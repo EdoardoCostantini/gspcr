@@ -12,9 +12,9 @@ cv_gspcr(
   nthrs = 10,
   maxnpcs = 3,
   K = 5,
-  test = c("LRT", "F", "MSE")[2],
-  max.features = ncol(ivs),
-  min.features = 5,
+  fit_measure = c("LRT", "F", "MSE")[2],
+  max_features = ncol(ivs),
+  min_features = 5,
   oneSE = TRUE
 )
 }
@@ -33,11 +33,11 @@ cv_gspcr(
 
 \item{K}{Number of folds for the K-fold cross-validation procedure}
 
-\item{test}{Type of measure to cross-validate}
+\item{fit_measure}{Type of measure to cross-validate}
 
-\item{max.features}{Maximum number of features that can be selected}
+\item{max_features}{Maximum number of features that can be selected}
 
-\item{min.features}{Minimum number of features that can be selected}
+\item{min_features}{Minimum number of features that can be selected}
 
 \item{oneSE}{Whether the results with the 1SE rule should be stored}
 }

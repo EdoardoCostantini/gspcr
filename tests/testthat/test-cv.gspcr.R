@@ -13,10 +13,10 @@ out1 <- cv_gspcr(
     nthrs = 5,
     maxnpcs = 5,
     K = 3,
-    test = "F",
+    fit_measure = "F",
     thrs = "normalized",
-    min.features = 1,
-    max.features = ncol(GSPCRexdata[, -1])
+    min_features = 1,
+    max_features = ncol(GSPCRexdata[, -1])
 )
 
 # Test the length of the output is as expected

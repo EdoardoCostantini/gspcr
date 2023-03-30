@@ -3,25 +3,25 @@
 #' Extracting the CV choices of SPCR parameters.
 #'
 #' @param scor A \eqn{npcs \times nthrs} matrix of K-fold CV scores.
-#' @param scor.lwr A \eqn{npcs \times nthrs} matrix of score lower bounds.
-#' @param scor.upr A \eqn{npcs \times nthrs} matrix of score upper bounds.
+#' @param scor_lwr A \eqn{npcs \times nthrs} matrix of score lower bounds.
+#' @param scor_upr A \eqn{npcs \times nthrs} matrix of score upper bounds.
 #' @param K The number of folds used for K-fold cross-validation.
-#' @param test The type of score to compute for the cross-validation procedure.
+#' @param fit_measure The type of score to compute for the cross-validation procedure.
 #' @details
-#' Given a matrix of \eqn{npcs \times nthrs}, returns the best choice based on the type of test (best overall and 1se rule versions)
+#' Given a matrix of \eqn{npcs \times nthrs}, returns the best choice based on the type of fit measure (best overall and 1se rule versions)
 #' @return A list of two unit vectors:
 #' - default = The default choice.
 #' - oneSE = The choice based on the one standard error rule.
 #' @author Edoardo Costantini, 2023
 #'
 #' @export
-cv_choose <- function(scor, scor.lwr, scor.upr, K, test) {
+cv_choose <- function(scor, scor_lwr, scor_upr, K, fit_measure) {
 
     # Decide if you need the max or the min
-    if (test == "F" | test == "LRT" | test == "PR2") {
+    if (fit_measure == "F" | fit_measure == "LRT" | fit_measure == "PR2") {
         maxmin <- "max"
     }
-    if (test == "AIC" | test == "BIC" | test == "MSE") {
+    if (fit_measure == "AIC" | fit_measure == "BIC" | fit_measure == "MSE") {
         maxmin <- "min"
     }
 
@@ -32,22 +32,22 @@ cv_choose <- function(scor, scor.lwr, scor.upr, K, test) {
     cv.default <- which(scor == choice, arr.ind = TRUE)
 
     # Reverse engineer the standard error of the decision CV
-    cv.default.se <- (scor - scor.lwr)[cv.default]
+    cv.default.se <- (scor - scor_lwr)[cv.default]
 
     # Logical matrix storing which values bigger than sol - 1SE
-    if (test == "F" | test == "LRT" | test == "PR2") {
-        scor.s1se <- scor >= choice - cv.default.se
+    if (fit_measure == "F" | fit_measure == "LRT" | fit_measure == "PR2") {
+        scor_s1se <- scor >= choice - cv.default.se
     }
     # Logical matrix storing which values smaller than sol + 1SE
-    if (test == "MSE" | test == "BIC" | test == "AIC") {
-        scor.s1se <- scor <= choice + cv.default.se
+    if (fit_measure == "MSE" | fit_measure == "BIC" | fit_measure == "AIC") {
+        scor_s1se <- scor <= choice + cv.default.se
     }
 
     # Logical matrix excluding default solution
-    scor.ns <- scor != scor[cv.default]
+    scor_ns <- scor != scor[cv.default]
 
     # Create a list of candidate models that are within 1 standard error of the best
-    candidates <- which(scor.s1se & scor.ns, arr.ind = TRUE)
+    candidates <- which(scor_s1se & scor_ns, arr.ind = TRUE)
 
     # Attach value
     candidates <- cbind(candidates, values = scor[candidates[, 1:2, drop = FALSE]])

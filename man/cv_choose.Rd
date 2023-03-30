@@ -4,18 +4,18 @@
 \alias{cv_choose}
 \title{Cross-validation choice}
 \usage{
-cv_choose(scor, scor.lwr, scor.upr, K, test)
+cv_choose(scor, scor_lwr, scor_upr, K, fit_measure)
 }
 \arguments{
 \item{scor}{A \eqn{npcs \times nthrs} matrix of K-fold CV scores.}
 
-\item{scor.lwr}{A \eqn{npcs \times nthrs} matrix of score lower bounds.}
+\item{scor_lwr}{A \eqn{npcs \times nthrs} matrix of score lower bounds.}
 
-\item{scor.upr}{A \eqn{npcs \times nthrs} matrix of score upper bounds.}
+\item{scor_upr}{A \eqn{npcs \times nthrs} matrix of score upper bounds.}
 
 \item{K}{The number of folds used for K-fold cross-validation.}
 
-\item{test}{The type of score to compute for the cross-validation procedure.}
+\item{fit_measure}{The type of score to compute for the cross-validation procedure.}
 }
 \value{
 A list of two unit vectors:
@@ -28,7 +28,7 @@ A list of two unit vectors:
 Extracting the CV choices of SPCR parameters.
 }
 \details{
-Given a matrix of \eqn{npcs \times nthrs}, returns the best choice based on the type of test (best overall and 1se rule versions)
+Given a matrix of \eqn{npcs \times nthrs}, returns the best choice based on the type of fit measure (best overall and 1se rule versions)
 }
 \author{
 Edoardo Costantini, 2023

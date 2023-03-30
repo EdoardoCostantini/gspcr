@@ -17,13 +17,13 @@
 \arguments{
 \item{x}{An object of class \code{gspcr}.}
 
-\item{y}{The CV test to report on the Y axis. Default is the test specified in \code{cv_gspcr()}.}
+\item{y}{The CV fit measure to report on the Y axis. Default is the fit measure specified in \code{cv_gspcr()}.}
 
 \item{labels}{Logical value. \code{FALSE} hides the labels of the points indicating the number of components used. The default is \code{TRUE}.}
 
 \item{errorBars}{Logical value. \code{TRUE} shows the error bars for each point. The default is \code{FALSE}.}
 
-\item{discretize}{Logical value. \code{TRUE} treats the X-axis as a discrete measure that facilitates comparing solution paths between different test types. The default is \code{TRUE}.}
+\item{discretize}{Logical value. \code{TRUE} treats the X-axis as a discrete measure that facilitates comparing solution paths between different fit measures. The default is \code{TRUE}.}
 
 \item{print}{Logical value. TRUE prints the plot when the function is called. The default is \code{TRUE}.}
 

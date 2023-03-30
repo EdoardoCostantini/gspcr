@@ -9,9 +9,9 @@
 #' @param nthrs Number of threshold values to be used
 #' @param maxnpcs = Maximum number of principal components to be used
 #' @param K Number of folds for the K-fold cross-validation procedure
-#' @param test Type of measure to cross-validate
-#' @param max.features Maximum number of features that can be selected
-#' @param min.features Minimum number of features that can be selected
+#' @param fit_measure Type of measure to cross-validate
+#' @param max_features Maximum number of features that can be selected
+#' @param min_features Minimum number of features that can be selected
 #' @param oneSE Whether the results with the 1SE rule should be stored
 #' @details
 #' This function does such and such.
@@ -30,9 +30,9 @@ cv_gspcr <- function(
   nthrs = 10,
   maxnpcs = 3,
   K = 5,
-  test = c("LRT", "F", "MSE")[2],
-  max.features = ncol(ivs),
-  min.features = 5,
+  fit_measure = c("LRT", "F", "MSE")[2],
+  max_features = ncol(ivs),
+  min_features = 5,
   oneSE = TRUE
   ) {
 
@@ -44,13 +44,13 @@ cv_gspcr <- function(
   # fam <- c("gaussian", "binomial", "poisson")[1]
   # maxnpcs <- 10
   # K = 2
-  # test = c("LRT", "F", "MSE")[2]
-  # max.features = ncol(ivs)
-  # min.features = 1
+  # fit_measure = c("LRT", "F", "MSE")[2]
+  # max_features = ncol(ivs)
+  # min_features = 1
   # oneSE = TRUE
 
   # Save the call
-  gspcr.call <- list(
+  gspcr_call <- list(
     dv = dv,
     ivs = ivs,
     fam = fam,
@@ -58,9 +58,9 @@ cv_gspcr <- function(
     nthrs = nthrs,
     maxnpcs = maxnpcs,
     K = K,
-    test = test,
-    max.features = max.features,
-    min.features = min.features,
+    fit_measure = fit_measure,
+    max_features = max_features,
+    min_features = min_features,
     oneSE = oneSE
   )
 
@@ -107,8 +107,8 @@ cv_gspcr <- function(
     ascores <- sqrt(CNR2)
 
     # Define upper and lower bounds of the association
-    lower <- stats::quantile(ascores, 1 - (max.features / ncol(ivs)))
-    upper <- stats::quantile(ascores, 1 - (min.features / ncol(ivs)))
+    lower <- stats::quantile(ascores, 1 - (max_features / ncol(ivs)))
+    upper <- stats::quantile(ascores, 1 - (min_features / ncol(ivs)))
 
   }
 
@@ -166,8 +166,8 @@ cv_gspcr <- function(
     ascores <- abs(tt)[, 1]
 
     # Define upper and lower bounds of the normalized correlation
-    lower <- stats::quantile(abs(ascores), 1 - (max.features / nrow(x)))
-    upper <- stats::quantile(abs(ascores), 1 - (min.features / nrow(x)))
+    lower <- stats::quantile(abs(ascores), 1 - (max_features / nrow(x)))
+    upper <- stats::quantile(abs(ascores), 1 - (min_features / nrow(x)))
 
   }
 
@@ -175,27 +175,27 @@ cv_gspcr <- function(
   thrs_values <- seq(from = lower, to = upper, length.out = nthrs)
 
   # Create a map of active predictors based on threshold values
-  pred.map <- sapply(1:nthrs, function(a) ascores > thrs_values[a])
+  pred_map <- sapply(1:nthrs, function(a) ascores > thrs_values[a])
 
   # Use thresholds as names
-  colnames(pred.map) <- round(thrs_values, 3)
+  colnames(pred_map) <- round(thrs_values, 3)
 
   # If two thresholds are giving the same result reduce the burden
-  pred.map <- pred.map[, !duplicated(t(pred.map))]
+  pred_map <- pred_map[, !duplicated(t(pred_map))]
 
   # Get rid of thresholds that are keeping too few predictors
-  pred.map <- pred.map[, colSums(pred.map) >= min.features]
+  pred_map <- pred_map[, colSums(pred_map) >= min_features]
 
   # Get rid of thresholds that are keeping too many predictors
-  pred.map <- pred.map[, colSums(pred.map) <= max.features]
+  pred_map <- pred_map[, colSums(pred_map) <= max_features]
 
   # And update the effective number of the thresholds considered
-  nthrs.eff <- ncol(pred.map)
+  nthrs_eff <- ncol(pred_map)
   
   # Create an object to store k-fold cross-validation log-likelihoods
   map_kfcv <- array(
-    dim = c(maxnpcs, nthrs.eff, K),
-    dimnames = list(NULL, colnames(pred.map), NULL)
+    dim = c(maxnpcs, nthrs_eff, K),
+    dimnames = list(NULL, colnames(pred_map), NULL)
   )
 
   # Create a fold partitioning object
@@ -212,10 +212,10 @@ cv_gspcr <- function(
     yva <- dv[part == k]
 
     # Loop over threshold values
-    for (thr in 1:nthrs.eff) {
+    for (thr in 1:nthrs_eff) {
       # thr <- 1
       # Define the active set of predictors based on the current threshold value
-      aset <- pred.map[, thr]
+      aset <- pred_map[, thr]
 
       # If there is more than 1 active variable
       if (sum(aset) > 1) {
@@ -235,24 +235,24 @@ cv_gspcr <- function(
         PC_va <- Xva_thr %*% svd_Xtr$v
 
         # Check how many components are available (effective number)
-        q.eff <- min(sum(aset), maxnpcs)
+        q_eff <- min(sum(aset), maxnpcs)
 
         # Select the available PC scores
-        PC_tr.eff <- PC_tr[, 1:q.eff, drop = FALSE]
-        PC_va.eff <- PC_va[, 1:q.eff, drop = FALSE]
+        PC_tr_eff <- PC_tr[, 1:q_eff, drop = FALSE]
+        PC_va_eff <- PC_va[, 1:q_eff, drop = FALSE]
 
         # Compute the F-statistic for the possible additive PCRs
-        for (Q in 1:q.eff) {
+        for (Q in 1:q_eff) {
           # Q <- 1
 
           # Train GLM model and baseline model
-          glm_fit_tr <- stats::glm(ytr ~ PC_tr.eff[, 1:Q], family = fam)
+          glm_fit_tr <- stats::glm(ytr ~ PC_tr_eff[, 1:Q], family = fam)
 
           # Store the baseline GLM model
           glm_null_tr <- stats::glm(ytr ~ 1, family = fam)
           
           # Obtain prediction based on new data
-          yhat_va <- cbind(1, PC_va.eff[, 1:Q]) %*% stats::coef(glm_fit_tr)
+          yhat_va <- cbind(1, PC_va_eff[, 1:Q]) %*% stats::coef(glm_fit_tr)
 
           # Obtain validation residuals
           r_va_mod <- (yva - yhat_va)
@@ -269,7 +269,7 @@ cv_gspcr <- function(
           loglik_va_mod <- loglike_norm(r = r_va_mod, s = s_va_mod)
 
           # Extract desired statistic
-          if (test == "F") {
+          if (fit_measure == "F") {
             # Compute residuals
             Er <- TSS <- sum((yva - mean(ytr))^2) # baseline prediction error
             Ef <- SSE <- sum((yva - yhat_va)^2) # model prediction error
@@ -284,19 +284,19 @@ cv_gspcr <- function(
             # Store the F stats
             map_kfcv[Q, thr, k] <- Fstat
           }
-          if (test == "LRT") {
+          if (fit_measure == "LRT") {
             map_kfcv[Q, thr, k] <- 2 * (loglik_va_mod - loglik_va_null)
           }
-          if (test == "AIC") {
+          if (fit_measure == "AIC") {
             map_kfcv[Q, thr, k] <- 2 * (Q + 1 + 1) - 2 * loglik_va_mod
           }
-          if (test == "BIC") {
+          if (fit_measure == "BIC") {
             map_kfcv[Q, thr, k] <- log(length(r_va_mod)) * (Q + 1 + 1) - 2 * loglik_va_mod
           }
-          if (test == "PR2") {
+          if (fit_measure == "PR2") {
             map_kfcv[Q, thr, k] <- 1 - exp(-2 / length(r_va_mod) * (loglik_va_mod - loglik_va_null))
           }
-          if (test == "MSE") {
+          if (fit_measure == "MSE") {
             map_kfcv[Q, thr, k] <- MLmetrics::MSE(y_pred = yhat_va, y_true = yva)
           }
         }
@@ -305,29 +305,29 @@ cv_gspcr <- function(
   }
 
   # Average selected score across folds
-  scor.list <- cv_collect(cv_array = map_kfcv, test = test)
+  scor_list <- cv_collect(cv_array = map_kfcv, fit_measure = fit_measure)
 
   # Make a decision based on the CV measures
   cv_sol <- cv_choose(
-    scor = scor.list$scor,
-    scor.lwr = scor.list$scor.lwr,
-    scor.upr = scor.list$scor.upr,
+    scor = scor_list$scor,
+    scor_lwr = scor_list$scor_lwr,
+    scor_upr = scor_list$scor_upr,
     K = K,
-    test = test
+    fit_measure = fit_measure
   )
 
   # Return
   out <- list(
     thr         = thrs_values,
-    thr.cv      = thrs_values[cv_sol$default[2]],
-    thr.cv.1se  = thrs_values[cv_sol$oneSE[2]],
-    Q.cv        = cv_sol$default[1],
-    Q.cv.1se    = cv_sol$oneSE[1],
-    scor        = scor.list$scor,
-    scor.lwr    = scor.list$scor.lwr,
-    scor.upr    = scor.list$scor.upr,
-    pred.map    = pred.map,
-    gspcr.call  = gspcr.call
+    thr_cv      = thrs_values[cv_sol$default[2]],
+    thr_cv_1se  = thrs_values[cv_sol$oneSE[2]],
+    Q_cv        = cv_sol$default[1],
+    Q_cv_1se    = cv_sol$oneSE[1],
+    scor        = scor_list$scor,
+    scor_lwr    = scor_list$scor_lwr,
+    scor_upr    = scor_list$scor_upr,
+    pred_map    = pred_map,
+    gspcr_call  = gspcr_call
   )
 
   # Assign class to object

@@ -4,19 +4,19 @@
 \alias{cv_collect}
 \title{Collect results from CV}
 \usage{
-cv_collect(cv_array, test)
+cv_collect(cv_array, fit_measure)
 }
 \arguments{
 \item{cv_array}{A an array of q nt k dimensionality.}
 
-\item{test}{The type of test stored in the array}
+\item{fit_measure}{The type of fit measure stored in the array}
 }
 \value{
 A list of three q nt matrices.
 \itemize{
 \item scor: contains the average CV scores across the K folds
-\item scor.upr: contains the average CV scores across the K folds + 1 standard deviation
-\item scor.lwr: contains the average CV scores across the K folds - 1 standard deviation
+\item scor_upr: contains the average CV scores across the K folds + 1 standard deviation
+\item scor_lwr: contains the average CV scores across the K folds - 1 standard deviation
 }
 }
 \description{

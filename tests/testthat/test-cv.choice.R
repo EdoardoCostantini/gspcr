@@ -9,48 +9,48 @@
 
 # Score matrices
 scor <- matrix(c(1, 2, 3, 4, 5, 6), nrow = 3, ncol = 2)
-scor.lwr <- matrix(c(1, 2, 3, 4, 5, 6) - 1.5, nrow = 3, ncol = 2)
-scor.upr <- matrix(c(1, 2, 3, 4, 5, 6) + 1.5, nrow = 3, ncol = 2)
+scor_lwr <- matrix(c(1, 2, 3, 4, 5, 6) - 1.5, nrow = 3, ncol = 2)
+scor_upr <- matrix(c(1, 2, 3, 4, 5, 6) + 1.5, nrow = 3, ncol = 2)
 
 # Number of folds
 K <- 10
 
 # High score (e.g., F) ---------------------------------------------------------
 
-# Type of test
-test <- "F"
+# Type of fit_measure
+fit_measure <- "F"
 
 # Apply function
 cv_choose.out <- cv_choose(
   scor = scor,
-  scor.lwr = scor.lwr,
-  scor.upr = scor.upr,
+  scor_lwr = scor_lwr,
+  scor_upr = scor_upr,
   K = K,
-  test = test
+  fit_measure = fit_measure
 )
 
-# Check default results for an F test
+# Check default results for an F fit_measure
 testthat::expect_equal(as.vector(cv_choose.out$default), c(3, 2))
 
-# Check 1SE results for an F test
+# Check 1SE results for an F fit_measure
 testthat::expect_equal(as.vector(cv_choose.out$oneSE), c(2, 2))
 
 # Low score (e.g., MSE) --------------------------------------------------------
 
-# Type of test
-test <- "MSE"
+# Type of fit_measure
+fit_measure <- "MSE"
 
 # Apply function
 cv_choose.out <- cv_choose(
   scor = scor,
-  scor.lwr = scor.lwr,
-  scor.upr = scor.upr,
+  scor_lwr = scor_lwr,
+  scor_upr = scor_upr,
   K = K,
-  test = test
+  fit_measure = fit_measure
 )
 
-# Check default results for an F test
+# Check default results for an F fit_measure
 testthat::expect_equal(as.vector(cv_choose.out$default), c(1, 1))
 
-# Check 1SE results for an F test
+# Check 1SE results for an F fit_measure
 testthat::expect_equal(as.vector(cv_choose.out$oneSE), c(2, 1))

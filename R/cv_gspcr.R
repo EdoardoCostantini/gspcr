@@ -10,8 +10,8 @@
 #' @param maxnpcs = Maximum number of principal components to be used
 #' @param K Number of folds for the K-fold cross-validation procedure
 #' @param fit_measure Type of measure to cross-validate
-#' @param max.features Maximum number of features that can be selected
-#' @param min.features Minimum number of features that can be selected
+#' @param max_features Maximum number of features that can be selected
+#' @param min_features Minimum number of features that can be selected
 #' @param oneSE Whether the results with the 1SE rule should be stored
 #' @details
 #' This function does such and such.
@@ -31,8 +31,8 @@ cv_gspcr <- function(
   maxnpcs = 3,
   K = 5,
   fit_measure = c("LRT", "F", "MSE")[2],
-  max.features = ncol(ivs),
-  min.features = 5,
+  max_features = ncol(ivs),
+  min_features = 5,
   oneSE = TRUE
   ) {
 
@@ -45,8 +45,8 @@ cv_gspcr <- function(
   # maxnpcs <- 10
   # K = 2
   # fit_measure = c("LRT", "F", "MSE")[2]
-  # max.features = ncol(ivs)
-  # min.features = 1
+  # max_features = ncol(ivs)
+  # min_features = 1
   # oneSE = TRUE
 
   # Save the call
@@ -59,8 +59,8 @@ cv_gspcr <- function(
     maxnpcs = maxnpcs,
     K = K,
     fit_measure = fit_measure,
-    max.features = max.features,
-    min.features = min.features,
+    max_features = max_features,
+    min_features = min_features,
     oneSE = oneSE
   )
 
@@ -107,8 +107,8 @@ cv_gspcr <- function(
     ascores <- sqrt(CNR2)
 
     # Define upper and lower bounds of the association
-    lower <- stats::quantile(ascores, 1 - (max.features / ncol(ivs)))
-    upper <- stats::quantile(ascores, 1 - (min.features / ncol(ivs)))
+    lower <- stats::quantile(ascores, 1 - (max_features / ncol(ivs)))
+    upper <- stats::quantile(ascores, 1 - (min_features / ncol(ivs)))
 
   }
 
@@ -166,8 +166,8 @@ cv_gspcr <- function(
     ascores <- abs(tt)[, 1]
 
     # Define upper and lower bounds of the normalized correlation
-    lower <- stats::quantile(abs(ascores), 1 - (max.features / nrow(x)))
-    upper <- stats::quantile(abs(ascores), 1 - (min.features / nrow(x)))
+    lower <- stats::quantile(abs(ascores), 1 - (max_features / nrow(x)))
+    upper <- stats::quantile(abs(ascores), 1 - (min_features / nrow(x)))
 
   }
 
@@ -184,10 +184,10 @@ cv_gspcr <- function(
   pred.map <- pred.map[, !duplicated(t(pred.map))]
 
   # Get rid of thresholds that are keeping too few predictors
-  pred.map <- pred.map[, colSums(pred.map) >= min.features]
+  pred.map <- pred.map[, colSums(pred.map) >= min_features]
 
   # Get rid of thresholds that are keeping too many predictors
-  pred.map <- pred.map[, colSums(pred.map) <= max.features]
+  pred.map <- pred.map[, colSums(pred.map) <= max_features]
 
   # And update the effective number of the thresholds considered
   nthrs.eff <- ncol(pred.map)

@@ -3,10 +3,10 @@
 #' Produces a scatter plot showing the CV score obtained by \code{cv_gspcr} (Y-axis) with different threshold values (X-axis) for a different number of components (lines).
 #'
 #' @param x An object of class \code{gspcr}.
-#' @param y The CV test to report on the Y axis. Default is the test specified in \code{cv_gspcr()}.
+#' @param y The CV fit measure to report on the Y axis. Default is the fit measure specified in \code{cv_gspcr()}.
 #' @param labels Logical value. \code{FALSE} hides the labels of the points indicating the number of components used. The default is \code{TRUE}.
 #' @param errorBars Logical value. \code{TRUE} shows the error bars for each point. The default is \code{FALSE}.
-#' @param discretize Logical value. \code{TRUE} treats the X-axis as a discrete measure that facilitates comparing solution paths between different test types. The default is \code{TRUE}.
+#' @param discretize Logical value. \code{TRUE} treats the X-axis as a discrete measure that facilitates comparing solution paths between different fit measures. The default is \code{TRUE}.
 #' @param print Logical value. TRUE prints the plot when the function is called. The default is \code{TRUE}.
 #' @param ... Other arguments passed on to methods. Not currently used.
 #' @details
@@ -18,20 +18,20 @@
 plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discretize = TRUE, print = TRUE, ...) {
     # Check y
     if (is.null(y)) {
-        y <- x$gspcr.call$test
+        y <- x$gspcr.call$fit_measure
     } else {
         # Define the message
-        message_wrongy <- paste0(y, " was not used as the score in the CV procedure. If you want to plot the ", y, " scores, run cv_gspcr again and change the `test` argument to ", y, ".")
+        message_wrongy <- paste0(y, " was not used as the score in the CV procedure. If you want to plot the ", y, " scores, run cv_gspcr again and change the `fit_measure` argument to ", y, ".")
         # Return it
         warning(message_wrongy)
-        # And use the test called by spcr
-        y <- x$gspcr.call$test
+        # And use the fit_measure called by spcr
+        y <- x$gspcr.call$fit_measure
     }
 
     # Make scores from wide to long
     x.long <- reshape2::melt(
         data = x$scor,
-        value.name = x$gspcr.call$test,
+        value.name = x$gspcr.call$fit_measure,
         varnames = c("npcs", x$gspcr.call$thrs)
     )
 
@@ -55,7 +55,7 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
         ggplot2::ggplot(
             ggplot2::aes(
                 x = .data[[x$gspcr.call$thrs]],
-                y = .data[[x$gspcr.call$test]],
+                y = .data[[x$gspcr.call$fit_measure]],
                 group = .data$npcs,
                 label = .data$npcs
             )

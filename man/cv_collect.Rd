@@ -4,12 +4,12 @@
 \alias{cv_collect}
 \title{Collect results from CV}
 \usage{
-cv_collect(cv_array, test)
+cv_collect(cv_array, fit_measure)
 }
 \arguments{
 \item{cv_array}{A an array of q nt k dimensionality.}
 
-\item{test}{The type of test stored in the array}
+\item{fit_measure}{The type of fit measure stored in the array}
 }
 \value{
 A list of three q nt matrices.

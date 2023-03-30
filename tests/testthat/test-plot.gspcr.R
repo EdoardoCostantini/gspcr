@@ -15,7 +15,7 @@ out1 <- cv_gspcr(
     nthrs = 5,
     maxnpcs = 5,
     K = 3,
-    test = "F",
+    fit_measure = "F",
     thrs = "normalized",
     min.features = 1,
     max.features = ncol(GSPCRexdata[, -1])
@@ -28,7 +28,7 @@ plot_output <- plot(
     labels = TRUE, 
     errorBars = FALSE, 
     discretize = TRUE,
-    print = FALSE # not needed for test
+    print = FALSE # not needed for fit_measure
 )
 
 # Perform the test

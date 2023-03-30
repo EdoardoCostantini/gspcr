@@ -25,7 +25,7 @@ cv_array <- array(
 # Compute the cv scores
 cv_collect.out <- cv_collect(
     cv_array = cv_array,
-    test = "F"
+    fit_measure = "F"
 )
 
 # Check output is list

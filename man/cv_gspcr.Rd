@@ -12,7 +12,7 @@ cv_gspcr(
   nthrs = 10,
   maxnpcs = 3,
   K = 5,
-  test = c("LRT", "F", "MSE")[2],
+  fit_measure = c("LRT", "F", "MSE")[2],
   max.features = ncol(ivs),
   min.features = 5,
   oneSE = TRUE
@@ -33,7 +33,7 @@ cv_gspcr(
 
 \item{K}{Number of folds for the K-fold cross-validation procedure}
 
-\item{test}{Type of measure to cross-validate}
+\item{fit_measure}{Type of measure to cross-validate}
 
 \item{max.features}{Maximum number of features that can be selected}
 

@@ -9,7 +9,7 @@
 #' @param nthrs Number of threshold values to be used
 #' @param maxnpcs = Maximum number of principal components to be used
 #' @param K Number of folds for the K-fold cross-validation procedure
-#' @param test Type of measure to cross-validate
+#' @param fit_measure Type of measure to cross-validate
 #' @param max.features Maximum number of features that can be selected
 #' @param min.features Minimum number of features that can be selected
 #' @param oneSE Whether the results with the 1SE rule should be stored
@@ -30,7 +30,7 @@ cv_gspcr <- function(
   nthrs = 10,
   maxnpcs = 3,
   K = 5,
-  test = c("LRT", "F", "MSE")[2],
+  fit_measure = c("LRT", "F", "MSE")[2],
   max.features = ncol(ivs),
   min.features = 5,
   oneSE = TRUE
@@ -44,7 +44,7 @@ cv_gspcr <- function(
   # fam <- c("gaussian", "binomial", "poisson")[1]
   # maxnpcs <- 10
   # K = 2
-  # test = c("LRT", "F", "MSE")[2]
+  # fit_measure = c("LRT", "F", "MSE")[2]
   # max.features = ncol(ivs)
   # min.features = 1
   # oneSE = TRUE
@@ -58,7 +58,7 @@ cv_gspcr <- function(
     nthrs = nthrs,
     maxnpcs = maxnpcs,
     K = K,
-    test = test,
+    fit_measure = fit_measure,
     max.features = max.features,
     min.features = min.features,
     oneSE = oneSE
@@ -269,7 +269,7 @@ cv_gspcr <- function(
           loglik_va_mod <- loglike_norm(r = r_va_mod, s = s_va_mod)
 
           # Extract desired statistic
-          if (test == "F") {
+          if (fit_measure == "F") {
             # Compute residuals
             Er <- TSS <- sum((yva - mean(ytr))^2) # baseline prediction error
             Ef <- SSE <- sum((yva - yhat_va)^2) # model prediction error
@@ -284,19 +284,19 @@ cv_gspcr <- function(
             # Store the F stats
             map_kfcv[Q, thr, k] <- Fstat
           }
-          if (test == "LRT") {
+          if (fit_measure == "LRT") {
             map_kfcv[Q, thr, k] <- 2 * (loglik_va_mod - loglik_va_null)
           }
-          if (test == "AIC") {
+          if (fit_measure == "AIC") {
             map_kfcv[Q, thr, k] <- 2 * (Q + 1 + 1) - 2 * loglik_va_mod
           }
-          if (test == "BIC") {
+          if (fit_measure == "BIC") {
             map_kfcv[Q, thr, k] <- log(length(r_va_mod)) * (Q + 1 + 1) - 2 * loglik_va_mod
           }
-          if (test == "PR2") {
+          if (fit_measure == "PR2") {
             map_kfcv[Q, thr, k] <- 1 - exp(-2 / length(r_va_mod) * (loglik_va_mod - loglik_va_null))
           }
-          if (test == "MSE") {
+          if (fit_measure == "MSE") {
             map_kfcv[Q, thr, k] <- MLmetrics::MSE(y_pred = yhat_va, y_true = yva)
           }
         }
@@ -305,7 +305,7 @@ cv_gspcr <- function(
   }
 
   # Average selected score across folds
-  scor.list <- cv_collect(cv_array = map_kfcv, test = test)
+  scor.list <- cv_collect(cv_array = map_kfcv, fit_measure = fit_measure)
 
   # Make a decision based on the CV measures
   cv_sol <- cv_choose(
@@ -313,7 +313,7 @@ cv_gspcr <- function(
     scor.lwr = scor.list$scor.lwr,
     scor.upr = scor.list$scor.upr,
     K = K,
-    test = test
+    fit_measure = fit_measure
   )
 
   # Return

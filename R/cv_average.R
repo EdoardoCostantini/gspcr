@@ -1,6 +1,6 @@
-#' Collect results from CV
+#' Average fit measures computed in the K-fold cross-validation procedure
 #'
-#' A low-level function to average results from an array of CV results.
+#' A low-level function to average results from an array of K-fold CV fit measures.
 #'
 #' @param cv_array A an array of q nt k dimensionality.
 #' @param fit_measure The type of fit measure stored in the array

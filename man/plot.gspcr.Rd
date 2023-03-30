@@ -2,35 +2,41 @@
 % Please edit documentation in R/plot.gspcr.R
 \name{plot.gspcr}
 \alias{plot.gspcr}
-\title{Plot the gspcr solution path}
+\title{Plot the cross-validation solution path for the GSPCR algorithm}
 \usage{
 \method{plot}{gspcr}(
-  gspcr.out,
+  x,
+  y = NULL,
   labels = TRUE,
   errorBars = FALSE,
   discretize = TRUE,
-  print = TRUE
+  print = TRUE,
+  ...
 )
 }
 \arguments{
-\item{gspcr.out}{The output of a cv.gspcr() call.}
+\item{x}{An object of class \code{gspcr}.}
 
-\item{labels}{Logical value. FALSE hides the labels of the points indicating the number of components used. The default is TRUE.}
+\item{y}{The CV test to report on the Y axis. Default is the test specified in \code{cv.gspcr()}.}
 
-\item{errorBars}{Logical value. TRUE shows the errorBars for each point. The default is FALSE.}
+\item{labels}{Logical value. \code{FALSE} hides the labels of the points indicating the number of components used. The default is \code{TRUE}.}
 
-\item{discretize}{Logical value. TRUE treats the X-axis as a discrete measure that facilitates comparing solution paths between different test types. The default is TRUE.}
+\item{errorBars}{Logical value. \code{TRUE} shows the error bars for each point. The default is \code{FALSE}.}
 
-\item{print}{Logical value. TRUE prints the plot when the function is called. The default is TRUE.}
+\item{discretize}{Logical value. \code{TRUE} treats the X-axis as a discrete measure that facilitates comparing solution paths between different test types. The default is \code{TRUE}.}
+
+\item{print}{Logical value. TRUE prints the plot when the function is called. The default is \code{TRUE}.}
+
+\item{...}{Other arguments passed on to methods. Not currently used.}
 }
 \value{
-A scatterplot of ggplot class
+A scatter plot of \code{ggplot} class
 }
 \description{
-Produces a scatterplot showing the CV score obtained by cv.gspcr (Y-axis) with different threshold values (X-axis) for a different number of components (lines).
+Produces a scatter plot showing the CV score obtained by \code{cv.gspcr} (Y-axis) with different threshold values (X-axis) for a different number of components (lines).
 }
 \details{
-The bounds defining the error bars are computed by cv.gspcr(). First, the K-fold cross-validation score of the statistic of interest (e.g., the F score, the MSE) is computed. Then, the standard deviation of the statistic across the K folds is computed. Finally, the bounds used for the error bars are computed by summing and subtracting this standard deviation to and from the K-fold cross-validation score of the statistic.
+The bounds defining the error bars are computed by \code{cv.gspcr()}. First, the K-fold cross-validation score of the statistic of interest (e.g., the F score, the MSE) is computed. Then, the standard deviation of the statistic across the K folds is computed. Finally, the bounds used for the error bars are computed by summing and subtracting this standard deviation to and from the K-fold cross-validation score of the statistic.
 }
 \author{
 Edoardo Costantini, 2023

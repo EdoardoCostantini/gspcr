@@ -2,7 +2,7 @@
 # Objective: Testing the plot.gspcr function
 # Author:    Edoardo Costantini
 # Created:   2023-03-29
-# Modified:  2023-03-29
+# Modified:  2023-03-30
 # Notes: 
 
 # Does the function produce a ggplot output? -----------------------------------
@@ -22,8 +22,9 @@ out1 <- cv.gspcr(
 )
 
 # Use the plotting function
-plot_output <- plot.gspcr(
-    gspcr.out = out1,
+plot_output <- plot(
+    x = out1,
+    y = "LSS",
     labels = TRUE, 
     errorBars = FALSE, 
     discretize = TRUE,
@@ -32,3 +33,15 @@ plot_output <- plot.gspcr(
 
 # Perform the test
 testthat::expect_true(ggplot2::is.ggplot(plot_output))
+
+# Can you change plotting parameters? ------------------------------------------
+
+# Change the shape of the points
+# plot_output <- plot(
+#     x = out1,
+#     labels = FALSE,
+#     errorBars = FALSE,
+#     discretize = TRUE,
+#     shape = 14,
+#     print = FALSE # not needed for test
+# )

@@ -2,10 +2,8 @@
 # Objective: Test the cv.gspcr function
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
-# Modified:  2023-03-29
+# Modified:  2023-03-30
 # Notes: 
-
-# Test length of output is as expected -----------------------------------------
 
 # Use the functions with a given method
 out1 <- cv.gspcr(
@@ -23,3 +21,6 @@ out1 <- cv.gspcr(
 
 # Test the length of the output is as expected
 testthat::expect_equal(length(out1), 10)
+
+# Test the class of the output
+testthat::expect_equal(class(out1), c("gspcr", "list"))

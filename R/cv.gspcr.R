@@ -15,7 +15,7 @@
 #' @param oneSE Whether the results with the 1SE rule should be stored
 #' @details
 #' This function does such and such.
-#' @return Description of function output
+#' @return Returns an object of class gspcr.
 #' @author Edoardo Costantini, 2023
 #' @references
 #'
@@ -317,7 +317,7 @@ cv.gspcr <- function(
   )
 
   # Return
-  list(
+  out <- list(
     thr         = thrs_values,
     thr.cv      = thrs_values[cv_sol$default[2]],
     thr.cv.1se  = thrs_values[cv_sol$oneSE[2]],
@@ -330,4 +330,9 @@ cv.gspcr <- function(
     gspcr.call  = gspcr.call
   )
 
+  # Assign class to object
+  class(out) <- c("gspcr", "list")
+
+  # Return gspcr object
+  return(out)
 }

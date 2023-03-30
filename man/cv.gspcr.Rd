@@ -42,7 +42,7 @@ cv.gspcr(
 \item{oneSE}{Whether the results with the 1SE rule should be stored}
 }
 \value{
-Description of function output
+Returns an object of class gspcr.
 }
 \description{
 Use K-fold cross-validation to decide on the number of principal components and the threshold value for GSPCR.

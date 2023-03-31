@@ -2,7 +2,7 @@
 # Objective: Script to generate some example data for the package
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
-# Modified:  2023-03-16
+# Modified:  2023-03-31
 # Notes:     After updating the script and the RDS file, to update the data in 
 #            the package you need to run again usethis::use_data(GSPCRexdata) call
 
@@ -168,7 +168,7 @@ XTP <- generateXTP(
 )
 
 # Compute PCA with prcomp
-PCX <- prcomp(X)
+PCX <- prcomp(XTP$X)
 
 # Extract eigenvalues
 eigenvalues <- PCX$sdev^2
@@ -177,10 +177,10 @@ eigenvalues <- PCX$sdev^2
 cumsum(prop.table(eigenvalues))[1:Q]
 
 # Non-graphical solutions
-nScree(x = eigenvalues)
+nFactors::nScree(x = eigenvalues)
 
 # Screeplot
-plotuScree(x = eigenvalues)
+nFactors::plotuScree(x = eigenvalues)
 
 # Generate DV based on the component scores
 y <- generateDV(
@@ -189,8 +189,47 @@ y <- generateDV(
     beta = 1
 )
 
-# Collect data in a single data.frame
-GSPCRexdata <- data.frame(y = y, XTP$X)
+# Create other other versions of this variable
+u <- pnorm(y)
 
-# Save example dataset
+# Binary
+y_bin <- factor(
+    x = qbinom(u, size = 1, prob = .7),
+    levels = 0:1,
+    labels = LETTERS[1:2]
+)
+table(y_bin)
+
+# Multi-categorical
+K <- 3
+y_cat <- factor(
+    x = qbinom(u, size = K - 1, prob = c(.1, .3, .6)),
+    levels = 0:(K - 1),
+    labels = letters[1:K]
+)
+table(y_cat)
+
+# Poisson
+y_pois <- qpois(u, lambda = 2)
+factor(
+    x = y_pois,
+    levels = sort(unique(y_pois)),
+    labels = length(unique(y_pois))
+)
+
+# Collect data in a single data.frame
+GSPCRexdata <- list(
+    X = XTP$X,
+    y = data.frame(
+        cont = y,
+        bin = y_bin,
+        cat = y_cat,
+        pois = y_pois
+    )
+)
+
+# Make use of this data in the package
+usethis::use_data(GSPCRexdata, overwrite = TRUE)
+
+# Save example dataset (note really needed but useful to have somewhere)
 saveRDS(GSPCRexdata, "./data-raw/data/GSPCRexdata.rds")

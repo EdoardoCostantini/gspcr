@@ -5,24 +5,14 @@
 \alias{GSPCRexdata}
 \title{GSPCR example data}
 \format{
-\code{GSPCRexdata} is a data frame with 1000 rows and 51 columns:
+\code{GSPCRexdata} is a list containing two data.frame objects:
 \describe{
-\item{y}{A normally distributed variable generated as the linear combination of the first two components underlying X}
-\item{X}{A collection of predictors with 5 underlying components explaining 0.3 of the variation in X}
+\item{X}{A data.frame with 1000 rows and 50 columns of possible predictors. These predictors were generated such that 30\% of their total variability could be explained by 5 principal components.}
+\item{y}{A data.frame with 1000 rows and 4 columns. The first column \code{cont} is a continuous variable produced using a linear model with the first two PCs underlying \code{X} as a data-generating model. The other columns are transformed versions of \code{cont} to match common discrete target distribution in the social sciences.}
 }
 }
 \description{
 A data.frame with a dependent variable and 50 predictors generated based on true principal components.
-}
-\details{
-Data from a randomized experiment to reduce post-traumatic stress by two
-treatments: Eye Movement Desensitization and Reprocessing (EMDR)
-(experimental treatment), and cognitive behavioral therapy (CBT) (control
-treatment). 52 children were randomized to one of these two treatments.
-Outcomes were measured at three time points: at baseline (pre-treatment, T1),
-post-treatment (T2, 4-8 weeks), and at follow-up (T3, 3 months). For more
-details, see de Roos et al (2011).  Some person covariates were reshuffled.
-The imputation methodology is explained in Chapter 9 of van Buuren (2012).
 }
 \examples{
 

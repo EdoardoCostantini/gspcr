@@ -35,10 +35,10 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
   # Define formula
   if (length(X_train) == 1) {
     # Null model
-    glm_formula <- as.formula("y ~ 1")
+    glm_formula <- stats::as.formula("y ~ 1")
   } else {
     # Some model of interest
-    glm_formula <- as.formula(
+    glm_formula <- stats::as.formula(
       paste0("y ~ ", paste0(colnames(train)[-1], collapse = " + "))
     )
   }
@@ -47,7 +47,7 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
   glm_fit_tr <- stats::glm(glm_formula, data = train, family = fam)
 
   # Obtain prediction for new data
-  yhat_va <- predict(
+  yhat_va <- stats::predict(
     object = glm_fit_tr,
     newdata = valid,
     type = "link"

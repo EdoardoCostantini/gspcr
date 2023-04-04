@@ -16,7 +16,7 @@
 LL_binomial <- function(y, lgt) {
     # convert to numbers if needed
     if(is.factor(y)){
-        y <- model.matrix( ~ y)[, -1]
+        y <- stats::model.matrix(~y)[, -1]
     }
 
     # Compute the log-likelihood

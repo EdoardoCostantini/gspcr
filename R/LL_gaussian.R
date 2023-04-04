@@ -12,7 +12,7 @@
 LL_gaussian <- function(y, y_hat, mod) {
 
     # Store the ML estimate of the sigma from the model
-    s <- sqrt(sum(stats::resid(mod)^2) / (nobs(mod)))
+    s <- sqrt(sum(stats::resid(mod)^2) / (stats::nobs(mod)))
 
     # Obtain residuals for the target ys (can be different from model)
     r <- (y - y_hat)

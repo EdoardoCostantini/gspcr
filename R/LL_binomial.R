@@ -1,16 +1,16 @@
-#' Normal log-likelihood
+#' Binomial log-likelihood
 #'
-#' Computes the binomial log-likelihood given a vector of probabilities
+#' Computes the binomial log-likelihood given a response vector and corresponding GLM linear predictor values.
 #'
-#' @param r Vector of residuals
-#' @param s Residual standard deviation
+#' @param y Vector (or factor) of values on a binary dependent variable.
+#' @param lgt Vector of GLM linear predictor values.
 #' @details
-#' Given
-#' @return The log-likelihood value
+#' The log-likelihood equation is based on Agresti (2002, p. 192).
+#' @return Atomic vector of length 1 containing the log-likelihood value.
 #' @author Edoardo Costantini, 2022
 #' @references
 #'
-#' Such, S. (2006). Such and such. Journal such and such, 101(473), 119-137.
+#' Agresti, A. (2012). Categorical data analysis (Vol. 792). John Wiley & Sons.
 #'
 #' @export
 LL_binomial <- function(y, lgt) {

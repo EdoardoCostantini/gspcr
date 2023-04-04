@@ -2,26 +2,22 @@
 % Please edit documentation in R/LL_gaussian.R
 \name{LL_gaussian}
 \alias{LL_gaussian}
-\title{Normal log-likelihood}
+\title{Gaussian log-likelihood}
 \usage{
 LL_gaussian(y, y_hat, mod)
 }
 \arguments{
-\item{r}{Vector of residuals}
+\item{y}{Vector of observed values on a continuous dependent variable.}
 
-\item{s}{Residual standard deviation}
+\item{y_hat}{Vector of predicted values by the model.}
+
+\item{mod}{\code{glm} or \code{lm} object containing and estimated linear regression model.}
 }
 \value{
-The log-likelihood value
+Atomic vector of length 1 containing the log-likelihood value.
 }
 \description{
-Computes the normal log-likelihood
-}
-\details{
-Given
-}
-\references{
-Such, S. (2006). Such and such. Journal such and such, 101(473), 119-137.
+Computes the gaussian (normal) log-likelihood of a vector of observed values given a trained linear regression model.
 }
 \author{
 Edoardo Costantini, 2022

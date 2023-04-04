@@ -2,26 +2,26 @@
 % Please edit documentation in R/LL_binomial.R
 \name{LL_binomial}
 \alias{LL_binomial}
-\title{Normal log-likelihood}
+\title{Binomial log-likelihood}
 \usage{
 LL_binomial(y, lgt)
 }
 \arguments{
-\item{r}{Vector of residuals}
+\item{y}{Vector (or factor) of values on a binary dependent variable.}
 
-\item{s}{Residual standard deviation}
+\item{lgt}{Vector of GLM linear predictor values.}
 }
 \value{
-The log-likelihood value
+Atomic vector of length 1 containing the log-likelihood value.
 }
 \description{
-Computes the binomial log-likelihood given a vector of probabilities
+Computes the binomial log-likelihood given a response vector and corresponding GLM linear predictor values.
 }
 \details{
-Given
+The log-likelihood equation is based on Agresti (2002, p. 192).
 }
 \references{
-Such, S. (2006). Such and such. Journal such and such, 101(473), 119-137.
+Agresti, A. (2012). Categorical data analysis (Vol. 792). John Wiley & Sons.
 }
 \author{
 Edoardo Costantini, 2022

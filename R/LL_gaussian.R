@@ -1,16 +1,12 @@
-#' Normal log-likelihood
+#' Gaussian log-likelihood
 #'
-#' Computes the normal log-likelihood
+#' Computes the gaussian (normal) log-likelihood of a vector of observed values given a trained linear regression model.
 #'
-#' @param r Vector of residuals
-#' @param s Residual standard deviation
-#' @details
-#' Given 
-#' @return The log-likelihood value
+#' @param y Vector of observed values on a continuous dependent variable.
+#' @param y_hat Vector of predicted values by the model.
+#' @param mod \code{glm} or \code{lm} object containing and estimated linear regression model.
+#' @return Atomic vector of length 1 containing the log-likelihood value.
 #' @author Edoardo Costantini, 2022
-#' @references
-#'
-#' Such, S. (2006). Such and such. Journal such and such, 101(473), 119-137.
 #'
 #' @export
 LL_gaussian <- function(y, y_hat, mod) {

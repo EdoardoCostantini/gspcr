@@ -200,6 +200,25 @@ y_bin <- factor(
 )
 table(y_bin)
 
+# Ordinal variable
+K <- 5
+
+# Create lags
+lags <- rep(abs(min(y) - max(y)) / K, (K - 1))
+
+# Define the break points y
+breaks <- c(cumsum(c(minimum = min(y), fixed = lags)), maximum = max(y))
+
+# Cut y with the given brakes
+y_dis <- as.numeric(cut(x = y, breaks = breaks, include.lowest = TRUE))
+
+# Make an ordered factor
+y_ord <- factor(
+    x = y_dis,
+    ordered = TRUE
+)
+table(y_ord)
+
 # Multi-categorical
 K <- 3
 y_cat <- factor(
@@ -223,6 +242,7 @@ GSPCRexdata <- list(
     y = data.frame(
         cont = y,
         bin = y_bin,
+        ord = y_ord,
         cat = y_cat,
         pois = y_pois
     )

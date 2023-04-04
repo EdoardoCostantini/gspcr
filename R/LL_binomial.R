@@ -1,11 +1,11 @@
 #' Normal log-likelihood
 #'
-#' Computes the normal log-likelihood
+#' Computes the binomial log-likelihood given a vector of probabilities
 #'
 #' @param r Vector of residuals
 #' @param s Residual standard deviation
 #' @details
-#' Given 
+#' Given
 #' @return The log-likelihood value
 #' @author Edoardo Costantini, 2022
 #' @references
@@ -13,10 +13,12 @@
 #' Such, S. (2006). Such and such. Journal such and such, 101(473), 119-137.
 #'
 #' @export
-loglike_norm <- function(r, s) {
-    # Define n based on the residuals
-    n <- length(r)
+LL_binomial <- function(y, lgt) {
+    # convert to numbers if needed
+    if(is.factor(y)){
+        y <- model.matrix( ~ y)[, -1]
+    }
 
     # Compute the log-likelihood
-    -n / 2 * log(2 * pi) - n / 2 * log(s^2) - 1 / (2 * s^2) * sum(r^2)
+    sum(y * lgt - log(1 + exp(lgt)))
 }

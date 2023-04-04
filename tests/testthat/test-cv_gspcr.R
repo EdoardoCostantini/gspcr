@@ -16,7 +16,8 @@ out1 <- cv_gspcr(
     fit_measure = "F",
     thrs = "normalized",
     min_features = 1,
-    max_features = ncol(GSPCRexdata$X)
+    max_features = ncol(GSPCRexdata$X),
+    oneSE = TRUE
 )
 
 # Test the length of the output is as expected
@@ -24,3 +25,20 @@ testthat::expect_equal(length(out1), 10)
 
 # Test the class of the output
 testthat::expect_equal(class(out1), c("gspcrout", "list"))
+
+# Binary outcome variable ------------------------------------------------------
+
+# Use the functions with a given method
+out1 <- cv_gspcr(
+    dv = GSPCRexdata$y$bin,
+    ivs = GSPCRexdata$X,
+    fam = "binomial",
+    nthrs = 5,
+    maxnpcs = 5,
+    K = 3,
+    fit_measure = "LRT",
+    thrs = "PR2",
+    min_features = 1,
+    max_features = ncol(GSPCRexdata$X),
+    oneSE = TRUE
+)

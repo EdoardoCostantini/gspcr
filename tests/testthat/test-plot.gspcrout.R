@@ -18,7 +18,8 @@ out1 <- cv_gspcr(
     fit_measure = "F",
     thrs = "normalized",
     min_features = 1,
-    max_features = ncol(GSPCRexdata$X)
+    max_features = ncol(GSPCRexdata$X),
+    oneSE = TRUE
 )
 
 # Use the plotting function

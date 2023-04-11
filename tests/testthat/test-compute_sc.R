@@ -20,64 +20,114 @@ mtcars_fact$am <- factor(
 # Make gear a factor
 mtcars_fact$gear <- factor(mtcars_fact$gear)
 
-# Fit the models ---------------------------------------------------------------
+# New data index
+new_data <- 1:10
 
-# Linear model with lm (null)
-lm_out_null <- lm(mpg ~ 1, data = mtcars_fact)
+# Define a tolerance for differences in testing
+tol <- 1e-15
 
-# Linear model with lm
+# Test function works with null models -----------------------------------------
+
+# Null models
+null_lm <- lm(mpg ~ 1, data = mtcars_fact)
+null_binlo <- stats::glm(am ~ 1, data = mtcars, family = "binomial")
+null_multi <- nnet::multinom(formula = gear ~ 1, data = mtcars_fact)
+
+# Testing data for null models
+null_data <- matrix(1, nrow = 10, ncol = 1)
+
+# Get systematic components
+sc_lm_out_null <- predict(null_lm, newdata = mtcars_fact[new_data, ])
+
+# Use the function
+null_lm_sc <- compute_sc(null_lm, null_data)
+null_binlo_sc <- compute_sc(null_binlo, null_data)
+null_multi_sc <- compute_sc(null_multi, null_data)
+
+# Test the function returns a matrix
+testthat::expect_true(is.matrix(null_lm_sc))
+testthat::expect_true(is.matrix(null_binlo_sc))
+testthat::expect_true(is.matrix(null_multi_sc))
+
+# Test the matrix dimensionality is correct
+testthat::expect_true(ncol(null_lm_sc) == 1)
+testthat::expect_true(ncol(null_binlo_sc) == 1)
+testthat::expect_true(ncol(null_multi_sc) == nlevels(mtcars_fact$gear) - 1)
+
+# Test function works with linear models ---------------------------------------
+
+# Linear model with lm and glm
 lm_out <- lm(mpg ~ cyl + disp, data = mtcars_fact)
-
-# Linear model with GLM
 glm_out1 <- stats::glm(mpg ~ cyl + disp, data = mtcars, family = "gaussian")
+
+# Get systematic components
+sc_lm_out <- predict(lm_out, newdata = mtcars_fact[new_data, ])
+sc_glm_out1 <- predict(glm_out1, newdata = mtcars_fact[new_data, ], type = "link")
+
+# Use the function for linear model with lm and GLM
+sc_fun_lm_out <- compute_sc(
+    mod = lm_out,
+    predictors = mtcars_fact[new_data, c("cyl", "disp")]
+)
+sc_fun_glm_out1 <- compute_sc(
+    mod = glm_out1,
+    predictors = mtcars_fact[new_data, c("cyl", "disp")]
+)
+
+# Test the function returns a matrix
+testthat::expect_true(is.matrix(sc_fun_lm_out))
+testthat::expect_true(is.matrix(sc_fun_glm_out1))
+
+# Test the matrix dimensionality is correct
+testthat::expect_true(ncol(sc_fun_lm_out) == 1)
+testthat::expect_true(ncol(sc_fun_glm_out1) == 1)
+
+# Test the function is computing what is expected
+testthat::expect_true(sum(sc_lm_out - sc_fun_lm_out) < tol)
+testthat::expect_true(sum(sc_glm_out1 - sc_fun_glm_out1) < tol)
+
+# Test function works with logistic regression models --------------------------
 
 # Logistic regression
 glm_out2 <- stats::glm(am ~ cyl + disp, data = mtcars, family = "binomial")
 
+# Get systematic components
+sc_glm_out2 <- predict(glm_out2, newdata = mtcars_fact[new_data, ], type = "link")
+
+# Use the function for logistic regression
+sc_fun_glm_out2 <- compute_sc(
+    mod = glm_out2,
+    predictors = mtcars_fact[new_data, c("cyl", "disp")]
+)
+
+# Test the function returns a matrix
+testthat::expect_true(is.matrix(sc_fun_glm_out2))
+
+# Test the matrix dimensionality is correct
+testthat::expect_true(ncol(sc_fun_glm_out2) == 1)
+
+# Test the function is computing what is expected
+testthat::expect_true(sum(sc_glm_out2 - sc_fun_glm_out2) < tol)
+
+# Test function works with baseline-category logistic regression ---------------
+
 # Baseline-category logistic regression
-multi_out <- out <- nnet::multinom(
+multi_out <- nnet::multinom(
     formula = gear ~ cyl + disp,
     data = mtcars_fact
 )
 
-# Get systematic components with default approach ------------------------------
-
-sc_lm_out_null <- predict(lm_out_null, newdata = mtcars_fact[1:10, ])
-sc_lm_out <- predict(lm_out, newdata = mtcars_fact[1:10, ])
-sc_glm_out1 <- predict(glm_out1, newdata = mtcars_fact[1:10, ], type = "link")
-sc_glm_out2 <- predict(glm_out2, newdata = mtcars_fact[1:10, ], type = "link")
-multi_out_probs <- predict(multi_out, newdata = mtcars_fact[1:10, ], type = "probs")
-
-# Use the function -------------------------------------------------------------
-
-# Linear model with lm (null)
-sc_fun_lm_out_null <- compute_sc(
-    mod = lm_out_null,
-    predictors = matrix(1, nrow = 10, ncol = 1)
+# Get systematic components
+multi_out_probs <- predict(
+    multi_out,
+    newdata = mtcars_fact[new_data, ], 
+    type = "probs"
 )
 
-# Linear model with lm
-sc_fun_lm_out <- compute_sc(
-    mod = lm_out,
-    predictors = mtcars_fact[1:10, c("cyl", "disp")]
-)
-
-# Linear model with GLM
-sc_fun_glm_out1 <- compute_sc(
-    mod = glm_out1,
-    predictors = mtcars_fact[1:10, c("cyl", "disp")]
-)
-
-# Logistic regression
-sc_fun_glm_out2 <- compute_sc(
-    mod = glm_out2,
-    predictors = mtcars_fact[1:10, c("cyl", "disp")]
-)
-
-# Baseline-category logistic regression
+# Use the function for Baseline-category logistic regression
 sc_fun_multi_out <- compute_sc(
     mod = multi_out,
-    predictors = mtcars_fact[1:10, c("cyl", "disp")]
+    predictors = mtcars_fact[new_data, c("cyl", "disp")]
 )
 
 # Compute the logits for the baseline category
@@ -86,28 +136,11 @@ logits <- cbind(0, sc_fun_multi_out)
 # Transform to probabilities
 multi_out_probs_fun <- exp(logits) / rowSums(exp(logits))
 
-# Test function ----------------------------------------------------------------
-
-# Define a tolerance
-tol <- 1e-15
-
 # Test the function returns a matrix
-testthat::expect_true(is.matrix(sc_fun_lm_out_null))
-testthat::expect_true(is.matrix(sc_fun_lm_out))
-testthat::expect_true(is.matrix(sc_fun_glm_out1))
-testthat::expect_true(is.matrix(sc_fun_glm_out2))
 testthat::expect_true(is.matrix(sc_fun_multi_out))
 
 # Test the matrix dimensionality is correct
-testthat::expect_true(ncol(sc_fun_lm_out_null) == 1)
-testthat::expect_true(ncol(sc_fun_lm_out) == 1)
-testthat::expect_true(ncol(sc_fun_glm_out1) == 1)
-testthat::expect_true(ncol(sc_fun_glm_out2) == 1)
 testthat::expect_true(ncol(sc_fun_multi_out) == (nlevels(mtcars_fact$gear) - 1))
 
-# Test the function is computing what it's expected
-testthat::expect_true(sum(sc_lm_out_null - sc_fun_lm_out_null) < tol)
-testthat::expect_true(sum(sc_lm_out - sc_fun_lm_out) < tol)
-testthat::expect_true(sum(sc_glm_out1 - sc_fun_glm_out1) < tol)
-testthat::expect_true(sum(sc_glm_out2 - sc_fun_glm_out2) < tol)
+# Test the function is computing what is expected
 testthat::expect_true(sum(multi_out_probs - multi_out_probs_fun) < tol)

@@ -22,7 +22,7 @@ resi_var <- var(resi) * (n - 1) / n
 # With function
 ll_fun <- LL_gaussian(
   y = mtcars$mpg,
-  y_hat = predict(lm1),
+  syst_comp = predict(lm1),
   mod = lm1
 )
 

@@ -68,13 +68,13 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
   if (fam == "binomial") {
     LL_va_mod <- LL_binomial(
       y = y_valid,
-      lgt = yhat_va
+      syst_comp = yhat_va
     )
   }
   if (fam == "gaussian") {
     LL_va_mod <- LL_gaussian(
       y = y_valid,
-      y_hat = yhat_va,
+      syst_comp = yhat_va,
       mod = glm_fit_tr
     )
   }

@@ -17,7 +17,7 @@ glm1 <- stats::glm(am ~ cyl + disp, data = mtcars, family = "binomial")
 y <- mtcars$am
 n <- length(y)
 p <- predict(glm1, type = "response")
-lgt <- predict(glm1, type = "link") # logit values
+syst_comp <- predict(glm1, type = "link") # logit values
 
 # LogLikelihood w/ R
 ll_R <- as.numeric(logLik(glm1))
@@ -26,7 +26,7 @@ ll_R <- as.numeric(logLik(glm1))
 ll_man1 <- log(prod((p)^y * (1 - p)^(1-y)))
 
 # LogLikelihood w/ manual easy way
-ll_man2 <- sum(y * lgt - log(1 + exp(lgt)))
+ll_man2 <- sum(y * syst_comp - log(1 + exp(syst_comp)))
 
 # Active predictors
 active_set <- names(stats::coef(glm1)[-1])
@@ -37,7 +37,7 @@ syst_comp <- cbind(int = 1, as.matrix(mtcars[, active_set])) %*% stats::coef(glm
 # With function
 ll_fun <- LL_binomial(
     y = mtcars$am,
-    lgt = syst_comp
+    syst_comp = syst_comp
 )
 
 # Collect values
@@ -61,7 +61,7 @@ mtcars_fact$am <- factor(
 # Factor input
 ll_fun_fact <- LL_binomial(
     y = mtcars_fact$am,
-    lgt = syst_comp
+    syst_comp = syst_comp
 )
 
 # Collect values
@@ -81,7 +81,7 @@ ll_R <- as.numeric(logLik(glm0))
 # With function
 ll_fun <- LL_binomial(
     y = mtcars$am,
-    lgt = predict(glm0, type = "link") # logit values
+    syst_comp = predict(glm0, type = "link") # logit values
 )
 
 # Check the values are all the same

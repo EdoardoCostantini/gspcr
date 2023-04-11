@@ -4,12 +4,12 @@
 \alias{LL_gaussian}
 \title{Gaussian log-likelihood}
 \usage{
-LL_gaussian(y, y_hat, mod)
+LL_gaussian(y, syst_comp, mod)
 }
 \arguments{
 \item{y}{Vector of observed values on a continuous dependent variable.}
 
-\item{y_hat}{Vector of predicted values by the model.}
+\item{syst_comp}{Vector of predicted values by the model.}
 
 \item{mod}{\code{glm} or \code{lm} object containing and estimated linear regression model.}
 }

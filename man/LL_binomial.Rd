@@ -4,12 +4,12 @@
 \alias{LL_binomial}
 \title{Binomial log-likelihood}
 \usage{
-LL_binomial(y, lgt)
+LL_binomial(y, syst_comp)
 }
 \arguments{
 \item{y}{Vector (or factor) of values on a binary dependent variable.}
 
-\item{lgt}{Vector of GLM linear predictor values.}
+\item{syst_comp}{Vector of GLM linear predictor values.}
 }
 \value{
 Atomic vector of length 1 containing the log-likelihood value.

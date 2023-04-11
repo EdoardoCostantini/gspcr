@@ -182,6 +182,8 @@ nFactors::nScree(x = eigenvalues)
 # Screeplot
 nFactors::plotuScree(x = eigenvalues)
 
+# > Continuous -----------------------------------------------------------------
+
 # Generate DV based on the component scores
 y <- generateDV(
     X = XTP$T[, 1:Qy, drop = FALSE],
@@ -189,10 +191,10 @@ y <- generateDV(
     beta = 1
 )
 
-# Create other other versions of this variable
+# Create other versions of this variable
 u <- pnorm(y)
 
-# Binary
+# > Binary ---------------------------------------------------------------------
 y_bin <- factor(
     x = qbinom(u, size = 1, prob = .7),
     levels = 0:1,
@@ -200,7 +202,7 @@ y_bin <- factor(
 )
 table(y_bin)
 
-# Ordinal variable
+# > Ordinal variable -----------------------------------------------------------
 K <- 5
 
 # Create lags
@@ -219,7 +221,7 @@ y_ord <- factor(
 )
 table(y_ord)
 
-# Multi-categorical
+# > Multi-categorical ----------------------------------------------------------
 K <- 3
 y_cat <- factor(
     x = qbinom(u, size = K - 1, prob = c(.1, .3, .6)),
@@ -235,6 +237,8 @@ factor(
     levels = sort(unique(y_pois)),
     labels = length(unique(y_pois))
 )
+
+# Store results ----------------------------------------------------------------
 
 # Collect data in a single data.frame
 GSPCRexdata <- list(

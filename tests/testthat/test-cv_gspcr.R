@@ -42,3 +42,20 @@ out1 <- cv_gspcr(
     max_features = ncol(GSPCRexdata$X),
     oneSE = TRUE
 )
+
+# Multi-categorical outcome variable -------------------------------------------
+
+# Use the functions with a given method
+out1 <- cv_gspcr(
+    dv = GSPCRexdata$y$cat,
+    ivs = GSPCRexdata$X,
+    fam = "baseline",
+    nthrs = 5,
+    maxnpcs = 5,
+    K = 3,
+    fit_measure = "LRT",
+    thrs = "PR2",
+    min_features = 1,
+    max_features = ncol(GSPCRexdata$X),
+    oneSE = TRUE
+)

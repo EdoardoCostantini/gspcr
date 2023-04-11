@@ -2,18 +2,18 @@
 # Objective: Test the LL_newdata function
 # Author:    Edoardo Costantini
 # Created:   2023-04-04
-# Modified:  2023-04-04
+# Modified:  2023-04-11
 # Notes: 
 
 # Correct results when train = valid -------------------------------------------
 
 # Use the function with training = validation data
 mod_out <- LL_newdata(
-    y_train <- as.matrix(mtcars[, 1]),
-    y_valid <- as.matrix(mtcars[, 1]),
-    X_train <- as.matrix(mtcars[, -1]),
-    X_valid <- as.matrix(mtcars[, -1]),
-    fam <- "gaussian"
+    y_train = as.matrix(mtcars[, 1]),
+    y_valid = as.matrix(mtcars[, 1]),
+    X_train = as.matrix(mtcars[, -1]),
+    X_valid = as.matrix(mtcars[, -1]),
+    fam = "gaussian"
 )
 
 # Fit the expected model
@@ -29,7 +29,7 @@ LL_R <- as.numeric(logLik(mod_R))
 # testthat::expect_equal(coef(mod_R), coef(mod_out$mod))
 
 # Test predicted values are as expected
-testthat::expect_equal(fit_R, mod_out$yhat_va)
+testthat::expect_true(sum(fit_R - mod_out$yhat_va) == 0)
 
 # Test log-likelihood value is as expected
 testthat::expect_equal(LL_R, mod_out$LL)

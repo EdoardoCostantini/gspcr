@@ -81,13 +81,26 @@ cv_gspcr <- function(
   # Sample size
   n <- nrow(ivs)
 
-  # Fit null model
-  glm0 <- stats::glm(dv ~ 1, family = fam)
+  # Compute baseline and univariate models for thresholding
+  if (fam == "gaussian" | fam == "binomial") {
+    # Fit null model
+    glm0 <- stats::glm(dv ~ 1, family = fam)
 
-  # Fit univariate models
-  glm.fits <- lapply(1:ncol(ivs), function(j) {
-    stats::glm(dv ~ ivs[, j], family = fam)
-  })
+    # Fit univariate models
+    glm.fits <- lapply(1:ncol(ivs), function(j) {
+      stats::glm(dv ~ ivs[, j], family = fam)
+    })
+  }
+  if (fam == "baseline") {
+    glm0 <- nnet::multinom(
+      formula = dv ~ 1
+    )
+
+    # Fit univariate models
+    glm.fits <- lapply(1:ncol(ivs), function(j) {
+      nnet::multinom(dv ~ ivs[, j])
+    })
+  }
 
   # Extract Log-likelihood values
   ll0 <- as.numeric(stats::logLik(glm0))

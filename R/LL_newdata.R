@@ -50,12 +50,6 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
       data = train,
       family = fam
     )
-    # Obtain prediction for new data
-    yhat_va <- stats::predict(
-      object = glm_fit_tr,
-      newdata = valid,
-      type = "link"
-    )
   }
   if (fam == "baseline") {
     glm_fit_tr <- nnet::multinom(
@@ -64,34 +58,37 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
     )
   }
 
+  # Compute the GLM systematic component
+  sc_va <- compute_sc(
+    mod = glm_fit_tr,
+    predictors = valid[, -1, drop = FALSE]
+  )
+
   # Evaluate the log-likelihood of new data under this model
   if (fam == "binomial") {
     LL_va_mod <- LL_binomial(
       y = y_valid,
-      syst_comp = yhat_va
+      syst_comp = sc_va
     )
   }
   if (fam == "gaussian") {
     LL_va_mod <- LL_gaussian(
       y = y_valid,
-      syst_comp = yhat_va,
+      syst_comp = sc_va,
       mod = glm_fit_tr
     )
   }
   if (fam == "baseline") {
-    # Compute the GLM systematic component
-    yhat_va <- sc <- stats::model.matrix(y ~ ., train) %*% t(stats::coef(glm_fit_tr))
-
     LL_va_mod <- LL_baseline(
       y = y_valid,
-      syst_comp = sc
+      syst_comp = sc_va
     )
   }
 
   # Return
   list(
     LL = LL_va_mod,
-    yhat_va = yhat_va,
+    yhat_va = sc_va,
     mod = glm_fit_tr
   )
 }

@@ -17,7 +17,9 @@ Depends:
 LazyData: true
 Imports: 
     dplyr,
+    FactoMineR,
     ggplot2,
     MLmetrics,
+    nnet,
     reshape2,
     rlang

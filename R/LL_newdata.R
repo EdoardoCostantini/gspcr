@@ -43,15 +43,26 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
     )
   }
 
-  # Train GLM model
-  glm_fit_tr <- stats::glm(glm_formula, data = train, family = fam)
-
-  # Obtain prediction for new data
-  yhat_va <- stats::predict(
-    object = glm_fit_tr,
-    newdata = valid,
-    type = "link"
-  )
+  # Train GLM model based on family
+  if (fam == "gaussian" | fam == "binomial") {
+    glm_fit_tr <- stats::glm(
+      formula = glm_formula,
+      data = train,
+      family = fam
+    )
+    # Obtain prediction for new data
+    yhat_va <- stats::predict(
+      object = glm_fit_tr,
+      newdata = valid,
+      type = "link"
+    )
+  }
+  if (fam == "baseline") {
+    glm_fit_tr <- nnet::multinom(
+      formula = glm_formula,
+      data = train
+    )
+  }
 
   # Evaluate the log-likelihood of new data under this model
   if (fam == "binomial") {
@@ -65,6 +76,15 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
       y = y_valid,
       y_hat = yhat_va,
       mod = glm_fit_tr
+    )
+  }
+  if (fam == "baseline") {
+    # Compute the GLM systematic component
+    yhat_va <- sc <- stats::model.matrix(y ~ ., train) %*% t(stats::coef(glm_fit_tr))
+
+    LL_va_mod <- LL_baseline(
+      y = y_valid,
+      syst_comp = sc
     )
   }
 

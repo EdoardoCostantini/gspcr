@@ -99,3 +99,25 @@ mod_out <- LL_newdata(
 
 # Test output object has expected length
 testthat::expect_true(length(mod_out) == 3)
+
+# Works for multinomial logistic regression ------------------------------------
+
+# Create a copy of the data
+mtcars_fact <- mtcars
+
+# Transform dv to factor
+mtcars_fact$gear <- factor(
+    x = mtcars$gear
+)
+
+# Use the function with different training and validation data
+mod_out <- LL_newdata(
+    y_train = mtcars_fact[, "gear"],
+    y_valid = mtcars_fact[, "gear"],
+    X_train = as.matrix(mtcars_fact[, 1:3]),
+    X_valid = as.matrix(mtcars_fact[, 1:3]),
+    fam = "baseline"
+)
+
+# Test output object has expected length
+testthat::expect_true(length(mod_out) == 3)

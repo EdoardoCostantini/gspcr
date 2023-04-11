@@ -32,12 +32,12 @@ ll_man2 <- sum(y * lgt - log(1 + exp(lgt)))
 active_set <- names(stats::coef(glm1)[-1])
 
 # Obtain a linear predictor on new data
-linear_comp <- cbind(int = 1, as.matrix(mtcars[, active_set])) %*% stats::coef(glm1)
+syst_comp <- cbind(int = 1, as.matrix(mtcars[, active_set])) %*% stats::coef(glm1)
 
 # With function
 ll_fun <- LL_binomial(
     y = mtcars$am,
-    lgt = linear_comp
+    lgt = syst_comp
 )
 
 # Collect values
@@ -61,7 +61,7 @@ mtcars_fact$am <- factor(
 # Factor input
 ll_fun_fact <- LL_binomial(
     y = mtcars_fact$am,
-    lgt = linear_comp
+    lgt = syst_comp
 )
 
 # Collect values

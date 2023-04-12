@@ -121,3 +121,22 @@ mod_out <- LL_newdata(
 
 # Test output object has expected length
 testthat::expect_true(length(mod_out) == 3)
+
+# Works for proportional odds model --------------------------------------------
+
+# Transform dv to factor
+mtcars_fact$carb <- factor(
+    x = mtcars$carb, ordered = TRUE
+)
+
+# Use the function with different training and validation data
+mod_out <- LL_newdata(
+    y_train = mtcars_fact[, "carb"],
+    y_valid = mtcars_fact[, "carb"],
+    X_train = as.matrix(mtcars_fact[, 1:3]),
+    X_valid = as.matrix(mtcars_fact[, 1:3]),
+    fam = "cumulative"
+)
+
+# Test output object has expected length
+testthat::expect_true(length(mod_out) == 3)

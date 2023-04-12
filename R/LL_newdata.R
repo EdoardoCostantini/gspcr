@@ -57,6 +57,13 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
       data = train
     )
   }
+  if (fam == "cumulative") {
+    glm_fit_tr <- MASS::polr(
+      formula = glm_formula,
+      data = train,
+      method = "logistic" # proportional odds logistic regression
+    )
+  }
 
   # Compute the GLM systematic component
   sc_va <- compute_sc(
@@ -79,6 +86,12 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
     )
   }
   if (fam == "baseline") {
+    LL_va_mod <- LL_baseline(
+      y = y_valid,
+      syst_comp = sc_va
+    )
+  }
+  if (fam == "cumulative") {
     LL_va_mod <- LL_baseline(
       y = y_valid,
       syst_comp = sc_va

@@ -2,7 +2,7 @@
 # Objective: Test the cv_gspcr function
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
-# Modified:  2023-03-31
+# Modified:  2023-04-12
 # Notes: 
 
 # Use the functions with a given method
@@ -43,6 +43,9 @@ out1 <- cv_gspcr(
     oneSE = TRUE
 )
 
+# Test the class of the output
+testthat::expect_equal(class(out1), c("gspcrout", "list"))
+
 # Multi-categorical outcome variable -------------------------------------------
 
 # Use the functions with a given method
@@ -59,3 +62,26 @@ out1 <- cv_gspcr(
     max_features = ncol(GSPCRexdata$X),
     oneSE = TRUE
 )
+
+# Test the class of the output
+testthat::expect_equal(class(out1), c("gspcrout", "list"))
+
+# Ordinal outcome variable -----------------------------------------------------
+
+# Use the functions with a given method
+out1 <- cv_gspcr(
+    dv = GSPCRexdata$y$ord,
+    ivs = GSPCRexdata$X,
+    fam = "baseline",
+    nthrs = 5,
+    maxnpcs = 5,
+    K = 3,
+    fit_measure = "LRT",
+    thrs = "PR2",
+    min_features = 1,
+    max_features = ncol(GSPCRexdata$X),
+    oneSE = TRUE
+)
+
+# Test the class of the output
+testthat::expect_equal(class(out1), c("gspcrout", "list"))

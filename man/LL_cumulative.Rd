@@ -9,7 +9,7 @@ LL_cumulative(y, syst_comp)
 \arguments{
 \item{y}{Vector (or factor) of values on a binary dependent variable.}
 
-\item{syst_comp}{Vector of GLM systematic component values.}
+\item{syst_comp}{Matrix of GLM systematic component values.}
 }
 \value{
 Atomic vector of length 1 containing the log-likelihood value.

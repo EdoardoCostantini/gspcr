@@ -7,7 +7,7 @@
 compute_sc(mod, predictors)
 }
 \arguments{
-\item{mod}{A fit object returned by either glm or nnet::multinom.}
+\item{mod}{A fit object returned by one of \code{stats::lm}, \code{stats::glm}, \code{nnet::multinom}, or \code{MASS::polr}.}
 
 \item{predictors}{Dataset of predictor values to compute the systematic component based on.}
 }

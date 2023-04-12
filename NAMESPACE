@@ -3,6 +3,7 @@
 S3method(plot,gspcrout)
 export(LL_baseline)
 export(LL_binomial)
+export(LL_cumulative)
 export(LL_gaussian)
 export(LL_newdata)
 export(compute_sc)

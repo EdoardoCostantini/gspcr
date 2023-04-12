@@ -19,6 +19,7 @@ Imports:
     dplyr,
     FactoMineR,
     ggplot2,
+    MASS,
     MLmetrics,
     nnet,
     reshape2,

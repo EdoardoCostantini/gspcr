@@ -56,7 +56,7 @@ pred_lm <- predict(mod_lm, newdata = valid)
 # Obtain likelihood
 LL_R <- LL_gaussian(
     y = valid$y,
-    syst_comp = pred_lm,
+    x = valid[, -1],
     mod = mod_lm
 )
 

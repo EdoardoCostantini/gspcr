@@ -2,22 +2,25 @@
 % Please edit documentation in R/LL_cumulative.R
 \name{LL_cumulative}
 \alias{LL_cumulative}
-\title{Cumulative link model log-likelihood}
+\title{Proportional odds model log-likelihood}
 \usage{
-LL_cumulative(y, syst_comp)
+LL_cumulative(y, x, mod)
 }
 \arguments{
-\item{y}{Vector (or factor) of values on a binary dependent variable.}
+\item{y}{ordered factor or disjunctive table representation recording an ordinal variable with 3 or more categories.}
 
-\item{syst_comp}{Matrix of GLM systematic component values.}
+\item{x}{data.frame (or matrix) containing predictor values.}
+
+\item{mod}{\code{polr} object containing the estimated proportional odds model.}
 }
 \value{
 Atomic vector of length 1 containing the log-likelihood value.
 }
 \description{
-Computes the log-likelihood given an ordered categories response vector and corresponding GLM linear predictor values.
+Computes the log-likelihood given an ordered category response vector and corresponding GLM linear predictor values.
 }
 \details{
+If \code{x} and \code{y} are equal to the data on which \code{mod} has been trained, this function returns the same result as the default \code{logLink} function. If \code{x} and \code{y} are new, the function returns the log-likelihood of the new data under the trained model.
 The log-likelihood equation is based on Agresti (2002, p. 192).
 }
 \references{

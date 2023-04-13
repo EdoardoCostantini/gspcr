@@ -20,19 +20,11 @@ glm_poisson <- glm(
 # LogLikelihood w/ R
 ll_R <- as.numeric(logLik(glm_poisson))
 
-# Define y
-y <- mtcars$carb
-
-# Define x
-x <- model.matrix( ~ ., mtcars[, c("disp", "hp")])
-
-# Compute bx
-bx <- x %*% glm_poisson$coefficients
-
 # Use the function
 ll_fun <- LL_poisson(
     y = mtcars$carb,
-    syst_comp = bx
+    x = mtcars[, c("disp", "hp")],
+    mod = glm_poisson
 )
 
 # Check the values are all the same

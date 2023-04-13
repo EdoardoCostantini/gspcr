@@ -25,19 +25,11 @@ out <- nnet::multinom(
 # LogLikelihood w/ R
 ll_R <- as.numeric(logLik(out))
 
-# Create multinomial trial representation of the dv
-y <- FactoMineR::tab.disjonctif(mtcars_fact$gear)
-
-# Create the systematic component
-syst_comp <- cbind(
-    int = 1,
-    as.matrix(mtcars[, "disp", drop = FALSE])
-) %*% t(coef(out))
-
 # Input
 ll_fun <- LL_baseline(
-    y = y,
-    syst_comp = syst_comp
+    y = mtcars_fact$gear,
+    x = mtcars_fact[, "disp", drop = FALSE],
+    mod = out
 )
 
 # Check the values are all the same
@@ -51,7 +43,8 @@ y <- FactoMineR::tab.disjonctif(mtcars_fact$gear)
 # Compute ll with function using a factor as input
 ll_fun_fact <- LL_baseline(
     y = y,
-    syst_comp = syst_comp
+    x = mtcars_fact[, "disp", drop = FALSE],
+    mod = out
 )
 
 # Check the values are all the same

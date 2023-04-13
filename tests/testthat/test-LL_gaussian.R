@@ -11,26 +11,17 @@ tol <- 1e-10
 # Test: Correct result ---------------------------------------------------------
 
 # Fit a linear model
-lm1 <- lm(mpg ~ cyl + disp, data = mtcars)
-
-# Store sample size
-n <- nobs(lm1)
-
-# Compute the residuals
-resi <- resid(lm1)
-
-# Compute the ML residuals error variance
-resi_var <- var(resi) * (n - 1) / n
+glm_regression <- lm(mpg ~ disp + hp, data = mtcars)
 
 # With function
 ll_fun <- LL_gaussian(
   y = mtcars$mpg,
-  syst_comp = predict(lm1),
-  mod = lm1
+  x = mtcars[, c("disp", "hp")],
+  mod = glm_regression
 )
 
 # Store the value produced by the standard R function
-ll_R <- as.numeric(logLik(lm1))
+ll_R <- as.numeric(logLik(glm_regression))
 
 # Check the values are all the same
 testthat::expect_true(ll_R - ll_fun < tol)

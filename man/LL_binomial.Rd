@@ -4,12 +4,14 @@
 \alias{LL_binomial}
 \title{Binomial log-likelihood}
 \usage{
-LL_binomial(y, syst_comp)
+LL_binomial(y, x, mod)
 }
 \arguments{
-\item{y}{Vector (or factor) of values on a binary dependent variable.}
+\item{y}{numeric vector (or factor) recording a binary dependent variable.}
 
-\item{syst_comp}{Vector of GLM linear predictor values.}
+\item{x}{data.frame (or matrix) containing predictor values.}
+
+\item{mod}{\code{glm} object containing and estimated logistic regression model.}
 }
 \value{
 Atomic vector of length 1 containing the log-likelihood value.
@@ -18,6 +20,7 @@ Atomic vector of length 1 containing the log-likelihood value.
 Computes the binomial log-likelihood given a response vector and corresponding GLM linear predictor values.
 }
 \details{
+If \code{x} and \code{y} are equal to the data on which \code{mod} has been trained, this function returns the same result as the default \code{logLink} function. If \code{x} and \code{y} are new, the function returns the log-likelihood of the new data under the trained model.
 The log-likelihood equation is based on Agresti (2002, p. 192).
 }
 \references{

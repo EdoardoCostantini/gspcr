@@ -4,12 +4,14 @@
 \alias{LL_baseline}
 \title{Baseline category logistic regression log-likelihood}
 \usage{
-LL_baseline(y, syst_comp)
+LL_baseline(y, x, mod)
 }
 \arguments{
-\item{y}{A multi-categorical factor or its disjunctive table representation.}
+\item{y}{factor or disjunctive table representation recording a nominal variable with 3 or more categories.}
 
-\item{syst_comp}{A matrix storing all of the systematic components for a baseline category logistic regression.}
+\item{x}{data.frame (or matrix) containing predictor values.}
+
+\item{mod}{\code{multinom} object containing the estimated baseline-category logit model.}
 }
 \value{
 Atomic vector of length 1 containing the log-likelihood value.
@@ -18,7 +20,13 @@ Atomic vector of length 1 containing the log-likelihood value.
 Computes the baseline category logistic regression log-likelihood given a nominal categorical variable and the corresponding GLM linear predictor values.
 }
 \details{
+If \code{x} and \code{y} are equal to the data on which \code{mod} has been trained, this function returns the same result as the default \code{logLink} function. If \code{x} and \code{y} are new, the function returns the log-likelihood of the new data under the trained model.
+
 A disjunctive table is a matrix representation of a multi-categorical variable. The dimensionality of the matrix is i times j, with i = number of observations, and j = number of categories. \code{y_{ij}} is equal to 1 if observation i responded with category j, and it is equal to 0 otherwise.
+The log-likelihood equation is based on Agresti (2002, p. 192).
+}
+\references{
+Agresti, A. (2012). Categorical data analysis (Vol. 792). John Wiley & Sons.
 }
 \author{
 Edoardo Costantini, 2023

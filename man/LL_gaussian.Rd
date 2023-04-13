@@ -4,20 +4,23 @@
 \alias{LL_gaussian}
 \title{Gaussian log-likelihood}
 \usage{
-LL_gaussian(y, syst_comp, mod)
+LL_gaussian(y, x, mod)
 }
 \arguments{
-\item{y}{Vector of observed values on a continuous dependent variable.}
+\item{y}{numeric vector recording a continuous dependent variable.}
 
-\item{syst_comp}{Vector of predicted values by the model.}
+\item{x}{data.frame (or matrix) containing predictor values.}
 
-\item{mod}{\code{glm} or \code{lm} object containing and estimated linear regression model.}
+\item{mod}{\code{glm} or \code{lm} object containing the estimated linear regression model.}
 }
 \value{
 Atomic vector of length 1 containing the log-likelihood value.
 }
 \description{
 Computes the gaussian (normal) log-likelihood of a vector of observed values given a trained linear regression model.
+}
+\details{
+If \code{x} and \code{y} are equal to the data on which \code{mod} has been trained, this function returns the same result as the default \code{logLink} function. If \code{x} and \code{y} are new, the function returns the log-likelihood of the new data under the trained model.
 }
 \author{
 Edoardo Costantini, 2022

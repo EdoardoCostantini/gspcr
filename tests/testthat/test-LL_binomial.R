@@ -14,43 +14,23 @@ tol <- 1e-10
 mtcars_fact <- mtcars
 
 # Fit a linear model
-glm1 <- stats::glm(am ~ cyl + disp, data = mtcars, family = "binomial")
-
-# Extract important objects
-y <- mtcars$am
-n <- length(y)
-p <- predict(glm1, type = "response")
-syst_comp <- predict(glm1, type = "link") # logit values
+glm_logistic <- stats::glm(am ~ cyl + disp, data = mtcars, family = "binomial")
 
 # LogLikelihood w/ R
-ll_R <- as.numeric(logLik(glm1))
-
-# LogLikelihood w/ manual easy way
-ll_man1 <- log(prod((p)^y * (1 - p)^(1-y)))
-
-# LogLikelihood w/ manual easy way
-ll_man2 <- sum(y * syst_comp - log(1 + exp(syst_comp)))
-
-# Active predictors
-active_set <- names(stats::coef(glm1)[-1])
-
-# Obtain a linear predictor on new data
-syst_comp <- cbind(int = 1, as.matrix(mtcars[, active_set])) %*% stats::coef(glm1)
+ll_R <- as.numeric(logLik(glm_logistic))
 
 # With function
 ll_fun <- LL_binomial(
     y = mtcars$am,
-    syst_comp = syst_comp
+    x = mtcars[, c("cyl", "disp")],
+    mod = glm_logistic
 )
-
-# Collect values
-lls <- c(ll_R, ll_man1, ll_man2, ll_fun)
 
 # Define tolerance for difference
 tol <- 1e-10
 
 # Check the values are all the same
-testthat::expect_true(max(lls) - min(lls) < tol)
+testthat::expect_true(ll_fun - ll_R < tol)
 
 # Test: Factor input -----------------------------------------------------------
 
@@ -61,30 +41,39 @@ mtcars_fact$am <- factor(
     labels = c("automatic", "manual")
 )
 
-# Factor input
-ll_fun_fact <- LL_binomial(
-    y = mtcars_fact$am,
-    syst_comp = syst_comp
+# Fit a linear model
+glm_logistic <- stats::glm(
+    formula = am ~ cyl + disp,
+    data = mtcars_fact,
+    family = "binomial"
 )
 
-# Collect values
-lls <- c(ll_fun, ll_fun_fact)
+# LogLikelihood w/ R
+ll_R <- as.numeric(logLik(glm_logistic))
+
+# Factor input
+ll_fun <- LL_binomial(
+    y = mtcars_fact$am,
+    x = mtcars_fact[, c("cyl", "disp")],
+    mod = glm_logistic
+)
 
 # Check the values are all the same
-testthat::expect_true(max(lls) - min(lls) < tol)
+testthat::expect_true(ll_fun - ll_R < tol)
 
-# TEst: Null model -------------------------------------------------------------
+# Test: Null model -------------------------------------------------------------
 
 # Fit a linear model
-glm0 <- stats::glm(am ~ 1, data = mtcars, family = "binomial")
+glm_logistic_null <- stats::glm(am ~ 1, data = mtcars, family = "binomial")
 
 # LogLikelihood w/ R
-ll_R <- as.numeric(logLik(glm0))
+ll_R <- as.numeric(logLik(glm_logistic_null))
 
 # With function
 ll_fun <- LL_binomial(
-    y = mtcars$am,
-    syst_comp = predict(glm0, type = "link") # logit values
+    y = mtcars_fact$am,
+    x = matrix(1, nrow = length(mtcars_fact$am), ncol = 1),
+    mod = glm_logistic_null
 )
 
 # Check the values are all the same

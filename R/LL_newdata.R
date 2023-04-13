@@ -72,37 +72,14 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
   )
 
   # Evaluate the log-likelihood of new data under this model
-  if (fam == "gaussian") {
-    LL_va_mod <- LL_gaussian(
+  LL_va_mod <- do.call(
+    what = paste0("LL_", fam),
+    args = list(
       y = y_valid,
-      syst_comp = sc_va,
+      x = valid[, -1, drop = FALSE],
       mod = glm_fit_tr
     )
-  }
-  if (fam == "binomial") {
-    LL_va_mod <- LL_binomial(
-      y = y_valid,
-      syst_comp = sc_va
-    )
-  }
-  if (fam == "baseline") {
-    LL_va_mod <- LL_baseline(
-      y = y_valid,
-      syst_comp = sc_va
-    )
-  }
-  if (fam == "cumulative") {
-    LL_va_mod <- LL_baseline(
-      y = y_valid,
-      syst_comp = sc_va
-    )
-  }
-  if (fam == "poisson") {
-    LL_va_mod <- LL_poisson(
-      y = y_valid,
-      syst_comp = sc_va
-    )
-  }
+  )
 
   # Return
   list(

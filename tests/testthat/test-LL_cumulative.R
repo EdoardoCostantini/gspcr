@@ -16,9 +16,6 @@ mtcars_fact <- mtcars
 # Make carb a factor
 mtcars_fact$carb <- factor(mtcars_fact$carb, ordered = TRUE)
 
-# Count the number of levels
-J <- nlevels(mtcars_fact$carb)
-
 # Fit a logistic or probit regression model to an ordered factor response.
 plor_test <- MASS::polr(
     formula = carb ~ disp + hp,
@@ -29,18 +26,11 @@ plor_test <- MASS::polr(
 # LogLikelihood w/ R
 ll_R <- as.numeric(logLik(plor_test))
 
-# Compute bx
-bx <- as.matrix(mtcars[, c("disp", "hp")]) %*% plor_test$coefficients
-
-# Compute aj + bx
-abx <- sapply(plor_test$zeta, function(a) {
-    a - bx
-})
-
 # Use the function
 ll_fun <- LL_cumulative(
     y = mtcars_fact$carb,
-    syst_comp = abx
+    x = mtcars[, c("disp", "hp")],
+    mod = plor_test
 )
 
 # Check the values are all the same
@@ -54,7 +44,8 @@ y <- FactoMineR::tab.disjonctif(mtcars_fact$carb)
 # Use the function
 ll_fun <- LL_cumulative(
     y = y,
-    syst_comp = abx
+    x = mtcars[, c("disp", "hp")],
+    mod = plor_test
 )
 
 # Check the values are all the same

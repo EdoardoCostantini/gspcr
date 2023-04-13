@@ -2,13 +2,13 @@
 # Objective: Testing the plot.gspcrout function
 # Author:    Edoardo Costantini
 # Created:   2023-03-29
-# Modified:  2023-03-31
+# Modified:  2023-04-13
 # Notes: 
 
-# Does the function produce a ggplot output? -----------------------------------
+# Test: ggplot as output -------------------------------------------------------
 
 # Train the GSPCR model
-out1 <- cv_gspcr(
+out <- cv_gspcr(
     dv = GSPCRexdata$y$cont,
     ivs = GSPCRexdata$X,
     fam = "gaussian",
@@ -18,12 +18,13 @@ out1 <- cv_gspcr(
     fit_measure = "F",
     thrs = "normalized",
     min_features = 1,
-    max_features = ncol(GSPCRexdata$X)
+    max_features = ncol(GSPCRexdata$X),
+    oneSE = TRUE
 )
 
 # Use the plotting function
 plot_output <- plot(
-    x = out1,
+    x = out,
     y = "F",
     labels = TRUE, 
     errorBars = FALSE, 
@@ -34,11 +35,11 @@ plot_output <- plot(
 # Perform the test
 testthat::expect_true(ggplot2::is.ggplot(plot_output))
 
-# Can you change plotting parameters? ------------------------------------------
+# Test: plotting parameters can be changed -------------------------------------
 
-# Change the shape of the points
+# # Change the shape of the points
 # plot_output <- plot(
-#     x = out1,
+#     x = out,
 #     labels = FALSE,
 #     errorBars = FALSE,
 #     discretize = TRUE,

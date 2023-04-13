@@ -2,10 +2,10 @@
 # Objective: Testing the cv_average function
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
-# Modified:  2023-03-16
+# Modified:  2023-04-13
 # Notes:
 
-# Is the output of expected dimensionality? ------------------------------------
+# Test: Dimensionality of the output -------------------------------------------
 
 # Number of folds
 K <- 5

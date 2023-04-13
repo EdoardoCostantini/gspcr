@@ -8,11 +8,11 @@ cv_gspcr(
   dv,
   ivs,
   fam = "gaussian",
-  thrs = c("LLS", "pseudoR2", "normalized")[1],
+  thrs = c("LLS", "PR2", "normalized")[1],
   nthrs = 10,
   maxnpcs = 3,
   K = 5,
-  fit_measure = c("LRT", "F", "MSE")[2],
+  fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
   max_features = ncol(ivs),
   min_features = 5,
   oneSE = TRUE
@@ -29,11 +29,11 @@ cv_gspcr(
 
 \item{nthrs}{Number of threshold values to be used}
 
-\item{maxnpcs}{= Maximum number of principal components to be used}
+\item{maxnpcs}{Maximum number of principal components to be used}
 
 \item{K}{Number of folds for the K-fold cross-validation procedure}
 
-\item{fit_measure}{Type of measure to cross-validate}
+\item{fit_measure}{Type of measure to cross-validate.}
 
 \item{max_features}{Maximum number of features that can be selected}
 
@@ -42,16 +42,30 @@ cv_gspcr(
 \item{oneSE}{Whether the results with the 1SE rule should be stored}
 }
 \value{
-Returns an object of class gspcr.
+Returns an object of class \code{gspcr}.
 }
 \description{
 Use K-fold cross-validation to decide on the number of principal components and the threshold value for GSPCR.
 }
 \details{
-This function does such and such.
+The possible threshold types are:
+\itemize{
+\item \code{LLS}
+\item \code{PR2}
+\item \code{normalized}
+}
+The possible fit measures are:
+\itemize{
+\item \code{F}
+\item \code{LRT}
+\item \code{AIC}
+\item \code{BIC}
+\item \code{PR2}
+\item \code{MSE}
+}
 }
 \references{
-Such, S. (2006). Such and such. Journal such and such, 101(473), 119-137.
+Bair, E., Hastie, T., Paul, D., & Tibshirani, R. (2006). Prediction by supervised principal components. Journal of the American Statistical Association, 101(473), 119-137.
 }
 \author{
 Edoardo Costantini, 2023

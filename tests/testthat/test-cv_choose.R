@@ -2,10 +2,10 @@
 # Objective: Testing the likelihood functions
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
-# Modified:  2023-03-16
+# Modified:  2023-04-13
 # Notes: 
 
-# Define example inputs with known outcome -------------------------------------
+# Setup: Define example inputs with known outcome ------------------------------
 
 # Score matrices
 scor <- matrix(c(1, 2, 3, 4, 5, 6), nrow = 3, ncol = 2)
@@ -15,7 +15,7 @@ scor_upr <- matrix(c(1, 2, 3, 4, 5, 6) + 1.5, nrow = 3, ncol = 2)
 # Number of folds
 K <- 10
 
-# High score (e.g., F) ---------------------------------------------------------
+# Test: Returns the highest score when needed (e.g., F) ------------------------
 
 # Type of fit_measure
 fit_measure <- "F"
@@ -35,7 +35,7 @@ testthat::expect_equal(as.vector(cv_choose.out$default), c(3, 2))
 # Check 1SE results for an F fit_measure
 testthat::expect_equal(as.vector(cv_choose.out$oneSE), c(2, 2))
 
-# Low score (e.g., MSE) --------------------------------------------------------
+# Test: Returns the lowest score when needed (e.g., MSE) -----------------------
 
 # Type of fit_measure
 fit_measure <- "MSE"

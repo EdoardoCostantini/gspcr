@@ -182,6 +182,8 @@ nFactors::nScree(x = eigenvalues)
 # Screeplot
 nFactors::plotuScree(x = eigenvalues)
 
+# > Continuous -----------------------------------------------------------------
+
 # Generate DV based on the component scores
 y <- generateDV(
     X = XTP$T[, 1:Qy, drop = FALSE],
@@ -189,10 +191,10 @@ y <- generateDV(
     beta = 1
 )
 
-# Create other other versions of this variable
+# Create other versions of this variable
 u <- pnorm(y)
 
-# Binary
+# > Binary ---------------------------------------------------------------------
 y_bin <- factor(
     x = qbinom(u, size = 1, prob = .7),
     levels = 0:1,
@@ -200,7 +202,26 @@ y_bin <- factor(
 )
 table(y_bin)
 
-# Multi-categorical
+# > Ordinal variable -----------------------------------------------------------
+K <- 5
+
+# Create lags
+lags <- rep(abs(min(y) - max(y)) / K, (K - 1))
+
+# Define the break points y
+breaks <- c(cumsum(c(minimum = min(y), fixed = lags)), maximum = max(y))
+
+# Cut y with the given brakes
+y_dis <- as.numeric(cut(x = y, breaks = breaks, include.lowest = TRUE))
+
+# Make an ordered factor
+y_ord <- factor(
+    x = y_dis,
+    ordered = TRUE
+)
+table(y_ord)
+
+# > Multi-categorical ----------------------------------------------------------
 K <- 3
 y_cat <- factor(
     x = qbinom(u, size = K - 1, prob = c(.1, .3, .6)),
@@ -217,12 +238,15 @@ factor(
     labels = length(unique(y_pois))
 )
 
+# Store results ----------------------------------------------------------------
+
 # Collect data in a single data.frame
 GSPCRexdata <- list(
     X = XTP$X,
     y = data.frame(
         cont = y,
         bin = y_bin,
+        ord = y_ord,
         cat = y_cat,
         pois = y_pois
     )

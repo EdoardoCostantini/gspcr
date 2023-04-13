@@ -7,30 +7,44 @@
 #' @param fam GLM framework for the dv
 #' @param thrs Type of threshold to be used
 #' @param nthrs Number of threshold values to be used
-#' @param maxnpcs = Maximum number of principal components to be used
+#' @param maxnpcs Maximum number of principal components to be used
 #' @param K Number of folds for the K-fold cross-validation procedure
-#' @param fit_measure Type of measure to cross-validate
+#' @param fit_measure Type of measure to cross-validate.
 #' @param max_features Maximum number of features that can be selected
 #' @param min_features Minimum number of features that can be selected
 #' @param oneSE Whether the results with the 1SE rule should be stored
 #' @details
-#' This function does such and such.
-#' @return Returns an object of class gspcr.
+#' The possible threshold types are:
+#' \itemize{
+#'   \item \code{LLS}
+#'   \item \code{PR2}
+#'   \item \code{normalized}
+#' }
+#' The possible fit measures are:
+#' \itemize{
+#'   \item \code{F}
+#'   \item \code{LRT}
+#'   \item \code{AIC}
+#'   \item \code{BIC}
+#'   \item \code{PR2}
+#'   \item \code{MSE}
+#' }
+#' @return Returns an object of class \code{gspcr}.
 #' @author Edoardo Costantini, 2023
 #' @references
 #'
-#' Such, S. (2006). Such and such. Journal such and such, 101(473), 119-137.
+#' Bair, E., Hastie, T., Paul, D., & Tibshirani, R. (2006). Prediction by supervised principal components. Journal of the American Statistical Association, 101(473), 119-137.
 #'
 #' @export
 cv_gspcr <- function(
   dv, 
   ivs, 
   fam = "gaussian",
-  thrs = c("LLS", "pseudoR2", "normalized")[1],
+  thrs = c("LLS", "PR2", "normalized")[1],
   nthrs = 10,
   maxnpcs = 3,
   K = 5,
-  fit_measure = c("LRT", "F", "MSE")[2],
+  fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
   max_features = ncol(ivs),
   min_features = 5,
   oneSE = TRUE
@@ -39,7 +53,7 @@ cv_gspcr <- function(
   # Example inputs
   # dv <- mtcars[, 1]
   # ivs <- mtcars[, -1]
-  # thrs = c("LLS", "pseudoR2", "normalized")[3]
+  # thrs = c("LLS", "PR2", "normalized")[3]
   # nthrs = 5
   # fam <- c("gaussian", "binomial", "poisson")[1]
   # maxnpcs <- 10
@@ -67,13 +81,40 @@ cv_gspcr <- function(
   # Sample size
   n <- nrow(ivs)
 
-  # Fit null model
-  glm0 <- stats::glm(dv ~ 1, family = fam)
+  # Compute baseline and univariate models for thresholding
+  if (fam == "gaussian" | fam == "binomial" | fam == "poisson") {
+    # Fit null model
+    glm0 <- stats::glm(dv ~ 1, family = fam)
 
-  # Fit univariate models
-  glm.fits <- lapply(1:ncol(ivs), function(j) {
-    stats::glm(dv ~ ivs[, j], family = fam)
-  })
+    # Fit univariate models
+    glm.fits <- lapply(1:ncol(ivs), function(j) {
+      stats::glm(dv ~ ivs[, j], family = fam)
+    })
+  }
+  if (fam == "baseline") {
+    glm0 <- nnet::multinom(
+      formula = dv ~ 1
+    )
+
+    # Fit univariate models
+    glm.fits <- lapply(1:ncol(ivs), function(j) {
+      nnet::multinom(dv ~ ivs[, j])
+    })
+  }
+  if (fam == "cumulative") {
+    glm0 <- MASS::polr(
+      formula = dv ~ 1,
+      method = "logistic"
+    )
+
+    # Fit univariate models
+    glm.fits <- lapply(1:ncol(ivs), function(j) {
+      MASS::polr(
+        formula = dv ~ ivs[, j],
+        method = "logistic"
+      )
+    })
+  }
 
   # Extract Log-likelihood values
   ll0 <- as.numeric(stats::logLik(glm0))
@@ -95,7 +136,7 @@ cv_gspcr <- function(
 
   }
 
-  if(thrs == "pseudoR2"){
+  if(thrs == "PR2"){
 
     # Compute pseudo R-squared
     CNR2 <- 1 - exp(-2 / n * (lls - ll0))
@@ -245,34 +286,29 @@ cv_gspcr <- function(
         for (Q in 1:q_eff) {
           # Q <- 1
 
-          # Train GLM model and baseline model
-          glm_fit_tr <- stats::glm(ytr ~ PC_tr_eff[, 1:Q], family = fam)
+          # Estimate new data log-likelihoods under the model of interest
+          mod_out <- LL_newdata(
+            y_train = ytr,
+            y_valid = yva,
+            X_train = PC_tr_eff[, 1:Q, drop = FALSE],
+            X_valid = PC_va_eff[, 1:Q, drop = FALSE],
+            fam = fam
+          )
 
-          # Store the baseline GLM model
-          glm_null_tr <- stats::glm(ytr ~ 1, family = fam)
-          
-          # Obtain prediction based on new data
-          yhat_va <- cbind(1, PC_va_eff[, 1:Q]) %*% stats::coef(glm_fit_tr)
-
-          # Obtain validation residuals
-          r_va_mod <- (yva - yhat_va)
-          r_va_null <- yva - mean(ytr)
-
-          # Store the estimate of the sigma
-          s_va_mod <- sqrt(sum(stats::resid(glm_fit_tr)^2) / (length(ytr))) # maximum likelihood version
-          s_va_null <- sqrt(sum(stats::resid(glm_null_tr)^2) / (length(ytr))) # maximum likelihood version
-
-          # Compute validation data log-likelihood under the null model
-          loglik_va_null <- loglike_norm(r = r_va_null, s = s_va_null)
-
-          # Compute validation data log-likelihood under the model
-          loglik_va_mod <- loglike_norm(r = r_va_mod, s = s_va_mod)
+          # Estimate new data log-likelihoods under the null model
+          null_out <- LL_newdata(
+            y_train = ytr,
+            y_valid = yva,
+            X_train = 1,
+            X_valid = 1,
+            fam = fam
+          )
 
           # Extract desired statistic
           if (fit_measure == "F") {
             # Compute residuals
-            Er <- TSS <- sum((yva - mean(ytr))^2) # baseline prediction error
-            Ef <- SSE <- sum((yva - yhat_va)^2) # model prediction error
+            Er <- TSS <- sum((yva - null_out$yhat_va)^2) # baseline prediction error
+            Ef <- SSE <- sum((yva - mod_out$yhat_va)^2) # model prediction error
 
             # Compute degrees of freedom
             dfR <- (n - 0 - 1) # for the restricted model
@@ -285,19 +321,19 @@ cv_gspcr <- function(
             map_kfcv[Q, thr, k] <- Fstat
           }
           if (fit_measure == "LRT") {
-            map_kfcv[Q, thr, k] <- 2 * (loglik_va_mod - loglik_va_null)
+            map_kfcv[Q, thr, k] <- 2 * (mod_out$LL - null_out$LL)
           }
           if (fit_measure == "AIC") {
-            map_kfcv[Q, thr, k] <- 2 * (Q + 1 + 1) - 2 * loglik_va_mod
+            map_kfcv[Q, thr, k] <- 2 * (Q + 1 + 1) - 2 * mod_out$LL
           }
           if (fit_measure == "BIC") {
-            map_kfcv[Q, thr, k] <- log(length(r_va_mod)) * (Q + 1 + 1) - 2 * loglik_va_mod
+            map_kfcv[Q, thr, k] <- log(length(yva)) * (Q + 1 + 1) - 2 * mod_out$LL
           }
           if (fit_measure == "PR2") {
-            map_kfcv[Q, thr, k] <- 1 - exp(-2 / length(r_va_mod) * (loglik_va_mod - loglik_va_null))
+            map_kfcv[Q, thr, k] <- 1 - exp(-2 / length(yva) * (mod_out$LL - null_out$LL))
           }
           if (fit_measure == "MSE") {
-            map_kfcv[Q, thr, k] <- MLmetrics::MSE(y_pred = yhat_va, y_true = yva)
+            map_kfcv[Q, thr, k] <- MLmetrics::MSE(y_pred = null_out$yhat_va, y_true = yva)
           }
         }
       }

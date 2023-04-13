@@ -2,10 +2,13 @@
 # Objective: Testing the likelihood functions
 # Author:    Edoardo Costantini
 # Created:   2023-03-31
-# Modified:  2023-04-04
+# Modified:  2023-04-13
 # Notes:
 
-# Correct value? ---------------------------------------------------------------
+# Define tolerance for difference
+tol <- 1e-10
+
+# Test: Correct result ---------------------------------------------------------
 
 # Create a copy of the data
 mtcars_fact <- mtcars
@@ -49,7 +52,7 @@ tol <- 1e-10
 # Check the values are all the same
 testthat::expect_true(max(lls) - min(lls) < tol)
 
-# Factor input -----------------------------------------------------------------
+# Test: Factor input -----------------------------------------------------------
 
 # Transform dv to factor
 mtcars_fact$am <- factor(
@@ -70,7 +73,7 @@ lls <- c(ll_fun, ll_fun_fact)
 # Check the values are all the same
 testthat::expect_true(max(lls) - min(lls) < tol)
 
-# Works for a null model -------------------------------------------------------
+# TEst: Null model -------------------------------------------------------------
 
 # Fit a linear model
 glm0 <- stats::glm(am ~ 1, data = mtcars, family = "binomial")

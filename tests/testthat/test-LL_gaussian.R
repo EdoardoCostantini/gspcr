@@ -2,10 +2,13 @@
 # Objective: Testing the likelihood functions
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
-# Modified:  2023-04-04
+# Modified:  2023-04-13
 # Notes: 
 
-# Correct value? ---------------------------------------------------------------
+# Define tolerance for difference
+tol <- 1e-10
+
+# Test: Correct result ---------------------------------------------------------
 
 # Fit a linear model
 lm1 <- lm(mpg ~ cyl + disp, data = mtcars)
@@ -28,9 +31,6 @@ ll_fun <- LL_gaussian(
 
 # Store the value produced by the standard R function
 ll_R <- as.numeric(logLik(lm1))
-
-# Define tolerance for difference
-tol <- 1e-10
 
 # Check the values are all the same
 testthat::expect_true(ll_R - ll_fun < tol)

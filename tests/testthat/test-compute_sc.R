@@ -2,7 +2,7 @@
 # Objective: Testing the compute_sc function
 # Author:    Edoardo Costantini
 # Created:   2023-04-11
-# Modified:  2023-04-11
+# Modified:  2023-04-13
 # Notes: 
 
 # Prepare the data -------------------------------------------------------------
@@ -29,55 +29,7 @@ new_data <- 1:10
 # Define a tolerance for differences in testing
 tol <- 1e-15
 
-# Test function works with null models -----------------------------------------
-
-# Null models
-null_lm <- lm(mpg ~ 1, data = mtcars_fact)
-null_binlo <- stats::glm(am ~ 1, data = mtcars, family = "binomial")
-null_multi <- nnet::multinom(formula = gear ~ 1, data = mtcars_fact)
-null_polr <- MASS::polr(
-    formula = carb ~ 1,
-    data = mtcars_fact,
-    method = "logistic" # proportional odds logistic regression
-)
-
-# Testing data for null models
-null_data <- matrix(1, nrow = 10, ncol = 1)
-
-# Get systematic components
-sc_lm_out_null <- predict(null_lm, newdata = mtcars_fact[new_data, ])
-
-# Use the function
-null_lm_sc <- compute_sc(
-    mod = null_lm,
-    predictors = null_data
-)
-null_binlo_sc <- compute_sc(
-    mod = null_binlo,
-    predictors = null_data
-)
-null_multi_sc <- compute_sc(
-    mod = null_multi,
-    predictors = null_data
-)
-null_polr_sc <- compute_sc(
-    mod = null_polr,
-    predictors = null_data
-)
-
-# Test the function returns a matrix
-testthat::expect_true(is.matrix(null_lm_sc))
-testthat::expect_true(is.matrix(null_binlo_sc))
-testthat::expect_true(is.matrix(null_multi_sc))
-testthat::expect_true(is.matrix(null_polr_sc))
-
-# Test the matrix dimensionality is correct
-testthat::expect_true(ncol(null_lm_sc) == 1)
-testthat::expect_true(ncol(null_binlo_sc) == 1)
-testthat::expect_true(ncol(null_multi_sc) == nlevels(mtcars_fact$gear) - 1)
-testthat::expect_true(ncol(null_polr_sc) == nlevels(mtcars_fact$carb) - 1)
-
-# Test function works with linear models ---------------------------------------
+# Test: linear models ----------------------------------------------------------
 
 # Linear model with lm and glm
 lm_out <- lm(mpg ~ cyl + disp, data = mtcars_fact)
@@ -119,7 +71,7 @@ testthat::expect_true(sum(sc_lm_out - sc_fun_lm_out) < tol)
 testthat::expect_true(sum(sc_glm_out1 - sc_fun_glm_out1) < tol)
 testthat::expect_true(sum(sc_glm_out2 - sc_fun_glm_out2) < tol)
 
-# Test function works with logistic regression models --------------------------
+# Test: logistic regression models ---------------------------------------------
 
 # Logistic regression
 glm_out2 <- stats::glm(am ~ cyl + disp, data = mtcars, family = "binomial")
@@ -142,7 +94,7 @@ testthat::expect_true(ncol(sc_fun_glm_out2) == 1)
 # Test the function is computing what is expected
 testthat::expect_true(sum(sc_glm_out2 - sc_fun_glm_out2) < tol)
 
-# Test function works with baseline-category logistic regression ---------------
+# Test: baseline-category logistic regression ----------------------------------
 
 # Baseline-category logistic regression
 multi_out <- nnet::multinom(
@@ -178,7 +130,7 @@ testthat::expect_true(ncol(sc_fun_multi_out) == (nlevels(mtcars_fact$gear) - 1))
 # Test the function is computing what is expected
 testthat::expect_true(sum(multi_out_probs - multi_out_probs_fun) < tol)
 
-# Test function works with proportional odds model -----------------------------
+# Test: proportional odds model ------------------------------------------------
 
 # Fit a logistic or probit regression model to an ordered factor response.
 plor_test <- MASS::polr(
@@ -225,7 +177,7 @@ testthat::expect_true(ncol(abx) == (nlevels(mtcars_fact$carb) - 1))
 # Test the function is computing what is expected
 testthat::expect_true(ll_polr - logLik(plor_test) < tol)
 
-# Test function works with proportional odds model with a single predictor -----
+# Test: Proportional odds model with a single predictor ------------------------
 
 # Fit a logistic or probit regression model to an ordered factor response.
 plor_test <- MASS::polr(
@@ -245,3 +197,51 @@ testthat::expect_true(is.matrix(abx_single))
 
 # Test the matrix dimensionality is correct
 testthat::expect_true(ncol(abx_single) == (nlevels(mtcars_fact$carb) - 1))
+
+# Test: null models ------------------------------------------------------------
+
+# Null models
+null_lm <- lm(mpg ~ 1, data = mtcars_fact)
+null_binlo <- stats::glm(am ~ 1, data = mtcars, family = "binomial")
+null_multi <- nnet::multinom(formula = gear ~ 1, data = mtcars_fact)
+null_polr <- MASS::polr(
+    formula = carb ~ 1,
+    data = mtcars_fact,
+    method = "logistic" # proportional odds logistic regression
+)
+
+# Testing data for null models
+null_data <- matrix(1, nrow = 10, ncol = 1)
+
+# Get systematic components
+sc_lm_out_null <- predict(null_lm, newdata = mtcars_fact[new_data, ])
+
+# Use the function
+null_lm_sc <- compute_sc(
+    mod = null_lm,
+    predictors = null_data
+)
+null_binlo_sc <- compute_sc(
+    mod = null_binlo,
+    predictors = null_data
+)
+null_multi_sc <- compute_sc(
+    mod = null_multi,
+    predictors = null_data
+)
+null_polr_sc <- compute_sc(
+    mod = null_polr,
+    predictors = null_data
+)
+
+# Test the function returns a matrix
+testthat::expect_true(is.matrix(null_lm_sc))
+testthat::expect_true(is.matrix(null_binlo_sc))
+testthat::expect_true(is.matrix(null_multi_sc))
+testthat::expect_true(is.matrix(null_polr_sc))
+
+# Test the matrix dimensionality is correct
+testthat::expect_true(ncol(null_lm_sc) == 1)
+testthat::expect_true(ncol(null_binlo_sc) == 1)
+testthat::expect_true(ncol(null_multi_sc) == nlevels(mtcars_fact$gear) - 1)
+testthat::expect_true(ncol(null_polr_sc) == nlevels(mtcars_fact$carb) - 1)

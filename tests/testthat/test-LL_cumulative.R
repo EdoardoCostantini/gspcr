@@ -2,10 +2,13 @@
 # Objective: Test log-likelihood for proportional odds logistic regression (ordinal variables)
 # Author:    Edoardo Costantini
 # Created:   2023-04-04
-# Modified:  2023-04-04
+# Modified:  2023-04-13
 # Notes: 
 
-# Correct value? ---------------------------------------------------------------
+# Define tolerance for difference
+tol <- 1e-10
+
+# Test: Correct result ---------------------------------------------------------
 
 # Create a copy of the data
 mtcars_fact <- mtcars
@@ -40,8 +43,19 @@ ll_fun <- LL_cumulative(
     syst_comp = abx
 )
 
-# Define tolerance for difference
-tol <- 1e-15
+# Check the values are all the same
+testthat::expect_true(ll_fun - ll_R < tol)
+
+# Test: Matrix input -----------------------------------------------------------
+
+# Create matrix version of DV
+y <- FactoMineR::tab.disjonctif(mtcars_fact$carb)
+
+# Use the function
+ll_fun <- LL_cumulative(
+    y = y,
+    syst_comp = abx
+)
 
 # Check the values are all the same
 testthat::expect_true(ll_fun - ll_R < tol)

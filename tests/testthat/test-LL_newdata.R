@@ -2,10 +2,10 @@
 # Objective: Test the LL_newdata function
 # Author:    Edoardo Costantini
 # Created:   2023-04-04
-# Modified:  2023-04-11
+# Modified:  2023-04-13
 # Notes: 
 
-# Correct results when train = valid -------------------------------------------
+# Test: Correct results when train = valid -------------------------------------
 
 # Use the function with training = validation data
 mod_out <- LL_newdata(
@@ -34,7 +34,7 @@ testthat::expect_true(sum(fit_R - mod_out$yhat_va) == 0)
 # Test log-likelihood value is as expected
 testthat::expect_equal(LL_R, mod_out$LL)
 
-# Log-likelihood returned is not the same as the model -------------------------
+# Test: Correct results when train != valid ------------------------------------
 
 # Example inputs
 y_train <- as.matrix(mtcars[1:20, 1])
@@ -76,7 +76,7 @@ tol <- 1e-10
 testthat::expect_true(as.numeric(logLik(mod_out$mod)) != mod_out$LL)
 testthat::expect_true(LL_R - mod_out$LL < tol)
 
-# Works for logistic regression ------------------------------------------------
+# Test: logistic regression ----------------------------------------------------
 
 # Create a copy of the data
 mtcars_fact <- mtcars
@@ -100,7 +100,7 @@ mod_out <- LL_newdata(
 # Test output object has expected length
 testthat::expect_true(length(mod_out) == 3)
 
-# Works for multinomial logistic regression ------------------------------------
+# Test: Multinomial logistic regression ----------------------------------------
 
 # Create a copy of the data
 mtcars_fact <- mtcars
@@ -122,7 +122,7 @@ mod_out <- LL_newdata(
 # Test output object has expected length
 testthat::expect_true(length(mod_out) == 3)
 
-# Works for proportional odds model --------------------------------------------
+# Test: proportional odds model ------------------------------------------------
 
 # Transform dv to factor
 mtcars_fact$carb <- factor(

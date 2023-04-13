@@ -2,10 +2,13 @@
 # Objective: Test log-likelihood for the baseline category logistic regression (nominal variables)
 # Author:    Edoardo Costantini
 # Created:   2023-04-05
-# Modified:  2023-04-05
+# Modified:  2023-04-13
 # Notes: 
 
-# Correct value? ---------------------------------------------------------------
+# Define tolerance for differences
+tol <- 1e-10
+
+# Test: Correct result ---------------------------------------------------------
 
 # Create a copy of the data
 mtcars_fact <- mtcars
@@ -37,17 +40,17 @@ ll_fun <- LL_baseline(
     syst_comp = syst_comp
 )
 
-# Define tolerance for difference
-tol <- 1e-10
-
 # Check the values are all the same
 testthat::expect_true(ll_R - ll_fun < tol)
 
-# Factor input -----------------------------------------------------------------
+# Test: Matrix input -----------------------------------------------------------
+
+# Create matrix version of DV
+y <- FactoMineR::tab.disjonctif(mtcars_fact$gear)
 
 # Compute ll with function using a factor as input
 ll_fun_fact <- LL_baseline(
-    y = mtcars_fact$gear,
+    y = y,
     syst_comp = syst_comp
 )
 

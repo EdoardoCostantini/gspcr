@@ -2,11 +2,13 @@
 # Objective: Test the cv_gspcr function
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
-# Modified:  2023-04-12
+# Modified:  2023-04-13
 # Notes: 
 
+# Test: Continuous outcome -----------------------------------------------------
+
 # Use the functions with a given method
-out1 <- cv_gspcr(
+out_cont <- cv_gspcr(
     dv = GSPCRexdata$y$cont,
     ivs = GSPCRexdata$X,
     fam = "gaussian",
@@ -21,15 +23,15 @@ out1 <- cv_gspcr(
 )
 
 # Test the length of the output is as expected
-testthat::expect_equal(length(out1), 10)
+testthat::expect_equal(length(out_cont), 10)
 
 # Test the class of the output
-testthat::expect_equal(class(out1), c("gspcrout", "list"))
+testthat::expect_equal(class(out_cont), c("gspcrout", "list"))
 
-# Binary outcome variable ------------------------------------------------------
+# Test: Binary outcome ---------------------------------------------------------
 
 # Use the functions with a given method
-out1 <- cv_gspcr(
+out_bin <- cv_gspcr(
     dv = GSPCRexdata$y$bin,
     ivs = GSPCRexdata$X,
     fam = "binomial",
@@ -44,12 +46,12 @@ out1 <- cv_gspcr(
 )
 
 # Test the class of the output
-testthat::expect_equal(class(out1), c("gspcrout", "list"))
+testthat::expect_equal(class(out_bin), c("gspcrout", "list"))
 
-# Multi-categorical outcome variable -------------------------------------------
+# Test: Multi-categorical outcome ----------------------------------------------
 
 # Use the functions with a given method
-out1 <- cv_gspcr(
+out_cat <- cv_gspcr(
     dv = GSPCRexdata$y$cat,
     ivs = GSPCRexdata$X,
     fam = "baseline",
@@ -64,12 +66,12 @@ out1 <- cv_gspcr(
 )
 
 # Test the class of the output
-testthat::expect_equal(class(out1), c("gspcrout", "list"))
+testthat::expect_equal(class(out_cat), c("gspcrout", "list"))
 
-# Ordinal outcome variable -----------------------------------------------------
+# Test: Ordinal outcome --------------------------------------------------------
 
 # Use the functions with a given method
-out1 <- cv_gspcr(
+out_ord <- cv_gspcr(
     dv = GSPCRexdata$y$ord,
     ivs = GSPCRexdata$X,
     fam = "cumulative",
@@ -84,4 +86,4 @@ out1 <- cv_gspcr(
 )
 
 # Test the class of the output
-testthat::expect_equal(class(out1), c("gspcrout", "list"))
+testthat::expect_equal(class(out_ord), c("gspcrout", "list"))

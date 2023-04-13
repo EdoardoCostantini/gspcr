@@ -92,7 +92,7 @@ testthat::expect_equal(class(out_ord), c("gspcrout", "list"))
 
 # Use the functions with a given method
 out_pois <- cv_gspcr(
-    dv = as.numeric(GSPCRexdata$y$ord),
+    dv = GSPCRexdata$y$pois,
     ivs = GSPCRexdata$X,
     fam = "poisson",
     nthrs = 5,

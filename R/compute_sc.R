@@ -34,8 +34,14 @@ compute_sc <- function(mod, predictors) {
                 byrow = TRUE
             )
         } else {
+            # Prepare X
+            x <- stats::model.matrix(
+                object = ~.,
+                data = predictors
+            )[, -1]
+
             # Compute bx
-            bx <- stats::model.matrix(~., predictors)[, -1] %*% mod$coefficients
+            bx <- x %*% matrix(mod$coefficients)
 
             #Compute aj - bx
             sc <- sapply(mod$zeta, function(a) {

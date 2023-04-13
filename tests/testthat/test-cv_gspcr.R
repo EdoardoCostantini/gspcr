@@ -72,7 +72,7 @@ testthat::expect_equal(class(out1), c("gspcrout", "list"))
 out1 <- cv_gspcr(
     dv = GSPCRexdata$y$ord,
     ivs = GSPCRexdata$X,
-    fam = "baseline",
+    fam = "cumulative",
     nthrs = 5,
     maxnpcs = 5,
     K = 3,

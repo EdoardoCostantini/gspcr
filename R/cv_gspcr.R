@@ -101,6 +101,20 @@ cv_gspcr <- function(
       nnet::multinom(dv ~ ivs[, j])
     })
   }
+  if (fam == "cumulative") {
+    glm0 <- MASS::polr(
+      formula = dv ~ 1,
+      method = "logistic"
+    )
+
+    # Fit univariate models
+    glm.fits <- lapply(1:ncol(ivs), function(j) {
+      MASS::polr(
+        formula = dv ~ ivs[, j],
+        method = "logistic"
+      )
+    })
+  }
 
   # Extract Log-likelihood values
   ll0 <- as.numeric(stats::logLik(glm0))

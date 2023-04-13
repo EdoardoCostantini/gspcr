@@ -81,21 +81,30 @@ testthat::expect_true(ncol(null_polr_sc) == nlevels(mtcars_fact$carb) - 1)
 
 # Linear model with lm and glm
 lm_out <- lm(mpg ~ cyl + disp, data = mtcars_fact)
-glm_out1 <- stats::glm(mpg ~ cyl + disp, data = mtcars, family = "gaussian")
+glm_out1 <- stats::glm(mpg ~ cyl, data = mtcars, family = "gaussian")
+glm_out2 <- stats::glm(mpg ~ cyl + disp, data = mtcars, family = "gaussian")
 
 # Get systematic components
 sc_lm_out <- predict(lm_out, newdata = mtcars_fact[new_data, ])
 sc_glm_out1 <- predict(glm_out1, newdata = mtcars_fact[new_data, ], type = "link")
+sc_glm_out2 <- predict(glm_out2, newdata = mtcars_fact[new_data, ], type = "link")
 
 # Use the function for linear model with lm and GLM
 sc_fun_lm_out <- compute_sc(
     mod = lm_out,
     predictors = mtcars_fact[new_data, c("cyl", "disp")]
 )
+# Use the function with GLM (and a single predictor)
 sc_fun_glm_out1 <- compute_sc(
     mod = glm_out1,
+    predictors = mtcars_fact[new_data, "cyl", drop = FALSE]
+)
+# Use the function with GLM
+sc_fun_glm_out2 <- compute_sc(
+    mod = glm_out2,
     predictors = mtcars_fact[new_data, c("cyl", "disp")]
 )
+
 
 # Test the function returns a matrix
 testthat::expect_true(is.matrix(sc_fun_lm_out))
@@ -108,6 +117,7 @@ testthat::expect_true(ncol(sc_fun_glm_out1) == 1)
 # Test the function is computing what is expected
 testthat::expect_true(sum(sc_lm_out - sc_fun_lm_out) < tol)
 testthat::expect_true(sum(sc_glm_out1 - sc_fun_glm_out1) < tol)
+testthat::expect_true(sum(sc_glm_out2 - sc_fun_glm_out2) < tol)
 
 # Test function works with logistic regression models --------------------------
 
@@ -214,3 +224,24 @@ testthat::expect_true(ncol(abx) == (nlevels(mtcars_fact$carb) - 1))
 
 # Test the function is computing what is expected
 testthat::expect_true(ll_polr - logLik(plor_test) < tol)
+
+# Test function works with proportional odds model with a single predictor -----
+
+# Fit a logistic or probit regression model to an ordered factor response.
+plor_test <- MASS::polr(
+    formula = carb ~ cyl,
+    data = mtcars_fact,
+    method = "logistic" # proportional odds logistic regression
+)
+
+# Get systematic component
+abx_single <- compute_sc(
+    mod = plor_test,
+    predictors = mtcars_fact[, "cyl", drop = FALSE]
+)
+
+# Test the function returns a matrix
+testthat::expect_true(is.matrix(abx_single))
+
+# Test the matrix dimensionality is correct
+testthat::expect_true(ncol(abx_single) == (nlevels(mtcars_fact$carb) - 1))

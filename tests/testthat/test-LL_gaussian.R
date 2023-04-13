@@ -14,7 +14,7 @@ tol <- 1e-10
 glm_regression <- lm(mpg ~ disp + hp, data = mtcars)
 
 # With function
-ll_fun <- LL_gaussian(
+out <- LL_gaussian(
   y = mtcars$mpg,
   x = mtcars[, c("disp", "hp")],
   mod = glm_regression
@@ -24,4 +24,4 @@ ll_fun <- LL_gaussian(
 ll_R <- as.numeric(logLik(glm_regression))
 
 # Check the values are all the same
-testthat::expect_true(ll_R - ll_fun < tol)
+testthat::expect_true(ll_R - out$ll < tol)

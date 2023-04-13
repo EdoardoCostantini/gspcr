@@ -65,14 +65,8 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
     )
   }
 
-  # Compute the GLM systematic component
-  sc_va <- compute_sc(
-    mod = glm_fit_tr,
-    predictors = valid[, -1, drop = FALSE]
-  )
-
   # Evaluate the log-likelihood of new data under this model
-  LL_va_mod <- do.call(
+  new_data_compu <- do.call(
     what = paste0("LL_", fam),
     args = list(
       y = y_valid,
@@ -83,8 +77,8 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
 
   # Return
   list(
-    LL = LL_va_mod,
-    yhat_va = sc_va,
+    LL = new_data_compu$ll,
+    yhat_va = new_data_compu$sc,
     mod = glm_fit_tr
   )
 }

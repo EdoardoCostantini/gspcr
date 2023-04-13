@@ -54,7 +54,7 @@ mod_lm <- lm(y ~ ., data = train)
 pred_lm <- predict(mod_lm, newdata = valid)
 
 # Obtain likelihood
-LL_R <- LL_gaussian(
+LL_out <- LL_gaussian(
     y = valid$y,
     x = valid[, -1],
     mod = mod_lm
@@ -74,7 +74,7 @@ tol <- 1e-10
 
 # Test log-likelihood value is as expected
 testthat::expect_true(as.numeric(logLik(mod_out$mod)) != mod_out$LL)
-testthat::expect_true(LL_R - mod_out$LL < tol)
+testthat::expect_true(LL_out$ll - mod_out$LL < tol)
 
 # Test: logistic regression ----------------------------------------------------
 

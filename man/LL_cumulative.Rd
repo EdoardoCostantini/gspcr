@@ -14,7 +14,11 @@ LL_cumulative(y, x, mod)
 \item{mod}{\code{polr} object containing the estimated proportional odds model.}
 }
 \value{
-Atomic vector of length 1 containing the log-likelihood value.
+A list containing:
+\itemize{
+\item \code{ll}, an atomic vector of length 1 containing the log-likelihood value.
+\item \code{sc}, a numeric matrix containing the systematic component for the input \code{x} and \code{mod}.
+}
 }
 \description{
 Computes the log-likelihood given an ordered category response vector and corresponding GLM linear predictor values.

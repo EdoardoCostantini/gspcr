@@ -20,7 +20,7 @@ glm_logistic <- stats::glm(am ~ cyl + disp, data = mtcars, family = "binomial")
 ll_R <- as.numeric(logLik(glm_logistic))
 
 # With function
-ll_fun <- LL_binomial(
+out <- LL_binomial(
     y = mtcars$am,
     x = mtcars[, c("cyl", "disp")],
     mod = glm_logistic
@@ -30,7 +30,7 @@ ll_fun <- LL_binomial(
 tol <- 1e-10
 
 # Check the values are all the same
-testthat::expect_true(ll_fun - ll_R < tol)
+testthat::expect_true(ll_R - out$ll < tol)
 
 # Test: Factor input -----------------------------------------------------------
 
@@ -52,14 +52,14 @@ glm_logistic <- stats::glm(
 ll_R <- as.numeric(logLik(glm_logistic))
 
 # Factor input
-ll_fun <- LL_binomial(
+out <- LL_binomial(
     y = mtcars_fact$am,
     x = mtcars_fact[, c("cyl", "disp")],
     mod = glm_logistic
 )
 
 # Check the values are all the same
-testthat::expect_true(ll_fun - ll_R < tol)
+testthat::expect_true(ll_R - out$ll < tol)
 
 # Test: Null model -------------------------------------------------------------
 
@@ -70,11 +70,11 @@ glm_logistic_null <- stats::glm(am ~ 1, data = mtcars, family = "binomial")
 ll_R <- as.numeric(logLik(glm_logistic_null))
 
 # With function
-ll_fun <- LL_binomial(
+out <- LL_binomial(
     y = mtcars_fact$am,
     x = matrix(1, nrow = length(mtcars_fact$am), ncol = 1),
     mod = glm_logistic_null
 )
 
 # Check the values are all the same
-testthat::expect_true(ll_R - ll_fun < tol)
+testthat::expect_true(ll_R - out$ll < tol)

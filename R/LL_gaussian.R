@@ -7,7 +7,9 @@
 #' @param mod \code{glm} or \code{lm} object containing the estimated linear regression model.
 #' @details 
 #' If \code{x} and \code{y} are equal to the data on which \code{mod} has been trained, this function returns the same result as the default \code{logLink} function. If \code{x} and \code{y} are new, the function returns the log-likelihood of the new data under the trained model.
-#' @return Atomic vector of length 1 containing the log-likelihood value.
+#' @return A list containing:
+#' - \code{ll}, an atomic vector of length 1 containing the log-likelihood value.
+#' - \code{sc}, an atomic vector containing the systematic component for the input \code{x} and \code{mod}.
 #' @author Edoardo Costantini, 2022
 #'
 #' @export
@@ -28,5 +30,11 @@ LL_gaussian <- function(y, x, mod) {
     n <- length(r)
 
     # Compute the log-likelihood
-    -n / 2 * log(2 * pi) - n / 2 * log(s^2) - 1 / (2 * s^2) * sum(r^2)
+    ll <- -n / 2 * log(2 * pi) - n / 2 * log(s^2) - 1 / (2 * s^2) * sum(r^2)
+
+    # Return
+    list(
+        ll = ll,
+        sc = sc
+    )
 }

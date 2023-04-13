@@ -21,11 +21,11 @@ glm_poisson <- glm(
 ll_R <- as.numeric(logLik(glm_poisson))
 
 # Use the function
-ll_fun <- LL_poisson(
+out <- LL_poisson(
     y = mtcars$carb,
     x = mtcars[, c("disp", "hp")],
     mod = glm_poisson
 )
 
 # Check the values are all the same
-testthat::expect_true(ll_fun - ll_R < tol)
+testthat::expect_true(ll_R - out$ll < tol)

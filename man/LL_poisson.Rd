@@ -14,7 +14,11 @@ LL_poisson(y, x, mod)
 \item{mod}{\code{glm} object containing the estimated poisson regression model.}
 }
 \value{
-Atomic vector of length 1 containing the log-likelihood value.
+A list containing:
+\itemize{
+\item \code{ll}, an atomic vector of length 1 containing the log-likelihood value.
+\item \code{sc}, an atomic vector containing the systematic component for the input \code{x} and \code{mod}.
+}
 }
 \description{
 Computes the Poisson regression log-likelihood of a vector of observed values given the GLM systematic component.

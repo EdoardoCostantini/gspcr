@@ -14,7 +14,11 @@ LL_gaussian(y, x, mod)
 \item{mod}{\code{glm} or \code{lm} object containing the estimated linear regression model.}
 }
 \value{
-Atomic vector of length 1 containing the log-likelihood value.
+A list containing:
+\itemize{
+\item \code{ll}, an atomic vector of length 1 containing the log-likelihood value.
+\item \code{sc}, an atomic vector containing the systematic component for the input \code{x} and \code{mod}.
+}
 }
 \description{
 Computes the gaussian (normal) log-likelihood of a vector of observed values given a trained linear regression model.

@@ -17,23 +17,23 @@ mtcars_fact <- mtcars
 mtcars_fact$gear <- factor(mtcars_fact$gear)
 
 # Fit a baseline category logistic regression model to a factor response.
-out <- nnet::multinom(
+glm_baseline <- nnet::multinom(
     formula = gear ~ disp,
     data = mtcars_fact
 )
 
 # LogLikelihood w/ R
-ll_R <- as.numeric(logLik(out))
+ll_R <- as.numeric(logLik(glm_baseline))
 
 # Input
-ll_fun <- LL_baseline(
+out <- LL_baseline(
     y = mtcars_fact$gear,
     x = mtcars_fact[, "disp", drop = FALSE],
-    mod = out
+    mod = glm_baseline
 )
 
 # Check the values are all the same
-testthat::expect_true(ll_R - ll_fun < tol)
+testthat::expect_true(ll_R - out$ll < tol)
 
 # Test: Matrix input -----------------------------------------------------------
 
@@ -41,11 +41,11 @@ testthat::expect_true(ll_R - ll_fun < tol)
 y <- FactoMineR::tab.disjonctif(mtcars_fact$gear)
 
 # Compute ll with function using a factor as input
-ll_fun_fact <- LL_baseline(
+out_fact <- LL_baseline(
     y = y,
     x = mtcars_fact[, "disp", drop = FALSE],
-    mod = out
+    mod = glm_baseline
 )
 
 # Check the values are all the same
-testthat::expect_true(ll_R - ll_fun_fact < tol)
+testthat::expect_true(ll_R - out_fact$ll < tol)

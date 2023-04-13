@@ -14,7 +14,11 @@ LL_baseline(y, x, mod)
 \item{mod}{\code{multinom} object containing the estimated baseline-category logit model.}
 }
 \value{
-Atomic vector of length 1 containing the log-likelihood value.
+A list containing:
+\itemize{
+\item \code{ll}, an atomic vector of length 1 containing the log-likelihood value.
+\item \code{sc}, a numeric matrix containing the systematic component for the input \code{x} and \code{mod}.
+}
 }
 \description{
 Computes the baseline category logistic regression log-likelihood given a nominal categorical variable and the corresponding GLM linear predictor values.

@@ -8,7 +8,9 @@
 #' @details
 #' If \code{x} and \code{y} are equal to the data on which \code{mod} has been trained, this function returns the same result as the default \code{logLink} function. If \code{x} and \code{y} are new, the function returns the log-likelihood of the new data under the trained model.
 #' The log-likelihood equation is based on Agresti (2002, p. 192).
-#' @return Atomic vector of length 1 containing the log-likelihood value.
+#' @return A list containing:
+#' - \code{ll}, an atomic vector of length 1 containing the log-likelihood value.
+#' - \code{sc}, a numeric matrix containing the systematic component for the input \code{x} and \code{mod}.
 #' @author Edoardo Costantini, 2022
 #' @references
 #'
@@ -16,13 +18,12 @@
 #'
 #' @export
 LL_cumulative <- function(y, x, mod) {
-
     # Compute the GLM systematic component
     sc <- compute_sc(
         mod = mod,
         predictors = x
     )
-    
+
     # convert to numbers if needed
     if (is.factor(y)) {
         y <- FactoMineR::tab.disjonctif(y)
@@ -44,5 +45,11 @@ LL_cumulative <- function(y, x, mod) {
     }
 
     # And then I can compute the log-likelihood
-    sum(sum(shelf))
+    ll <- sum(sum(shelf))
+
+    # Return
+    list(
+        ll = ll,
+        sc = sc
+    )
 }

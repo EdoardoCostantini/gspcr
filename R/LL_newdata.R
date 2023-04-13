@@ -44,7 +44,7 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
   }
 
   # Train GLM model based on family
-  if (fam == "gaussian" | fam == "binomial") {
+  if (fam == "gaussian" | fam == "binomial" | fam == "poisson") {
     glm_fit_tr <- stats::glm(
       formula = glm_formula,
       data = train,
@@ -72,17 +72,17 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
   )
 
   # Evaluate the log-likelihood of new data under this model
-  if (fam == "binomial") {
-    LL_va_mod <- LL_binomial(
-      y = y_valid,
-      syst_comp = sc_va
-    )
-  }
   if (fam == "gaussian") {
     LL_va_mod <- LL_gaussian(
       y = y_valid,
       syst_comp = sc_va,
       mod = glm_fit_tr
+    )
+  }
+  if (fam == "binomial") {
+    LL_va_mod <- LL_binomial(
+      y = y_valid,
+      syst_comp = sc_va
     )
   }
   if (fam == "baseline") {
@@ -93,6 +93,12 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
   }
   if (fam == "cumulative") {
     LL_va_mod <- LL_baseline(
+      y = y_valid,
+      syst_comp = sc_va
+    )
+  }
+  if (fam == "poisson") {
+    LL_va_mod <- LL_poisson(
       y = y_valid,
       syst_comp = sc_va
     )

@@ -87,3 +87,23 @@ out_ord <- cv_gspcr(
 
 # Test the class of the output
 testthat::expect_equal(class(out_ord), c("gspcrout", "list"))
+
+# Test: Count outcome --------------------------------------------------------
+
+# Use the functions with a given method
+out_pois <- cv_gspcr(
+    dv = as.numeric(GSPCRexdata$y$ord),
+    ivs = GSPCRexdata$X,
+    fam = "poisson",
+    nthrs = 5,
+    maxnpcs = 5,
+    K = 3,
+    fit_measure = "LRT",
+    thrs = "PR2",
+    min_features = 1,
+    max_features = ncol(GSPCRexdata$X),
+    oneSE = TRUE
+)
+
+# Test the class of the output
+testthat::expect_equal(class(out_pois), c("gspcrout", "list"))

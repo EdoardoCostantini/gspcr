@@ -74,25 +74,33 @@ testthat::expect_true(sum(sc_glm_out2 - sc_fun_glm_out2) < tol)
 # Test: logistic regression models ---------------------------------------------
 
 # Logistic regression
-glm_out2 <- stats::glm(am ~ cyl + disp, data = mtcars, family = "binomial")
+glm_logistic <- stats::glm(
+    formula = am ~ cyl + disp,
+    data = mtcars,
+    family = "binomial"
+)
 
 # Get systematic components
-sc_glm_out2 <- predict(glm_out2, newdata = mtcars_fact[new_data, ], type = "link")
+sc_glm_logistic <- predict(
+    object = glm_logistic,
+    newdata = mtcars_fact[new_data, ],
+    type = "link"
+)
 
 # Use the function for logistic regression
-sc_fun_glm_out2 <- compute_sc(
-    mod = glm_out2,
+sc_fun_glm_logistic <- compute_sc(
+    mod = glm_logistic,
     predictors = mtcars_fact[new_data, c("cyl", "disp")]
 )
 
 # Test the function returns a matrix
-testthat::expect_true(is.matrix(sc_fun_glm_out2))
+testthat::expect_true(is.matrix(sc_fun_glm_logistic))
 
 # Test the matrix dimensionality is correct
-testthat::expect_true(ncol(sc_fun_glm_out2) == 1)
+testthat::expect_true(ncol(sc_fun_glm_logistic) == 1)
 
 # Test the function is computing what is expected
-testthat::expect_true(sum(sc_glm_out2 - sc_fun_glm_out2) < tol)
+testthat::expect_true(sum(sc_glm_logistic - sc_fun_glm_logistic) < tol)
 
 # Test: baseline-category logistic regression ----------------------------------
 
@@ -198,17 +206,44 @@ testthat::expect_true(is.matrix(abx_single))
 # Test the matrix dimensionality is correct
 testthat::expect_true(ncol(abx_single) == (nlevels(mtcars_fact$carb) - 1))
 
+# Test: poisson regression -----------------------------------------------------
+
+# Fit the model
+glm_poisson <- glm(
+    formula = carb ~ cyl + disp,
+    data = mtcars,
+    family = "poisson"
+)
+
+# Get systematic component with GLM function
+sc_glm_poisson <- predict(
+    object = glm_poisson,
+    newdata = mtcars[new_data, ],
+    type = "link"
+)
+
+# Get systematic component with custom function
+sc_poisson <- compute_sc(
+    mod = glm_poisson,
+    predictors = mtcars[new_data, c("cyl", "disp"), drop = FALSE]
+)
+
+# Test the function returns a matrix
+testthat::expect_true(is.matrix(sc_poisson))
+
+# Test the matrix dimensionality is correct
+testthat::expect_true(ncol(sc_poisson) == 1)
+
+# Test the function is computing what is expected
+testthat::expect_true(sum(sc_poisson - sc_glm_poisson) < tol)
+
 # Test: null models ------------------------------------------------------------
 
 # Null models
 null_lm <- lm(mpg ~ 1, data = mtcars_fact)
 null_binlo <- stats::glm(am ~ 1, data = mtcars, family = "binomial")
 null_multi <- nnet::multinom(formula = gear ~ 1, data = mtcars_fact)
-null_polr <- MASS::polr(
-    formula = carb ~ 1,
-    data = mtcars_fact,
-    method = "logistic" # proportional odds logistic regression
-)
+null_polr <- MASS::polr(carb ~ 1, mtcars_fact, method = "logistic")
 
 # Testing data for null models
 null_data <- matrix(1, nrow = 10, ncol = 1)

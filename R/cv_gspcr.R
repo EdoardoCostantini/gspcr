@@ -82,7 +82,7 @@ cv_gspcr <- function(
   n <- nrow(ivs)
 
   # Compute baseline and univariate models for thresholding
-  if (fam == "gaussian" | fam == "binomial") {
+  if (fam == "gaussian" | fam == "binomial" | fam == "poisson") {
     # Fit null model
     glm0 <- stats::glm(dv ~ 1, family = fam)
 

@@ -107,7 +107,11 @@ cv_gspcr <- function(
   if(thrs == "PR2"){
 
     # Compute pseudo R-squared
-    CNR2 <- 1 - exp(-2 / n * (univ_mods$lls - univ_mods$ll0))
+    CNR2 <- cp_gR2(
+      ll_n = univ_mods$ll0,
+      ll_f = univ_mods$lls,
+      n = n
+    )
 
     # Give it good names
     names(CNR2) <- colnames(ivs)
@@ -298,7 +302,11 @@ cv_gspcr <- function(
             map_kfcv[Q, thr, k] <- log(length(yva)) * (Q + 1 + 1) - 2 * mod_out$LL
           }
           if (fit_measure == "PR2") {
-            map_kfcv[Q, thr, k] <- 1 - exp(-2 / length(yva) * (mod_out$LL - null_out$LL))
+            map_kfcv[Q, thr, k] <- cp_gR2(
+              ll_n = null_out$LL,
+              ll_f = mod_out$LL,
+              n = length(yva)
+            )
           }
           if (fit_measure == "MSE") {
             map_kfcv[Q, thr, k] <- MLmetrics::MSE(y_pred = null_out$yhat_va, y_true = yva)

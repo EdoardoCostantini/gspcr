@@ -81,51 +81,19 @@ cv_gspcr <- function(
   # Sample size
   n <- nrow(ivs)
 
-  # Compute baseline and univariate models for thresholding
-  if (fam == "gaussian" | fam == "binomial" | fam == "poisson") {
-    # Fit null model
-    glm0 <- stats::glm(dv ~ 1, family = fam)
-
-    # Fit univariate models
-    glm.fits <- lapply(1:ncol(ivs), function(j) {
-      stats::glm(dv ~ ivs[, j], family = fam)
-    })
-  }
-  if (fam == "baseline") {
-    glm0 <- nnet::multinom(
-      formula = dv ~ 1
-    )
-
-    # Fit univariate models
-    glm.fits <- lapply(1:ncol(ivs), function(j) {
-      nnet::multinom(dv ~ ivs[, j])
-    })
-  }
-  if (fam == "cumulative") {
-    glm0 <- MASS::polr(
-      formula = dv ~ 1,
-      method = "logistic"
-    )
-
-    # Fit univariate models
-    glm.fits <- lapply(1:ncol(ivs), function(j) {
-      MASS::polr(
-        formula = dv ~ ivs[, j],
-        method = "logistic"
-      )
-    })
-  }
-
-  # Extract Log-likelihood values
-  ll0 <- as.numeric(stats::logLik(glm0))
-  lls <- sapply(glm.fits, function(m) as.numeric(stats::logLik(m)))
+  # Estimate the univariate models
+  univ_mods <- est_univ_mods(
+    dv = dv,
+    ivs = ivs,
+    fam = fam
+  )
 
   # Create active sets based on threshold type
 
   if(thrs == "LLS"){
 
     # Use the logLikelihoods as bivariate association scores
-    ascores <- lls
+    ascores <- univ_mods$lls
 
     # Give it good names
     names(ascores) <- colnames(ivs)
@@ -139,7 +107,7 @@ cv_gspcr <- function(
   if(thrs == "PR2"){
 
     # Compute pseudo R-squared
-    CNR2 <- 1 - exp(-2 / n * (lls - ll0))
+    CNR2 <- 1 - exp(-2 / n * (univ_mods$lls - univ_mods$ll0))
 
     # Give it good names
     names(CNR2) <- colnames(ivs)

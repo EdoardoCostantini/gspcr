@@ -1,0 +1,123 @@
+---
+title: Replicate `superpc` results
+author: Edoardo Costantini
+date: '2022-10-26'
+format:
+  html:
+    toc: true
+    toc-location: left
+toc: true
+execute:
+  warning: false
+  keep-md: false
+  keep-ipynb: false
+---
+
+```{r, include = FALSE}
+# knitr::opts_chunk$set(
+#   collapse = TRUE,
+#   comment = "#>"
+# )
+```
+
+# Preliminaries
+
+Load the required packages.
+
+```{r setup}
+library(superpc)
+devtools::load_all()
+# library(gspcr)
+
+```
+
+Prepare data
+
+```{r}
+# Comment goal of code
+X <- GSPCRexdata$X
+y <- GSPCRexdata$y$cont
+
+```
+
+# Estimation
+
+## `superpc`
+
+Run `superpc` version
+
+```{r }
+# Define a train data
+data.train <- list(
+  x = t(as.matrix(X)),
+  y = y,
+  featurenames = colnames(X)
+)
+
+# Train the model (computes the scores for each feature)
+train.obj <- superpc.train(
+  data = data.train,
+  type = "regression"
+)
+
+# Cross-validate the model
+cv.obj <- superpc.cv(
+  fit = train.obj,
+  data = data.train,
+  min.features = 1,
+  max.features = nrow(data.train$x),
+  n.fold = 10,
+  n.threshold = 20,
+  n.components = 5
+)
+
+# Create plot the cross-validation curves
+cv.obj_plot <- superpc.plotcv(cv.obj)
+
+```
+
+## `gspcr`
+
+Run the version `gspcr`:
+
+```{r }
+# Train the GSPCR model
+out <- cv_gspcr(
+  dv = y,
+  ivs = X,
+  fam = "gaussian",
+  nthrs = 20,
+  maxnpcs = 5,
+  K = 10,
+  fit_measure = "F",
+  thrs = "normalized",
+  min_features = 1,
+  max_features = ncol(X),
+  oneSE = TRUE
+)
+
+# Use the plotting function
+plot_output <- plot(
+  x = out,
+  y = "F",
+  labels = TRUE,
+  errorBars = TRUE,
+  discretize = FALSE
+)
+
+```
+
+# Compare results
+
+The computed thresholds are the same:
+
+```{r}
+# Report the threshold values
+data.frame(
+    superpc = cv.obj$thresholds,
+    gpscr = out$thr,
+    diff = cv.obj$thresholds - out$thr
+)
+
+```
+

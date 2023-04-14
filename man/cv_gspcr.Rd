@@ -64,6 +64,36 @@ The possible fit measures are:
 \item \code{MSE}
 }
 }
+\examples{
+# Example input values
+dv <- mtcars[, 1]
+ivs <- mtcars[, -1]
+thrs <- "PR2"
+nthrs <- 5
+fam <- "gaussian"
+maxnpcs <- 10
+K <- 3
+fit_measure <- "F"
+max_features <- ncol(ivs)
+min_features <- 1
+oneSE <- TRUE
+
+# Example usage
+out_cont <- cv_gspcr(
+   dv = GSPCRexdata$y$cont,
+   ivs = GSPCRexdata$X,
+   fam = "gaussian",
+   nthrs = 5,
+   maxnpcs = 5,
+   K = 3,
+   fit_measure = "F",
+   thrs = "normalized",
+   min_features = 1,
+   max_features = ncol(GSPCRexdata$X),
+   oneSE = TRUE
+)
+
+}
 \references{
 Bair, E., Hastie, T., Paul, D., & Tibshirani, R. (2006). Prediction by supervised principal components. Journal of the American Statistical Association, 101(473), 119-137.
 }

@@ -32,8 +32,37 @@
 #' @return Returns an object of class \code{gspcr}.
 #' @author Edoardo Costantini, 2023
 #' @references
-#'
+#' 
 #' Bair, E., Hastie, T., Paul, D., & Tibshirani, R. (2006). Prediction by supervised principal components. Journal of the American Statistical Association, 101(473), 119-137.
+#'
+#' @examples
+#' # Example input values
+#' dv <- mtcars[, 1]
+#' ivs <- mtcars[, -1]
+#' thrs <- "PR2"
+#' nthrs <- 5
+#' fam <- "gaussian"
+#' maxnpcs <- 10
+#' K <- 3
+#' fit_measure <- "F"
+#' max_features <- ncol(ivs)
+#' min_features <- 1
+#' oneSE <- TRUE
+#'
+#' # Example usage
+#' out_cont <- cv_gspcr(
+#'    dv = GSPCRexdata$y$cont,
+#'    ivs = GSPCRexdata$X,
+#'    fam = "gaussian",
+#'    nthrs = 5,
+#'    maxnpcs = 5,
+#'    K = 3,
+#'    fit_measure = "F",
+#'    thrs = "normalized",
+#'    min_features = 1,
+#'    max_features = ncol(GSPCRexdata$X),
+#'    oneSE = TRUE
+#' )
 #'
 #' @export
 cv_gspcr <- function(
@@ -49,19 +78,6 @@ cv_gspcr <- function(
   min_features = 5,
   oneSE = TRUE
   ) {
-
-  # Example inputs
-  # dv <- mtcars[, 1]
-  # ivs <- mtcars[, -1]
-  # thrs = c("LLS", "PR2", "normalized")[3]
-  # nthrs = 5
-  # fam <- c("gaussian", "binomial", "poisson")[1]
-  # maxnpcs <- 10
-  # K = 2
-  # fit_measure = c("LRT", "F", "MSE")[2]
-  # max_features = ncol(ivs)
-  # min_features = 1
-  # oneSE = TRUE
 
   # Save the call
   gspcr_call <- list(
@@ -113,9 +129,9 @@ cv_gspcr <- function(
     )
   }
 
-    # Define upper and lower bounds of the association
-    lower <- stats::quantile(ascores, 1 - (max_features / ncol(ivs)))
-    upper <- stats::quantile(ascores, 1 - (min_features / ncol(ivs)))
+  # Define upper and lower bounds of the association
+  lower <- stats::quantile(ascores, 1 - (max_features / ncol(ivs)))
+  upper <- stats::quantile(ascores, 1 - (min_features / ncol(ivs)))
 
   # Define threshold values
   thrs_values <- seq(from = lower, to = upper, length.out = nthrs)

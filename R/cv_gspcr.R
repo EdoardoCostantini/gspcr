@@ -88,101 +88,34 @@ cv_gspcr <- function(
     fam = fam
   )
 
-  # Create active sets based on threshold type
-
-  if(thrs == "LLS"){
-
-    # Use the logLikelihoods as bivariate association scores
-    ascores <- univ_mods$lls
-
-    # Give it good names
-    names(ascores) <- colnames(ivs)
-
-    # Define the upper and lower bounds of the association
-    lower <- min(ascores)
-    upper <- max(ascores)
-
+  # Compute association measures
+  if (thrs == "LLS") {
+    ascores <- cp_thrs_LLS(
+      dv = dv,
+      ivs = ivs,
+      fam = fam
+    )
   }
 
-  if(thrs == "PR2"){
-
-    # Compute pseudo R-squared
-    CNR2 <- cp_gR2(
-      ll_n = univ_mods$ll0,
-      ll_f = univ_mods$lls,
-      n = n
+  if (thrs == "PR2") {
+    ascores <- cp_thrs_PR2(
+      dv = dv,
+      ivs = ivs,
+      fam = fam
     )
+  }
 
-    # Give it good names
-    names(CNR2) <- colnames(ivs)
-
-    # Make them correlation coefficients
-    ascores <- sqrt(CNR2)
+  if (thrs == "normalized") {
+    ascores <- cp_thrs_NOR(
+      dv = dv,
+      ivs = ivs,
+      s0_perc = NULL
+    )
+  }
 
     # Define upper and lower bounds of the association
     lower <- stats::quantile(ascores, 1 - (max_features / ncol(ivs)))
     upper <- stats::quantile(ascores, 1 - (min_features / ncol(ivs)))
-
-  }
-
-  if (thrs == "normalized") {
-    
-    # Set objects to the required dimension
-    x <- t(as.matrix(ivs))
-    y <- dv
-    featurenames <- colnames(ivs)
-
-    # Empty
-    s0.perc <- NULL
-
-    # Sample size
-    n <- length(y)
-
-    # Compute vector of feature means
-    xbar <- x %*% rep(1 / n, n)
-
-    # Same as computing the row means
-    cbind(xbar, rowMeans(x))
-
-    # Compute the diagonal of the cross-product matrix between variables
-    sxx <- ((x - as.vector(xbar))^2) %*% rep(1, n)
-
-    # Compute the cross-product matrix between X and Y
-    sxy <- (x - as.vector(xbar)) %*% (y - mean(y))
-
-    # Total sum of squares
-    syy <- sum((y - mean(y))^2)
-
-    # Ratio of the two
-    numer <- sxy / sxx
-
-    # Compute sd?
-    stdev <- sqrt((syy / sxx - numer^2) / (n - 2))
-
-    # add "fudge"(?) to the denominator
-    if (is.null(s0.perc)) {
-      fudge <- stats::median(stdev)
-    }
-    if (!is.null(s0.perc)) {
-      if (s0.perc >= 0) {
-        fudge <- stats::quantile(stdev, s0.perc)
-      }
-      if (s0.perc < 0) {
-        fudge <- 0
-      }
-    }
-
-    # Ratio between numerator and stdev
-    tt <- numer / (stdev + fudge)
-
-    # Store the normalized correlation scores
-    ascores <- abs(tt)[, 1]
-
-    # Define upper and lower bounds of the normalized correlation
-    lower <- stats::quantile(abs(ascores), 1 - (max_features / nrow(x)))
-    upper <- stats::quantile(abs(ascores), 1 - (min_features / nrow(x)))
-
-  }
 
   # Define threshold values
   thrs_values <- seq(from = lower, to = upper, length.out = nthrs)

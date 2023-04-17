@@ -74,16 +74,23 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
 
     # Add error bars if required
     if (errorBars == TRUE) {
+        # Define the size of the error bars
+        if (discretize == TRUE) {
+            error_bars_size <- .2
+        } else {
+            error_bars_size <- 1/30 * diff(range(x.long[, 2]))
+        }
+
+        # Add the errors bars
         store_plot <- store_plot +
             ggplot2::geom_errorbar(
                 ggplot2::aes(
                     ymin = .data$low,
                     ymax = .data$high
                 ),
-                width = .2
+                width = error_bars_size
             )
     }
-
 
     # Add labels if requested
     if (labels == TRUE) {

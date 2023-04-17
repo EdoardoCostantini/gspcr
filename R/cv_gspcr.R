@@ -258,7 +258,7 @@ cv_gspcr <- function(
             )
           }
           if (fit_measure == "MSE") {
-            map_kfcv[Q, thr, k] <- MLmetrics::MSE(y_pred = null_out$yhat_va, y_true = yva)
+            map_kfcv[Q, thr, k] <- MLmetrics::MSE(y_pred = mod_out$yhat_va, y_true = yva)
           }
         }
       }

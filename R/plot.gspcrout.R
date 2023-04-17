@@ -70,12 +70,6 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
             ggplot2::scale_x_discrete(drop = FALSE)
     }
 
-    # Add labels if requested
-    if (labels == TRUE) {
-        store_plot <- store_plot +
-            ggplot2::geom_label()
-    }
-
     # Add error bars if required
     if (errorBars == TRUE) {
         store_plot <- store_plot +
@@ -86,6 +80,13 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
                 ),
                 width = .2
             )
+    }
+
+
+    # Add labels if requested
+    if (labels == TRUE) {
+        store_plot <- store_plot +
+            ggplot2::geom_label()
     }
 
     # Return plot

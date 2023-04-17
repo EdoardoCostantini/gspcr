@@ -35,14 +35,21 @@ plot_output <- plot(
 # Perform the test
 testthat::expect_true(ggplot2::is.ggplot(plot_output))
 
-# Test: plotting parameters can be changed -------------------------------------
+# Test: warning if wrong y is requested ----------------------------------------
 
-# # Change the shape of the points
-# plot_output <- plot(
-#     x = out,
-#     labels = FALSE,
-#     errorBars = FALSE,
-#     discretize = TRUE,
-#     shape = 14,
-#     print = FALSE # not needed for test
-# )
+catch_warn <- tryCatch(
+    expr = plot(
+        x = out,
+        y = "PR2",
+        labels = FALSE,
+        errorBars = FALSE,
+        discretize = TRUE,
+        print = FALSE # not needed for test
+    ),
+    warning = function(w) {
+        return(w)
+    }
+)
+
+# Is the warning returned?
+testthat::expect_true("warning" %in% class(catch_warn))

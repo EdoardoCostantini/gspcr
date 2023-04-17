@@ -20,12 +20,14 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
     if (is.null(y)) {
         y <- x$gspcr_call$fit_measure
     } else {
-        # Define the message
-        message_wrongy <- paste0(y, " was not used as the score in the CV procedure. If you want to plot the ", y, " scores, run cv_gspcr again and change the `fit_measure` argument to ", y, ".")
-        # Return it
-        warning(message_wrongy)
-        # And use the fit_measure called by spcr
-        y <- x$gspcr_call$fit_measure
+        if (y != x$gspcr_call$fit_measure) {
+            # Define the message
+            message_wrongy <- paste0(y, " was not used as the fit measure in the CV procedure. If you want to plot the scores on the fit measure ", y, ", run cv_gspcr again and change the `fit_measure` argument to ", y, ".")
+            # Return it
+            warning(message_wrongy)
+            # And use the fit_measure called by spcr
+            y <- x$gspcr_call$fit_measure
+        }
     }
 
     # Make scores from wide to long
@@ -70,22 +72,30 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
             ggplot2::scale_x_discrete(drop = FALSE)
     }
 
-    # Add labels if requested
-    if (labels == TRUE) {
-        store_plot <- store_plot +
-            ggplot2::geom_label()
-    }
-
     # Add error bars if required
     if (errorBars == TRUE) {
+        # Define the size of the error bars
+        if (discretize == TRUE) {
+            error_bars_size <- .2
+        } else {
+            error_bars_size <- 1/30 * diff(range(x.long[, 2]))
+        }
+
+        # Add the errors bars
         store_plot <- store_plot +
             ggplot2::geom_errorbar(
                 ggplot2::aes(
                     ymin = .data$low,
                     ymax = .data$high
                 ),
-                width = .2
+                width = error_bars_size
             )
+    }
+
+    # Add labels if requested
+    if (labels == TRUE) {
+        store_plot <- store_plot +
+            ggplot2::geom_label()
     }
 
     # Return plot

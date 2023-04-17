@@ -2,7 +2,7 @@
 # Objective: Test the cv_gspcr function
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
-# Modified:  2023-04-13
+# Modified:  2023-04-17
 # Notes: 
 
 # Test: Continuous outcome -----------------------------------------------------
@@ -107,3 +107,43 @@ out_pois <- cv_gspcr(
 
 # Test the class of the output
 testthat::expect_equal(class(out_pois), c("gspcrout", "list"))
+
+# Test: LLS as threshold -------------------------------------------------------
+
+# Use the functions with a given method
+out_cont_F_lls <- cv_gspcr(
+    dv = GSPCRexdata$y$cont,
+    ivs = GSPCRexdata$X,
+    fam = "gaussian",
+    nthrs = 5,
+    maxnpcs = 5,
+    K = 3,
+    fit_measure = "F",
+    thrs = "LLS",
+    min_features = 1,
+    max_features = ncol(GSPCRexdata$X),
+    oneSE = TRUE
+)
+
+# Test the class of the output
+testthat::expect_equal(class(out_cont_F_lls), c("gspcrout", "list"))
+
+# Test: PR2 as threshold -------------------------------------------------------
+
+# Use the functions with a given method
+out_cont_F_PR2 <- cv_gspcr(
+    dv = GSPCRexdata$y$cont,
+    ivs = GSPCRexdata$X,
+    fam = "gaussian",
+    nthrs = 5,
+    maxnpcs = 5,
+    K = 3,
+    fit_measure = "F",
+    thrs = "PR2",
+    min_features = 1,
+    max_features = ncol(GSPCRexdata$X),
+    oneSE = TRUE
+)
+
+# Test the class of the output
+testthat::expect_equal(class(out_cont_F_PR2), c("gspcrout", "list"))

@@ -17,7 +17,7 @@
 #' The possible threshold types are:
 #' \itemize{
 #'   \item \code{LLS}
-#'   \item \code{PR2}
+#'   \item \code{PR2} - The Cox and Snell generalized R-squared is computed for the GLMs between \code{dv} and every column in \code{ivs}. Then, the square root of these values is used as to obtain the threshold values. For more information about the computation of the Cox and Snell R2 see the help file for [gspcr::cp_gR2()]. When using this measure for simple linear regressions (with continuous \code{dv} and \code{ivs}) is equivalent to the regular R-squared. Therefore, it can be thought of as equivalent to the bivariate correlations between \code{dv} and \code{ivs}.
 #'   \item \code{normalized}
 #' }
 #' The possible fit measures are:
@@ -32,8 +32,37 @@
 #' @return Returns an object of class \code{gspcr}.
 #' @author Edoardo Costantini, 2023
 #' @references
-#'
+#' 
 #' Bair, E., Hastie, T., Paul, D., & Tibshirani, R. (2006). Prediction by supervised principal components. Journal of the American Statistical Association, 101(473), 119-137.
+#'
+#' @examples
+#' # Example input values
+#' dv <- mtcars[, 1]
+#' ivs <- mtcars[, -1]
+#' thrs <- "PR2"
+#' nthrs <- 5
+#' fam <- "gaussian"
+#' maxnpcs <- 10
+#' K <- 3
+#' fit_measure <- "F"
+#' max_features <- ncol(ivs)
+#' min_features <- 1
+#' oneSE <- TRUE
+#'
+#' # Example usage
+#' out_cont <- cv_gspcr(
+#'    dv = GSPCRexdata$y$cont,
+#'    ivs = GSPCRexdata$X,
+#'    fam = "gaussian",
+#'    nthrs = 5,
+#'    maxnpcs = 5,
+#'    K = 3,
+#'    fit_measure = "F",
+#'    thrs = "normalized",
+#'    min_features = 1,
+#'    max_features = ncol(GSPCRexdata$X),
+#'    oneSE = TRUE
+#' )
 #'
 #' @export
 cv_gspcr <- function(
@@ -49,19 +78,6 @@ cv_gspcr <- function(
   min_features = 5,
   oneSE = TRUE
   ) {
-
-  # Example inputs
-  # dv <- mtcars[, 1]
-  # ivs <- mtcars[, -1]
-  # thrs = c("LLS", "PR2", "normalized")[3]
-  # nthrs = 5
-  # fam <- c("gaussian", "binomial", "poisson")[1]
-  # maxnpcs <- 10
-  # K = 2
-  # fit_measure = c("LRT", "F", "MSE")[2]
-  # max_features = ncol(ivs)
-  # min_features = 1
-  # oneSE = TRUE
 
   # Save the call
   gspcr_call <- list(
@@ -81,136 +97,34 @@ cv_gspcr <- function(
   # Sample size
   n <- nrow(ivs)
 
-  # Compute baseline and univariate models for thresholding
-  if (fam == "gaussian" | fam == "binomial" | fam == "poisson") {
-    # Fit null model
-    glm0 <- stats::glm(dv ~ 1, family = fam)
-
-    # Fit univariate models
-    glm.fits <- lapply(1:ncol(ivs), function(j) {
-      stats::glm(dv ~ ivs[, j], family = fam)
-    })
-  }
-  if (fam == "baseline") {
-    glm0 <- nnet::multinom(
-      formula = dv ~ 1
+  # Compute association measures
+  if (thrs == "LLS") {
+    ascores <- cp_thrs_LLS(
+      dv = dv,
+      ivs = ivs,
+      fam = fam
     )
-
-    # Fit univariate models
-    glm.fits <- lapply(1:ncol(ivs), function(j) {
-      nnet::multinom(dv ~ ivs[, j])
-    })
   }
-  if (fam == "cumulative") {
-    glm0 <- MASS::polr(
-      formula = dv ~ 1,
-      method = "logistic"
+
+  if (thrs == "PR2") {
+    ascores <- cp_thrs_PR2(
+      dv = dv,
+      ivs = ivs,
+      fam = fam
     )
-
-    # Fit univariate models
-    glm.fits <- lapply(1:ncol(ivs), function(j) {
-      MASS::polr(
-        formula = dv ~ ivs[, j],
-        method = "logistic"
-      )
-    })
-  }
-
-  # Extract Log-likelihood values
-  ll0 <- as.numeric(stats::logLik(glm0))
-  lls <- sapply(glm.fits, function(m) as.numeric(stats::logLik(m)))
-
-  # Create active sets based on threshold type
-
-  if(thrs == "LLS"){
-
-    # Use the logLikelihoods as bivariate association scores
-    ascores <- lls
-
-    # Give it good names
-    names(ascores) <- colnames(ivs)
-
-    # Define the upper and lower bounds of the association
-    lower <- min(ascores)
-    upper <- max(ascores)
-
-  }
-
-  if(thrs == "PR2"){
-
-    # Compute pseudo R-squared
-    CNR2 <- 1 - exp(-2 / n * (lls - ll0))
-
-    # Give it good names
-    names(CNR2) <- colnames(ivs)
-
-    # Make them correlation coefficients
-    ascores <- sqrt(CNR2)
-
-    # Define upper and lower bounds of the association
-    lower <- stats::quantile(ascores, 1 - (max_features / ncol(ivs)))
-    upper <- stats::quantile(ascores, 1 - (min_features / ncol(ivs)))
-
   }
 
   if (thrs == "normalized") {
-    
-    # Set objects to the required dimension
-    x <- t(as.matrix(ivs))
-    y <- dv
-    featurenames <- colnames(ivs)
-
-    # Empty
-    s0.perc <- NULL
-
-    # Sample size
-    n <- length(y)
-
-    # Compute vector of feature means
-    xbar <- x %*% rep(1 / n, n)
-
-    # Same as computing the row means
-    cbind(xbar, rowMeans(x))
-
-    # Compute the diagonal of the cross-product matrix between variables
-    sxx <- ((x - as.vector(xbar))^2) %*% rep(1, n)
-
-    # Compute the cross-product matrix between X and Y
-    sxy <- (x - as.vector(xbar)) %*% (y - mean(y))
-
-    # Total sum of squares
-    syy <- sum((y - mean(y))^2)
-
-    # Ratio of the two
-    numer <- sxy / sxx
-
-    # Compute sd?
-    stdev <- sqrt((syy / sxx - numer^2) / (n - 2))
-
-    # add "fudge"(?) to the denominator
-    if (is.null(s0.perc)) {
-      fudge <- stats::median(stdev)
-    }
-    if (!is.null(s0.perc)) {
-      if (s0.perc >= 0) {
-        fudge <- stats::quantile(stdev, s0.perc)
-      }
-      if (s0.perc < 0) {
-        fudge <- 0
-      }
-    }
-
-    # Ratio between numerator and stdev
-    tt <- numer / (stdev + fudge)
-
-    # Store the normalized correlation scores
-    ascores <- abs(tt)[, 1]
-
-    # Define upper and lower bounds of the normalized correlation
-    lower <- stats::quantile(abs(ascores), 1 - (max_features / nrow(x)))
-    upper <- stats::quantile(abs(ascores), 1 - (min_features / nrow(x)))
-
+    ascores <- cp_thrs_NOR(
+      dv = dv,
+      ivs = ivs,
+      s0_perc = NULL
+    )
   }
+
+  # Define upper and lower bounds of the association
+  lower <- stats::quantile(ascores, 1 - (max_features / ncol(ivs)))
+  upper <- stats::quantile(ascores, 1 - (min_features / ncol(ivs)))
 
   # Define threshold values
   thrs_values <- seq(from = lower, to = upper, length.out = nthrs)
@@ -330,7 +244,11 @@ cv_gspcr <- function(
             map_kfcv[Q, thr, k] <- log(length(yva)) * (Q + 1 + 1) - 2 * mod_out$LL
           }
           if (fit_measure == "PR2") {
-            map_kfcv[Q, thr, k] <- 1 - exp(-2 / length(yva) * (mod_out$LL - null_out$LL))
+            map_kfcv[Q, thr, k] <- cp_gR2(
+              ll_n = null_out$LL,
+              ll_f = mod_out$LL,
+              n = length(yva)
+            )
           }
           if (fit_measure == "MSE") {
             map_kfcv[Q, thr, k] <- MLmetrics::MSE(y_pred = mod_out$yhat_va, y_true = yva)

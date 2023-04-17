@@ -22,7 +22,7 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
     } else {
         if (y != x$gspcr_call$fit_measure) {
             # Define the message
-            message_wrongy <- paste0(y, " was not used as the score in the CV procedure. If you want to plot the ", y, " scores, run cv_gspcr again and change the `fit_measure` argument to ", y, ".")
+            message_wrongy <- paste0(y, " was not used as the fit measure in the CV procedure. If you want to plot the scores on the fit measure ", y, ", run cv_gspcr again and change the `fit_measure` argument to ", y, ".")
             # Return it
             warning(message_wrongy)
             # And use the fit_measure called by spcr

@@ -68,6 +68,9 @@ cp_thrs_NOR <- function(dv, ivs, s0_perc = NULL) {
     # Store the normalized correlation scores
     ascores <- as.numeric(abs(tt))
 
+    # Give it good names
+    names(ascores) <- colnames(ivs)
+
     # Return
     ascores
 }

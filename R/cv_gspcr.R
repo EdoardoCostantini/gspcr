@@ -97,13 +97,6 @@ cv_gspcr <- function(
   # Sample size
   n <- nrow(ivs)
 
-  # Estimate the univariate models
-  univ_mods <- est_univ_mods(
-    dv = dv,
-    ivs = ivs,
-    fam = fam
-  )
-
   # Compute association measures
   if (thrs == "LLS") {
     ascores <- cp_thrs_LLS(

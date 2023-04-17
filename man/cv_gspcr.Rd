@@ -51,7 +51,7 @@ Use K-fold cross-validation to decide on the number of principal components and 
 The possible threshold types are:
 \itemize{
 \item \code{LLS}
-\item \code{PR2}
+\item \code{PR2} - The Cox and Snell generalized R-squared is computed for the GLMs between \code{dv} and every column in \code{ivs}. Then, the square root of these values is used as to obtain the threshold values. For more information about the computation of the Cox and Snell R2 see the help file for \code{\link[=cp_gR2]{cp_gR2()}}. When using this measure for simple linear regressions (with continuous \code{dv} and \code{ivs}) is equivalent to the regular R-squared. Therefore, it can be thought of as equivalent to the bivariate correlations between \code{dv} and \code{ivs}.
 \item \code{normalized}
 }
 The possible fit measures are:

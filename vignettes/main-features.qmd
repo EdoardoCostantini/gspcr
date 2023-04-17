@@ -1,7 +1,7 @@
 ---
 title: Replicate `superpc` results
 author: Edoardo Costantini
-date: '2022-10-26'
+date: '2023-04-17'
 format:
   html:
     toc: true
@@ -28,10 +28,14 @@ execute:
 Load the required packages.
 
 ```{r setup}
+# Load required packages
 library(patchwork) # For combining ggplots
 library(superpc)
 devtools::load_all()
 # library(gspcr)
+
+# Set a seed
+set.seed(20230415)
 
 ```
 
@@ -134,7 +138,6 @@ trhs_vec <- c("PR2", "LLS")
 
 # Train the GSPCR model with the different values
 out_trhs <- lapply(trhs_vec, function(i) {
-    # Estimate
     cv_gspcr(
         dv = y,
         ivs = X,
@@ -152,7 +155,6 @@ out_trhs <- lapply(trhs_vec, function(i) {
 
 # Plot them
 plots <- lapply(out_trhs, function(i) {
-    # Estimate
     plot(
         x = i,
         y = "F",
@@ -178,8 +180,6 @@ fit_measure_vec <- c("F", "LRT", "AIC", "BIC", "PR2", "MSE")
 
 # Train the GSPCR model with the different values
 out_fit_meas <- lapply(fit_measure_vec, function(i) {
-
-    # Estimate
     cv_gspcr(
         dv = y,
         ivs = X,
@@ -193,12 +193,10 @@ out_fit_meas <- lapply(fit_measure_vec, function(i) {
         max_features = ncol(X),
         oneSE = TRUE
     )
-
 })
 
 # Plot them
 plots <- lapply(seq_along(fit_measure_vec), function(i) {
-    # Estimate
     plot(
         x = out_fit_meas[[i]],
         y = fit_measure_vec[[i]],
@@ -217,7 +215,6 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
 You can also check out the solutions that are returned by each measure:
 
 ```{r }
-
 # Default solutions
 res <- sapply(
     1:length(out_fit_meas),
@@ -230,6 +227,17 @@ res <- sapply(
     }
 )
 
+# Give meaningful names
+colnames(res) <- fit_measure_vec
+
+# Print rounded results
+round(t(res), 3)
+
+```
+
+The results for all fit measures except `F` struggle with accounting for measure complexity. The use of a simple 1-standard-error rule helps obviate this problem.
+
+```{r }
 # 1se solutions
 res_1se <- sapply(
     1:length(out_fit_meas),
@@ -243,11 +251,9 @@ res_1se <- sapply(
 )
 
 # Give meaningful names
-colnames(res) <- fit_measure_vec
 colnames(res_1se) <- fit_measure_vec
 
 # Print rounded results
-round(t(res), 3)
 round(t(res_1se), 3)
 
 ```

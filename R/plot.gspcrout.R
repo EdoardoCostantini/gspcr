@@ -20,12 +20,14 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
     if (is.null(y)) {
         y <- x$gspcr_call$fit_measure
     } else {
-        # Define the message
-        message_wrongy <- paste0(y, " was not used as the score in the CV procedure. If you want to plot the ", y, " scores, run cv_gspcr again and change the `fit_measure` argument to ", y, ".")
-        # Return it
-        warning(message_wrongy)
-        # And use the fit_measure called by spcr
-        y <- x$gspcr_call$fit_measure
+        if (y != x$gspcr_call$fit_measure) {
+            # Define the message
+            message_wrongy <- paste0(y, " was not used as the score in the CV procedure. If you want to plot the ", y, " scores, run cv_gspcr again and change the `fit_measure` argument to ", y, ".")
+            # Return it
+            warning(message_wrongy)
+            # And use the fit_measure called by spcr
+            y <- x$gspcr_call$fit_measure
+        }
     }
 
     # Make scores from wide to long

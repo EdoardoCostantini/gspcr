@@ -8,6 +8,7 @@
 #' @param thrs Type of threshold to be used
 #' @param nthrs Number of threshold values to be used
 #' @param max_npcs Maximum number of principal components to be used
+#' @param min_npcs minimum number of principal components to be used
 #' @param K Number of folds for the K-fold cross-validation procedure
 #' @param fit_measure Type of measure to cross-validate.
 #' @param max_features Maximum number of features that can be selected
@@ -72,6 +73,7 @@ cv_gspcr <- function(
   thrs = c("LLS", "PR2", "normalized")[1],
   nthrs = 10,
   max_npcs = 3,
+  min_npcs = 1,
   K = 5,
   fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
   max_features = ncol(ivs),
@@ -87,6 +89,7 @@ cv_gspcr <- function(
     thrs = thrs,
     nthrs = nthrs,
     max_npcs = max_npcs,
+    min_npcs = min_npcs,
     K = K,
     fit_measure = fit_measure,
     max_features = max_features,
@@ -197,7 +200,7 @@ cv_gspcr <- function(
         PC_va_eff <- PC_va[, 1:q_eff, drop = FALSE]
 
         # Compute the F-statistic for the possible additive PCRs
-        for (Q in 1:q_eff) {
+        for (Q in min_npcs:q_eff) {
           # Q <- 1
 
           # Estimate new data log-likelihoods under the model of interest

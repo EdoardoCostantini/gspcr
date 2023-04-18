@@ -11,6 +11,7 @@ cv_gspcr(
   thrs = c("LLS", "PR2", "normalized")[1],
   nthrs = 10,
   max_npcs = 3,
+  min_npcs = 1,
   K = 5,
   fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
   max_features = ncol(ivs),
@@ -30,6 +31,8 @@ cv_gspcr(
 \item{nthrs}{Number of threshold values to be used}
 
 \item{max_npcs}{Maximum number of principal components to be used}
+
+\item{min_npcs}{minimum number of principal components to be used}
 
 \item{K}{Number of folds for the K-fold cross-validation procedure}
 

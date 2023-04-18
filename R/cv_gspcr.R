@@ -231,7 +231,10 @@ cv_gspcr <- function(
             )
           }
           if (fit_measure == "LRT") {
-            map_kfcv[Q, thr, k] <- 2 * (mod_out$LL - null_out$LL)
+            map_kfcv[Q, thr, k] <- cp_LRT(
+              ll_restricted = null_out$LL,
+              ll_full = mod_out$LL
+            )
           }
           if (fit_measure == "AIC") {
             map_kfcv[Q, thr, k] <- 2 * (Q + 1 + 1) - 2 * mod_out$LL

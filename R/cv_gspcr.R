@@ -193,14 +193,15 @@ cv_gspcr <- function(
         PC_va <- Xva_thr %*% svd_Xtr$v
 
         # Check how many components are available (effective number)
-        q_eff <- min(sum(aset), max_npcs)
+        q_max_eff <- min(sum(aset), max_npcs)
+        q_min_eff <- min(sum(aset), min_npcs)
 
         # Select the available PC scores
-        PC_tr_eff <- PC_tr[, 1:q_eff, drop = FALSE]
-        PC_va_eff <- PC_va[, 1:q_eff, drop = FALSE]
+        PC_tr_eff <- PC_tr[, 1:q_max_eff, drop = FALSE]
+        PC_va_eff <- PC_va[, 1:q_max_eff, drop = FALSE]
 
         # Compute the F-statistic for the possible additive PCRs
-        for (Q in min_npcs:q_eff) {
+        for (Q in q_min_eff:q_max_eff) {
           # Q <- 1
 
           # Estimate new data log-likelihoods under the model of interest

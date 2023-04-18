@@ -12,7 +12,7 @@
 #' @param ... Other arguments passed on to methods. Not currently used.
 #' @details
 #' The bounds defining the error bars are computed by \code{cv_gspcr()}. First, the K-fold cross-validation score of the statistic of interest (e.g., the F score, the MSE) is computed. Then, the standard deviation of the statistic across the K folds is computed. Finally, the bounds used for the error bars are computed by summing and subtracting this standard deviation to and from the K-fold cross-validation score of the statistic.
-#' 
+#'
 #' Reversing the y-axis with \code{y_reverse} can be helpful to compare results obtained by different fit measures.
 #' @return A scatter plot of \code{ggplot} class
 #' @author Edoardo Costantini, 2023
@@ -68,6 +68,27 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
         ggplot2::geom_line(colour = "gray") +
         ggplot2::theme_bw()
 
+    # Add error bars if required
+    if (errorBars == TRUE) {
+        # Define the size of the error bars
+        if (discretize == TRUE) {
+            error_bars_size <- .2
+        } else {
+            error_bars_size <- 1 / 30 * diff(range(x.long[, 2]))
+        }
+
+        # Add the errors bars
+        store_plot <- store_plot +
+            ggplot2::geom_errorbar(
+                ggplot2::aes(
+                    ymin = .data$low,
+                    ymax = .data$high
+                ),
+                width = error_bars_size,
+                colour = "gray"
+            )
+    }
+
     # Add points if requested
     if (labels == FALSE) {
         store_plot <- store_plot +
@@ -84,27 +105,6 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
     if (discretize == TRUE) {
         store_plot <- store_plot +
             ggplot2::scale_x_discrete(drop = FALSE)
-    }
-
-    # Add error bars if required
-    if (errorBars == TRUE) {
-        # Define the size of the error bars
-        if (discretize == TRUE) {
-            error_bars_size <- .2
-        } else {
-            error_bars_size <- 1/30 * diff(range(x.long[, 2]))
-        }
-
-        # Add the errors bars
-        store_plot <- store_plot +
-            ggplot2::geom_errorbar(
-                ggplot2::aes(
-                    ymin = .data$low,
-                    ymax = .data$high
-                ),
-                width = error_bars_size,
-                colour = "gray"
-            )
     }
 
     # Add labels if requested

@@ -216,7 +216,7 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
         y = fit_measure_vec[[i]],
         labels = FALSE,
         y_reverse = rev,
-        errorBars = TRUE,
+        errorBars = FALSE,
         discretize = FALSE,
         print = FALSE
     )

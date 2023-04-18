@@ -1,43 +1,53 @@
 ---
-title: Replicate `superpc` results
-author: Edoardo Costantini
-date: '2023-04-17'
-format:
-  html:
+title: "Walkthrough: main features"
+output: 
+  bookdown::html_document2:
+    css: "style.css"
+    number_sections: yes
     toc: true
-    toc-location: left
-    number-sections: true
-    mainfont: sans-serif
-    fontsize: 1.1em
-    linestretch: 1.5
-execute:
-  warning: false
-  keep-md: false
-  keep-ipynb: false
+    toc_depth: 2
+    toc_float:
+      collapsed: false
+vignette: >
+  %\VignetteIndexEntry{main-features}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-# knitr::opts_chunk$set(
-#   collapse = TRUE,
-#   comment = "#>"
-# )
+```{r klippy, echo = FALSE}
+# Create a button for copy pasting code chunk to clipboard
+klippy::klippy(position = c("top", "right"))
+
 ```
 
-# Preliminaries
+```{r global_options, include = FALSE}
+# Load knitr package to change options
+library(knitr)
 
-Load the required packages.
+# Set default options for the chunks
+opts_chunk$set(
+    echo = TRUE,
+    warning = FALSE,
+    message = FALSE,
+    comment = ""
+)
+
+# Set the width of the console output to a large number (for sidewise scroll)
+options(width = 1e3)
+
+```
 
 ```{r setup}
-# Load required packages
-library(patchwork) # For combining ggplots
-library(superpc)
-devtools::load_all()
-# library(gspcr)
+# Load R packages
+library(gspcr)      # this package!
+library(superpc)    # alternative comparison package
+library(patchwork)  # combining ggplots
 
 # Set a seed
 set.seed(20230415)
 
 ```
+
 
 Prepare data
 
@@ -128,7 +138,7 @@ data.frame(
 
 ```
 
-# Different bivariate association measures
+# Association measures
 
 We can run it using the generalized R2 and the log-likelihoods of simple GLMs as a measure of association.
 
@@ -170,7 +180,7 @@ plot_output + plots[[1]] + plots[[2]]
 
 ```
 
-# Different cross-validation score statistics
+# CV fit measures
 
 We can run it using different cross-validation score statistics.
 
@@ -258,3 +268,7 @@ round(t(res_1se), 3)
 
 ```
 
+# TL;DR, just give me the code!
+
+```{r TLDR, ref.label = knitr::all_labels()[!knitr::all_labels() %in% c("global_options", "klippy")], echo = TRUE, eval = FALSE}
+```

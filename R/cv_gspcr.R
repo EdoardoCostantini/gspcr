@@ -243,7 +243,11 @@ cv_gspcr <- function(
             )
           }
           if (fit_measure == "BIC") {
-            map_kfcv[Q, thr, k] <- log(length(yva)) * (Q + 1 + 1) - 2 * mod_out$LL
+            map_kfcv[Q, thr, k] <- cp_BIC(
+              ll = mod_out$LL,
+              n = length(yva),
+              k = Q + 2
+            )
           }
           if (fit_measure == "PR2") {
             map_kfcv[Q, thr, k] <- cp_gR2(

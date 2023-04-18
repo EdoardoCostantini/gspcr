@@ -207,10 +207,15 @@ out_fit_meas <- lapply(fit_measure_vec, function(i) {
 
 # Plot them
 plots <- lapply(seq_along(fit_measure_vec), function(i) {
+    # Reverse y?
+    rev <- grepl("MSE|AIC|BIC", fit_measure_vec[i])
+
+    # Make plots
     plot(
         x = out_fit_meas[[i]],
         y = fit_measure_vec[[i]],
-        labels = TRUE,
+        labels = FALSE,
+        y_reverse = rev,
         errorBars = TRUE,
         discretize = FALSE,
         print = FALSE

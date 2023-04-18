@@ -7,15 +7,18 @@
 #' @param labels Logical value. \code{FALSE} hides the labels of the points indicating the number of components used. The default is \code{TRUE}.
 #' @param errorBars Logical value. \code{TRUE} shows the error bars for each point. The default is \code{FALSE}.
 #' @param discretize Logical value. \code{TRUE} treats the X-axis as a discrete measure that facilitates comparing solution paths between different fit measures. The default is \code{TRUE}.
+#' @param y_reverse Logical value. \code{TRUE} reverses the y axis scale. The default is \code{FALSE}.
 #' @param print Logical value. TRUE prints the plot when the function is called. The default is \code{TRUE}.
 #' @param ... Other arguments passed on to methods. Not currently used.
 #' @details
 #' The bounds defining the error bars are computed by \code{cv_gspcr()}. First, the K-fold cross-validation score of the statistic of interest (e.g., the F score, the MSE) is computed. Then, the standard deviation of the statistic across the K folds is computed. Finally, the bounds used for the error bars are computed by summing and subtracting this standard deviation to and from the K-fold cross-validation score of the statistic.
+#' 
+#' Reversing the y-axis with \code{y_reverse} can be helpful to compare results obtained by different fit measures.
 #' @return A scatter plot of \code{ggplot} class
 #' @author Edoardo Costantini, 2023
 #'
 #' @export
-plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discretize = TRUE, print = TRUE, ...) {
+plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discretize = TRUE, y_reverse = FALSE, print = TRUE, ...) {
     # Check y
     if (is.null(y)) {
         y <- x$gspcr_call$fit_measure
@@ -69,6 +72,12 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
     if (labels == FALSE) {
         store_plot <- store_plot +
             ggplot2::geom_point()
+    }
+
+    # Reverse y axis
+    if (y_reverse == TRUE) {
+        store_plot <- store_plot +
+            ggplot2::scale_y_reverse()
     }
 
     # Avoid dropping empty levels if the X-axis is discrete

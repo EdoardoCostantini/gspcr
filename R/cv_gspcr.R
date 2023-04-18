@@ -220,19 +220,15 @@ cv_gspcr <- function(
 
           # Extract desired statistic
           if (fit_measure == "F") {
-            # Compute residuals
-            Er <- TSS <- sum((yva - null_out$yhat_va)^2) # baseline prediction error
-            Ef <- SSE <- sum((yva - mod_out$yhat_va)^2) # model prediction error
-
-            # Compute degrees of freedom
-            dfR <- (n - 0 - 1) # for the restricted model
-            dfF <- (n - Q - 1) # for the full model
-
-            # Compute the f statistic
-            Fstat <- ((Er - Ef) / (dfR - dfF)) / (Ef / dfF)
-
-            # Store the F stats
-            map_kfcv[Q, thr, k] <- Fstat
+            # Compute F statistic with your function
+            map_kfcv[Q, thr, k] <- cp_F(
+              y = yva,
+              y_hat_restricted = null_out$yhat_va,
+              y_hat_full = mod_out$yhat_va,
+              n = nrow(ivs), # must change to training or validation!
+              p_restricted = 0,
+              p_full = Q
+            )
           }
           if (fit_measure == "LRT") {
             map_kfcv[Q, thr, k] <- 2 * (mod_out$LL - null_out$LL)

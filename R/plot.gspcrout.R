@@ -62,9 +62,14 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
                 label = .data$npcs
             )
         ) +
-        ggplot2::geom_point() +
         ggplot2::geom_line(colour = "gray") +
         ggplot2::theme_bw()
+
+    # Add points if requested
+    if (labels == FALSE) {
+        store_plot <- store_plot +
+            ggplot2::geom_point()
+    }
 
     # Avoid dropping empty levels if the X-axis is discrete
     if (discretize == TRUE) {

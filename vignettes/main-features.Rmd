@@ -195,7 +195,7 @@ out_fit_meas <- lapply(fit_measure_vec, function(i) {
         ivs = X,
         fam = "gaussian",
         nthrs = 20,
-        maxnpcs = 5,
+        maxnpcs = 1,
         K = 10,
         fit_measure = i,
         thrs = "normalized",

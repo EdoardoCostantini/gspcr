@@ -63,7 +63,7 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
             )
         ) +
         ggplot2::geom_point() +
-        ggplot2::geom_line() +
+        ggplot2::geom_line(colour = "gray") +
         ggplot2::theme_bw()
 
     # Avoid dropping empty levels if the X-axis is discrete
@@ -88,14 +88,15 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
                     ymin = .data$low,
                     ymax = .data$high
                 ),
-                width = error_bars_size
+                width = error_bars_size,
+                colour = "gray"
             )
     }
 
     # Add labels if requested
     if (labels == TRUE) {
         store_plot <- store_plot +
-            ggplot2::geom_label()
+            ggplot2::geom_text(colour = "black")
     }
 
     # Return plot

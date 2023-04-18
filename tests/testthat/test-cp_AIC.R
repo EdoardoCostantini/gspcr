@@ -27,7 +27,7 @@ testthat::expect_true(length(AIC_M) == 1)
 
 # Test: manual computation = stats::AIC output ---------------------------------
 
-# Compute AIC with R funciton
+# Compute AIC with R function
 AIC_R <- stats::AIC(lm_out)
 
 # R equal to manual

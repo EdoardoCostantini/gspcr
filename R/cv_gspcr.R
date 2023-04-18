@@ -237,7 +237,10 @@ cv_gspcr <- function(
             )
           }
           if (fit_measure == "AIC") {
-            map_kfcv[Q, thr, k] <- 2 * (Q + 1 + 1) - 2 * mod_out$LL
+            map_kfcv[Q, thr, k] <- cp_AIC(
+              ll = mod_out$LL,
+              k = Q + 1 + 1
+            )
           }
           if (fit_measure == "BIC") {
             map_kfcv[Q, thr, k] <- log(length(yva)) * (Q + 1 + 1) - 2 * mod_out$LL

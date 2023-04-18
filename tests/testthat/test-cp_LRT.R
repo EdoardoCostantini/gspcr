@@ -10,10 +10,6 @@ tol <- 1e-15
 
 # Test: output class -----------------------------------------------------------
 
-lm_n <- lm(mpg ~ 1, data = mtcars)
-
-lm_f <- lm(mpg ~ cyl + disp, data = mtcars)
-
 # Fit a nested model
 nested <- glm(mpg ~ cyl + disp, data = mtcars)
 

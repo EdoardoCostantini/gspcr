@@ -225,7 +225,7 @@ cv_gspcr <- function(
               y = yva,
               y_hat_restricted = null_out$yhat_va,
               y_hat_full = mod_out$yhat_va,
-              n = nrow(ivs), # must change to training or validation!
+              n = length(yva),
               p_restricted = 0,
               p_full = Q
             )

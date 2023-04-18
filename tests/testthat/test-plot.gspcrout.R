@@ -13,7 +13,7 @@ out <- cv_gspcr(
     ivs = GSPCRexdata$X,
     fam = "gaussian",
     nthrs = 5,
-    maxnpcs = 5,
+    max_npcs = 5,
     K = 3,
     fit_measure = "F",
     thrs = "normalized",

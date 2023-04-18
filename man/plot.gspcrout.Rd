@@ -10,6 +10,7 @@
   labels = TRUE,
   errorBars = FALSE,
   discretize = TRUE,
+  y_reverse = FALSE,
   print = TRUE,
   ...
 )
@@ -25,6 +26,8 @@
 
 \item{discretize}{Logical value. \code{TRUE} treats the X-axis as a discrete measure that facilitates comparing solution paths between different fit measures. The default is \code{TRUE}.}
 
+\item{y_reverse}{Logical value. \code{TRUE} reverses the y axis scale. The default is \code{FALSE}.}
+
 \item{print}{Logical value. TRUE prints the plot when the function is called. The default is \code{TRUE}.}
 
 \item{...}{Other arguments passed on to methods. Not currently used.}
@@ -37,6 +40,8 @@ Produces a scatter plot showing the CV score obtained by \code{cv_gspcr} (Y-axis
 }
 \details{
 The bounds defining the error bars are computed by \code{cv_gspcr()}. First, the K-fold cross-validation score of the statistic of interest (e.g., the F score, the MSE) is computed. Then, the standard deviation of the statistic across the K folds is computed. Finally, the bounds used for the error bars are computed by summing and subtracting this standard deviation to and from the K-fold cross-validation score of the statistic.
+
+Reversing the y-axis with \code{y_reverse} can be helpful to compare results obtained by different fit measures.
 }
 \author{
 Edoardo Costantini, 2023

@@ -17,6 +17,16 @@ AIC stored as a numeric unit vector of length 1.
 \description{
 Computes Akaike's information criterion for comparing competing models.
 }
+\examples{
+# Fit some model
+lm_out <- lm(mpg ~ cyl + disp, data = mtcars)
+
+# Compute AIC with your function
+AIC_M <- cp_AIC(
+    ll = logLik(lm_out),
+    k = length(coef(lm_out)) + 1 # intercept + reg coefs + error variance
+)
+}
 \author{
 Edoardo Costantini, 2023
 }

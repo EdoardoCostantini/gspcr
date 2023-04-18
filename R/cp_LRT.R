@@ -11,6 +11,18 @@
 #' - The restricted model must be nested within the full model.
 #' @return Description of function output
 #' @author Edoardo Costantini, 2023
+#' @examples
+#' # Fit a nested model
+#' nested <- glm(mpg ~ cyl + disp, data = mtcars)
+#' 
+#' # Fit a complex model
+#' complex <- glm(mpg ~ cyl + disp + hp + am, data = mtcars)
+#' 
+#' # Compute log-likelihood statistic with your function
+#' LRT_M <- cp_LRT(
+#'     ll_restricted = logLik(nested),
+#'     ll_full = logLik(complex)
+#' )
 #' @export
 cp_LRT <- function(ll_restricted, ll_full){
 

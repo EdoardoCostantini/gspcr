@@ -7,7 +7,7 @@
 #' @param fam GLM framework for the dv
 #' @param thrs Type of threshold to be used
 #' @param nthrs Number of threshold values to be used
-#' @param maxnpcs Maximum number of principal components to be used
+#' @param npcs_range range of number of principal components to be used
 #' @param K Number of folds for the K-fold cross-validation procedure
 #' @param fit_measure Type of measure to cross-validate.
 #' @param max_features Maximum number of features that can be selected
@@ -42,7 +42,7 @@
 #' thrs <- "PR2"
 #' nthrs <- 5
 #' fam <- "gaussian"
-#' maxnpcs <- 10
+#' npcs_range <- 1:3
 #' K <- 3
 #' fit_measure <- "F"
 #' max_features <- ncol(ivs)
@@ -55,7 +55,7 @@
 #'    ivs = GSPCRexdata$X,
 #'    fam = "gaussian",
 #'    nthrs = 5,
-#'    maxnpcs = 5,
+#'    npcs_range = 1:3,
 #'    K = 3,
 #'    fit_measure = "F",
 #'    thrs = "normalized",
@@ -71,7 +71,7 @@ cv_gspcr <- function(
   fam = "gaussian",
   thrs = c("LLS", "PR2", "normalized")[1],
   nthrs = 10,
-  maxnpcs = 3,
+  npcs_range = 1:3,
   K = 5,
   fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
   max_features = ncol(ivs),
@@ -86,7 +86,7 @@ cv_gspcr <- function(
     fam = fam,
     thrs = thrs,
     nthrs = nthrs,
-    maxnpcs = maxnpcs,
+    npcs_range = npcs_range,
     K = K,
     fit_measure = fit_measure,
     max_features = max_features,
@@ -149,7 +149,7 @@ cv_gspcr <- function(
   
   # Create an object to store k-fold cross-validation log-likelihoods
   map_kfcv <- array(
-    dim = c(maxnpcs, nthrs_eff, K),
+    dim = c(max(npcs_range), nthrs_eff, K),
     dimnames = list(NULL, colnames(pred_map), NULL)
   )
 
@@ -190,14 +190,18 @@ cv_gspcr <- function(
         PC_va <- Xva_thr %*% svd_Xtr$v
 
         # Check how many components are available (effective number)
-        q_eff <- min(sum(aset), maxnpcs)
+        q_max_eff <- min(sum(aset), max(npcs_range))
+        q_min_eff <- min(sum(aset), min(npcs_range))
+
+        # Replace max and min in range
+        npcs_range_eff <- npcs_range[npcs_range <= q_max_eff & npcs_range >= q_min_eff]
 
         # Select the available PC scores
-        PC_tr_eff <- PC_tr[, 1:q_eff, drop = FALSE]
-        PC_va_eff <- PC_va[, 1:q_eff, drop = FALSE]
+        PC_tr_eff <- PC_tr[, 1:q_max_eff, drop = FALSE]
+        PC_va_eff <- PC_va[, 1:q_max_eff, drop = FALSE]
 
         # Compute the F-statistic for the possible additive PCRs
-        for (Q in 1:q_eff) {
+        for (Q in npcs_range_eff) {
           # Q <- 1
 
           # Estimate new data log-likelihoods under the model of interest

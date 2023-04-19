@@ -10,7 +10,7 @@ cv_gspcr(
   fam = "gaussian",
   thrs = c("LLS", "PR2", "normalized")[1],
   nthrs = 10,
-  maxnpcs = 3,
+  npcs_range = 1:3,
   K = 5,
   fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
   max_features = ncol(ivs),
@@ -29,7 +29,7 @@ cv_gspcr(
 
 \item{nthrs}{Number of threshold values to be used}
 
-\item{maxnpcs}{Maximum number of principal components to be used}
+\item{npcs_range}{range of number of principal components to be used}
 
 \item{K}{Number of folds for the K-fold cross-validation procedure}
 
@@ -71,7 +71,7 @@ ivs <- mtcars[, -1]
 thrs <- "PR2"
 nthrs <- 5
 fam <- "gaussian"
-maxnpcs <- 10
+npcs_range <- 1:3
 K <- 3
 fit_measure <- "F"
 max_features <- ncol(ivs)
@@ -84,7 +84,7 @@ out_cont <- cv_gspcr(
    ivs = GSPCRexdata$X,
    fam = "gaussian",
    nthrs = 5,
-   maxnpcs = 5,
+   npcs_range = 1:3,
    K = 3,
    fit_measure = "F",
    thrs = "normalized",

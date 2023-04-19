@@ -2,7 +2,7 @@
 # Objective: Test the cv_gspcr function
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
-# Modified:  2023-04-17
+# Modified:  2023-04-18
 # Notes: 
 
 # Test: Continuous outcome -----------------------------------------------------
@@ -13,7 +13,7 @@ out_cont <- cv_gspcr(
     ivs = GSPCRexdata$X,
     fam = "gaussian",
     nthrs = 5,
-    maxnpcs = 5,
+    npcs_range = 1:5,
     K = 3,
     fit_measure = "F",
     thrs = "normalized",
@@ -36,7 +36,7 @@ out_bin <- cv_gspcr(
     ivs = GSPCRexdata$X,
     fam = "binomial",
     nthrs = 5,
-    maxnpcs = 5,
+    npcs_range = 1:5,
     K = 3,
     fit_measure = "LRT",
     thrs = "PR2",
@@ -56,7 +56,7 @@ out_cat <- cv_gspcr(
     ivs = GSPCRexdata$X,
     fam = "baseline",
     nthrs = 5,
-    maxnpcs = 5,
+    npcs_range = 1:5,
     K = 3,
     fit_measure = "LRT",
     thrs = "PR2",
@@ -76,7 +76,7 @@ out_ord <- cv_gspcr(
     ivs = GSPCRexdata$X,
     fam = "cumulative",
     nthrs = 5,
-    maxnpcs = 5,
+    npcs_range = 1:5,
     K = 3,
     fit_measure = "LRT",
     thrs = "PR2",
@@ -96,7 +96,7 @@ out_pois <- cv_gspcr(
     ivs = GSPCRexdata$X,
     fam = "poisson",
     nthrs = 5,
-    maxnpcs = 5,
+    npcs_range = 1:5,
     K = 3,
     fit_measure = "LRT",
     thrs = "PR2",
@@ -116,7 +116,7 @@ out_cont_F_lls <- cv_gspcr(
     ivs = GSPCRexdata$X,
     fam = "gaussian",
     nthrs = 5,
-    maxnpcs = 5,
+    npcs_range = 1:5,
     K = 3,
     fit_measure = "F",
     thrs = "LLS",
@@ -136,7 +136,7 @@ out_cont_F_PR2 <- cv_gspcr(
     ivs = GSPCRexdata$X,
     fam = "gaussian",
     nthrs = 5,
-    maxnpcs = 5,
+    npcs_range = 1:5,
     K = 3,
     fit_measure = "F",
     thrs = "PR2",
@@ -147,3 +147,49 @@ out_cont_F_PR2 <- cv_gspcr(
 
 # Test the class of the output
 testthat::expect_equal(class(out_cont_F_PR2), c("gspcrout", "list"))
+
+# Test: Target number of components --------------------------------------------
+
+# Use the functions with a given method
+out_traget_npcs <- cv_gspcr(
+    dv = GSPCRexdata$y$cont,
+    ivs = GSPCRexdata$X,
+    fam = "gaussian",
+    nthrs = 5,
+    npcs_range = 1,
+    K = 3,
+    fit_measure = "F",
+    thrs = "normalized",
+    min_features = 1,
+    max_features = ncol(GSPCRexdata$X),
+    oneSE = TRUE
+)
+
+# Test the length of the output is as expected
+testthat::expect_equal(length(out_traget_npcs), 10)
+
+# Test the class of the output
+testthat::expect_equal(class(out_traget_npcs), c("gspcrout", "list"))
+
+# Test: Works with an arbitrary target of number of components -----------------
+
+# Use the functions with a given method
+out_traget_npcs <- cv_gspcr(
+    dv = GSPCRexdata$y$cont,
+    ivs = GSPCRexdata$X,
+    fam = "gaussian",
+    nthrs = 5,
+    npcs_range = c(1, 3, 5, 7),
+    K = 3,
+    fit_measure = "F",
+    thrs = "normalized",
+    min_features = 1,
+    max_features = ncol(GSPCRexdata$X),
+    oneSE = TRUE
+)
+
+# Test the length of the output is as expected
+testthat::expect_equal(length(out_traget_npcs), 10)
+
+# Test the class of the output
+testthat::expect_equal(class(out_traget_npcs), c("gspcrout", "list"))

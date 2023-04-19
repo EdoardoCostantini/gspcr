@@ -69,7 +69,7 @@ out <- cv_gspcr(
   ivs = X,
   fam = "gaussian",
   nthrs = 20,
-  maxnpcs = 5,
+  npcs_range = 1:5,
   K = 10,
   fit_measure = "F",
   thrs = "normalized",
@@ -153,7 +153,7 @@ out_trhs <- lapply(trhs_vec, function(i) {
         ivs = X,
         fam = "gaussian",
         nthrs = 20,
-        maxnpcs = 5,
+        npcs_range = 1:5,
         K = 10,
         fit_measure = "F",
         thrs = i,
@@ -182,7 +182,7 @@ plot_output + plots[[1]] + plots[[2]]
 
 # CV fit measures
 
-We can run it using different cross-validation score statistics.
+We can run it using different cross-validation score statistics. For a given number of PCs, equivalent solution paths are drawn by using the different fit measures.
 
 ```{r }
 # Measures
@@ -195,7 +195,7 @@ out_fit_meas <- lapply(fit_measure_vec, function(i) {
         ivs = X,
         fam = "gaussian",
         nthrs = 20,
-        maxnpcs = 1,
+        npcs_range = 1,
         K = 10,
         fit_measure = i,
         thrs = "normalized",
@@ -249,6 +249,104 @@ colnames(res) <- fit_measure_vec
 round(t(res), 3)
 
 ```
+
+This is true for any number of pcs:
+
+```{r }
+# Measures
+fit_measure_vec <- c("F", "LRT", "AIC", "BIC", "PR2", "MSE")
+
+# Train the GSPCR model with the different values
+out_fit_meas <- lapply(fit_measure_vec, function(i) {
+    cv_gspcr(
+        dv = y,
+        ivs = X,
+        fam = "gaussian",
+        nthrs = 20,
+        npcs_range = 5,
+        K = 10,
+        fit_measure = i,
+        thrs = "normalized",
+        min_features = 1,
+        max_features = ncol(X),
+        oneSE = TRUE
+    )
+})
+
+# Plot them
+plots <- lapply(seq_along(fit_measure_vec), function(i) {
+    # Reverse y?
+    rev <- grepl("MSE|AIC|BIC", fit_measure_vec[i])
+
+    # Make plots
+    plot(
+        x = out_fit_meas[[i]],
+        y = fit_measure_vec[[i]],
+        labels = FALSE,
+        y_reverse = rev,
+        errorBars = FALSE,
+        discretize = FALSE,
+        print = FALSE
+    )
+})
+
+# Patchwork ggplots
+(plots[[1]] + plots[[2]] + plots[[6]]) / (plots[[5]] + plots[[3]] + plots[[4]])
+
+```
+
+The plots show very similar solutions paths across fit measures.
+An interesting detail in the plot is that they highlight how for high values of the threshold parameter, only 4, 3, and 2 components could be used.
+
+# CV the number of components
+
+```{r }
+# Measures
+fit_measure_vec <- c("F", "LRT", "AIC", "BIC", "PR2", "MSE")
+
+# Train the GSPCR model with the different values
+out_fit_meas <- lapply(fit_measure_vec, function(i) {
+    cv_gspcr(
+        dv = y,
+        ivs = X,
+        fam = "gaussian",
+        nthrs = 20,
+        npcs_range = c(1, 5),
+        K = 10,
+        fit_measure = i,
+        thrs = "normalized",
+        min_features = 1,
+        max_features = ncol(X),
+        oneSE = TRUE
+    )
+})
+
+# Plot them
+plots <- lapply(seq_along(fit_measure_vec), function(i) {
+    # Reverse y?
+    rev <- grepl("MSE|AIC|BIC", fit_measure_vec[i])
+
+    # Make plots
+    plot(
+        x = out_fit_meas[[i]],
+        y = fit_measure_vec[[i]],
+        labels = TRUE,
+        y_reverse = rev,
+        errorBars = FALSE,
+        discretize = FALSE,
+        print = FALSE
+    )
+})
+
+# Patchwork ggplots
+(plots[[1]] + plots[[2]] + plots[[6]]) / (plots[[5]] + plots[[3]] + plots[[4]])
+
+```
+
+This highlights the problem of the selection of the number of components.
+BIC seems to be the best likelihood-based alternative to the F statistic.
+
+## 1SE solutions
 
 The results for all fit measures except `F` struggle with accounting for measure complexity. The use of a simple 1-standard-error rule helps obviate this problem.
 

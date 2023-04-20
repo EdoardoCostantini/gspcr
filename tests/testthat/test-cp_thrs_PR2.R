@@ -2,7 +2,7 @@
 # Objective: Test cp_thrh_PR2
 # Author:    Edoardo Costantini
 # Created:   2023-04-17
-# Modified:  2023-04-17
+# Modified:  2023-04-20
 # Notes:
 
 # Test: function works on continuous outcomes ----------------------------------
@@ -35,7 +35,7 @@ thrs_bin_PR2 <- cp_thrs_PR2(
 # Returns a numeric vector
 testthat::expect_true(is.numeric(thrs_bin_PR2))
 
-# Negative values
+# Values between 0 and 1
 testthat::expect_true(all(thrs_PR2 >= 0 & thrs_PR2 <= 1))
 
 # The vector has the names of the predictors

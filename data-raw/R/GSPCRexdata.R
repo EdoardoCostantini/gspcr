@@ -141,6 +141,29 @@ orthmat <- function(X, verbose = FALSE) {
     return(X)
 }
 
+discretise <- function(x, K = 5, ordered = FALSE) {
+    # Example inputs
+    # x = rnorm(1e3)
+    # K = 2
+    # ordered = FALSE
+
+    # Create lags
+    lags <- rep(abs(min(x) - max(x)) / K, (K - 1))
+
+    # Define the breakpoints for j-th column
+    breaks <- c(cumsum(c(minimum = min(x), fixed = lags)), maximum = max(x))
+
+    # Cut j with the given brakes
+    x_dis <- as.numeric(cut(x = x, breaks = breaks, include.lowest = TRUE))
+
+    # Make an ordered factor
+    factor(
+        x = x_dis,
+        ordered = ordered
+    )
+}
+
+
 # Generate data ----------------------------------------------------------------
 
 # Define the desired number of components for X
@@ -238,17 +261,59 @@ factor(
     labels = length(unique(y_pois))
 )
 
+# Create discrete predictor matrix ---------------------------------------------
+
+# > Binary predictors ----------------------------------------------------------
+
+# Apply to every column of X
+X_binary_list <- lapply(XTP$X, discretise, K = 2, ordered = FALSE)
+
+# Make it a data.frame
+X_binary_data <- as.data.frame(X_binary_list)
+
+# > Ordinal predictors ---------------------------------------------------------
+
+# Apply to every column of X
+X_ordinal_list <- lapply(XTP$X, discretise, K = 5, ordered = TRUE)
+
+# Make it a data.frame
+X_ordinal_data <- as.data.frame(X_ordinal_list)
+
+# > Categorical predictors -----------------------------------------------------
+
+# Apply to every column of X
+X_cat_list <- lapply(XTP$X, discretise, K = 5, ordered = FALSE)
+
+# Make it a data.frame
+X_cat_data <- as.data.frame(X_cat_list)
+
+# Create mixed predictor matrix ------------------------------------------------
+
+# Divide the columns in four categories
+X_mixed <- cbind(
+    XTP$X[, 1:20],
+    X_binary_data[, 21:30],
+    X_ordinal_data[, 31:40],
+    X_cat_data[, 41:50]
+)
+
 # Store results ----------------------------------------------------------------
 
 # Collect data in a single data.frame
 GSPCRexdata <- list(
-    X = XTP$X,
     y = data.frame(
         cont = y,
         bin = y_bin,
         ord = y_ord,
         cat = y_cat,
         pois = y_pois
+    ),
+    X = list(
+        cont = XTP$X,
+        bin = X_binary_data,
+        ord = X_ordinal_data,
+        cat = X_cat_data,
+        mix = X_mixed
     )
 )
 

@@ -1685,7 +1685,7 @@ library(patchwork)  # combining ggplots
 set.seed(20230415)</code></pre>
 <p>Prepare data</p>
 <pre class="r"><code># Comment goal of code
-X &lt;- GSPCRexdata$X
+X &lt;- GSPCRexdata$X$cont
 y &lt;- GSPCRexdata$y$cont</code></pre>
 <div id="estimation" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Estimation</h1>
@@ -2012,7 +2012,7 @@ library(patchwork)  # combining ggplots
 set.seed(20230415)
 
 # Comment goal of code
-X &lt;- GSPCRexdata$X
+X &lt;- GSPCRexdata$X$cont
 y &lt;- GSPCRexdata$y$cont
 
 # Train the GSPCR model

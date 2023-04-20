@@ -9,7 +9,7 @@
 
 est_univ_mods(
     dv = GSPCRexdata$y$cont,
-    ivs = GSPCRexdata$X,
+    ivs = GSPCRexdata$X$cont,
     fam = "gaussian"
 )
 
@@ -17,7 +17,7 @@ est_univ_mods(
 
 est_univ_mods(
     dv = GSPCRexdata$y$bin,
-    ivs = GSPCRexdata$X,
+    ivs = GSPCRexdata$X$cont,
     fam = "binomial"
 )
 
@@ -25,7 +25,7 @@ est_univ_mods(
 
 est_univ_mods(
     dv = GSPCRexdata$y$ord,
-    ivs = GSPCRexdata$X,
+    ivs = GSPCRexdata$X$cont,
     fam = "cumulative"
 )
 
@@ -33,7 +33,7 @@ est_univ_mods(
 
 est_univ_mods(
     dv = GSPCRexdata$y$cat,
-    ivs = GSPCRexdata$X,
+    ivs = GSPCRexdata$X$cont,
     fam = "baseline"
 )
 
@@ -41,6 +41,6 @@ est_univ_mods(
 
 est_univ_mods(
     dv = GSPCRexdata$y$pois,
-    ivs = GSPCRexdata$X,
+    ivs = GSPCRexdata$X$cont,
     fam = "poisson"
 )

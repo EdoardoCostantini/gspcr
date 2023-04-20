@@ -53,7 +53,7 @@ Prepare data
 
 ```{r}
 # Comment goal of code
-X <- GSPCRexdata$X
+X <- GSPCRexdata$X$cont
 y <- GSPCRexdata$y$cont
 
 ```

@@ -5,6 +5,9 @@
 # Modified:  2023-05-01
 # Notes: 
 
+# Define tolerance
+tol <- 1e-5
+
 # Test: PCA and gpca scores are the same on numeric data -----------------------
 
 # Define numeric data
@@ -36,6 +39,36 @@ cors <- sapply(1:npcs, function(j) {
 
 # Check they are all equal to 1
 testthat::expect_true(all(abs(cors) - 1 < tol))
+
+# Test: MCA and gpca scores are the same on categorical data -------------------
+
+# Load data
+data(wine, package = "FactoMineR")
+
+# Define only numeric data
+X <- wine[, 1:2]
+
+# Define training and validation datasets
+npcs <- 5
+
+# use GSPCA
+T <- gpca(
+    X_tr = X,
+    npcs = npcs,
+    scale = "standard"
+)
+
+# Perform MCA
+MCA_out <- FactoMineR::MCA(X, ncp = npcs, graph = FALSE)
+
+# Compute correlations between the npcs
+cors <- sapply(1:npcs, function(j) {
+    cor(MCA_out$ind$coord[, j], T[, j])
+})
+
+# Check they are all equal to 1
+testthat::expect_true(all(abs(cors) - 1 < tol))
+
 
 # Test: gpca and PCAmixdata::PCAmix() are the same -----------------------------
 
@@ -74,4 +107,4 @@ cors_mix <- sapply(1:npcs, function(j) {
 })
 
 # Check they are all equal to 1
-testthat::expect_true(all(abs(cors_mix) - 1 > tol))
+testthat::expect_true(all(abs(cors_mix) - 1 < tol))

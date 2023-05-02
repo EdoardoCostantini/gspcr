@@ -75,34 +75,39 @@ gpca <- function(X_tr, npcs = 1, scale = "standard") {
 
         # Objects required for scaling
         p2 <- ncol(X_tr_quali)
+        ns <- unlist(sapply(X_tr_quali, table))
         m <- sum(sapply(X_tr_quali, nlevels))
         G <- FactoMineR::tab.disjonctif(X_tr_quali)
-        D <- diag(colSums(G))
-        v_1 <- rep(1, n)
-        I_n <- diag(v_1)
-        J <- I_n - v_1 %*% t(v_1) / n
-
-        # Scale qualitative variables
-        Z2 <- J %*% G %*% solve(sqrt(D))
+        Z2 <- scale(G, center = TRUE, scale = FALSE)
     } else {
         Z2 <- NULL
+        ns <- NULL
     }
 
+    # Create weight matrix M
+    M <- diag(c(rep(1, p1), n / ns))
+
+    # Create weight matrix N
+    N <- 1/n * diag(1, n)
+
     # Combine qunatitative and qualitative objects
-    Z <- cbind(Z1, Z2) / sqrt(n)
+    Z <- cbind(Z1, Z2)
+
+    # Create weighted Z
+    Z_tilde <- sqrt(N) %*% Z %*% sqrt(M)
 
     # General SVD
-    svdZ <- svd(Z)
-    L <- svdZ$d
-    U <- svdZ$u
-    V <- svdZ$v
+    svd_Z_tilde <- svd(Z_tilde)
+    L <- diag(svd_Z_tilde$d)
+    U <- sqrt(solve(N)) %*% svd_Z_tilde$u
+    V <- sqrt(solve(M)) %*% svd_Z_tilde$v
 
     # Calculate Standardized Component Scores
-    T <- (sqrt(n) * U)[, 1:npcs, drop = FALSE]
+    T <- U %*% L
 
     # Loading vectors
-    A <- V %*% diag(L)
+    A <- V %*% L
 
     # Return scores
-    return(T)
+    return(T[, 1:npcs, drop = FALSE])
 }

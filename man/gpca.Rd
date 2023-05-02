@@ -4,12 +4,16 @@
 \alias{gpca}
 \title{Generalized Principal Component Analysis}
 \usage{
-gpca(X_tr, X_new, npcs = 1)
+gpca(X_tr, npcs = 1, scale = "standard")
 }
 \arguments{
-\item{argument_1}{A description of the first argument}
+\item{X_tr}{data.frame of training data}
 
-\item{argument_2}{A description of the second argument}
+\item{npcs}{number of principal components to keep}
+
+\item{scale}{either "standard" or "MLE"}
+
+\item{X_new}{data.frame of new data if requested}
 }
 \value{
 Description of function output
@@ -23,17 +27,17 @@ This function does such and such.
 \examples{
 # Example inputs
 data(wine, package = "FactoMineR")
-X <- wine[, c(1, 2, 16, 22)]
-X$Label <- factor(X$Label)
-X$Soil <- factor(X$Soil)
-X_tr <- X[1:15, ]
-X_new <- X[16:21, ]
+X <- iris
+train <- c(1:40, 50:90, 100:140)
+valid <- -train
+X_tr <- X[train, ]
+X_new <- X[valid, ]
 npcs <- 2
+scale <- "standard"
 
 # Example use
 gpca(
-    X_tr = X[1:15, ],
-    X_new = X[16:21, ],
+    X_tr = X[1:100, ],
     npcs = 2
 )
 }

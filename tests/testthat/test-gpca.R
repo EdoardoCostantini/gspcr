@@ -34,7 +34,7 @@ PC_X <- (X_scaled %*% svd_X$v)[, 1:npcs]
 
 # Compute correlations between the npcs
 cors <- sapply(1:npcs, function(j) {
-    cor(PC_X[, j], T[, j])
+    cor(PC_X[, j], T$T[, j])
 })
 
 # Check they are all equal to 1
@@ -54,8 +54,7 @@ npcs <- 5
 # use GSPCA
 T <- gpca(
     X_tr = X,
-    npcs = npcs,
-    scale = "standard"
+    npcs = npcs
 )
 
 # Perform MCA
@@ -63,12 +62,11 @@ MCA_out <- FactoMineR::MCA(X, ncp = npcs, graph = FALSE)
 
 # Compute correlations between the npcs
 cors <- sapply(1:npcs, function(j) {
-    cor(MCA_out$ind$coord[, j], T[, j])
+    cor(MCA_out$ind$coord[, j], T$T[, j])
 })
 
 # Check they are all equal to 1
 testthat::expect_true(all(abs(cors) - 1 < tol))
-
 
 # Test: gpca and PCAmixdata::PCAmix() are the same -----------------------------
 
@@ -82,7 +80,7 @@ npcs <- 4
 T_mix <- gpca(
     X_tr = X,
     npcs = npcs,
-    scale = "standard"
+    scale = "MLE"
 )
 
 # Split data for PCA mix analysis
@@ -103,7 +101,7 @@ pcamix$ind$coord
 
 # Compute correlations between the npcs
 cors_mix <- sapply(1:npcs, function(j) {
-    cor(pcamix$ind$coord[, j], T_mix[, j])
+    cor(pcamix$ind$coord[, j], T_mix$T[, j])
 })
 
 # Check they are all equal to 1

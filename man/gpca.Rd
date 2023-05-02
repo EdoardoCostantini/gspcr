@@ -12,8 +12,6 @@ gpca(X_tr, npcs = 1, scale = "standard")
 \item{npcs}{number of principal components to keep}
 
 \item{scale}{either "standard" or "MLE"}
-
-\item{X_new}{data.frame of new data if requested}
 }
 \value{
 Description of function output
@@ -26,18 +24,13 @@ This function does such and such.
 }
 \examples{
 # Example inputs
-data(wine, package = "FactoMineR")
-X <- iris
-train <- c(1:40, 50:90, 100:140)
-valid <- -train
-X_tr <- X[train, ]
-X_new <- X[valid, ]
+X_tr <- iris
 npcs <- 2
 scale <- "standard"
 
 # Example use
 gpca(
-    X_tr = X[1:100, ],
+    X_tr = iris,
     npcs = 2
 )
 }

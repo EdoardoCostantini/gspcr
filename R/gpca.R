@@ -3,7 +3,6 @@
 #' A high level description of the function.
 #'
 #' @param X_tr data.frame of training data
-#' @param X_new data.frame of new data if requested
 #' @param npcs number of principal components to keep
 #' @param scale either "standard" or "MLE"
 #' @details
@@ -12,18 +11,13 @@
 #' @author Edoardo Costantini, 2023
 #' @examples
 #' # Example inputs
-#' data(wine, package = "FactoMineR")
-#' X <- iris
-#' train <- c(1:40, 50:90, 100:140)
-#' valid <- -train
-#' X_tr <- X[train, ]
-#' X_new <- X[valid, ]
+#' X_tr <- iris
 #' npcs <- 2
 #' scale <- "standard"
 #'
 #' # Example use
 #' gpca(
-#'     X_tr = X[1:100, ],
+#'     X_tr = iris,
 #'     npcs = 2
 #' )
 #' @references
@@ -88,7 +82,7 @@ gpca <- function(X_tr, npcs = 1, scale = "standard") {
     M <- diag(c(rep(1, p1), n / ns))
 
     # Create weight matrix N
-    N <- 1/n * diag(1, n)
+    N <- 1 / n * diag(1, n)
 
     # Combine qunatitative and qualitative objects
     Z <- cbind(Z1, Z2)
@@ -105,9 +99,22 @@ gpca <- function(X_tr, npcs = 1, scale = "standard") {
     # Calculate Standardized Component Scores
     T <- U %*% L
 
-    # Loading vectors
+    # Loading of the standardized components
     A <- V %*% L
 
+    # Factor coordinates
+    A_star <- M %*% A
+
     # Return scores
-    return(T[, 1:npcs, drop = FALSE])
+    return(
+        list(
+            Z_tilde = Z_tilde,
+            L = L,
+            U = U,
+            V = V,
+            T = T[, 1:npcs, drop = FALSE],
+            A = A[, 1:npcs, drop = FALSE],
+            A_star = A_star[, 1:npcs, drop = FALSE]
+        )
+    )
 }

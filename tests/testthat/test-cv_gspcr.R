@@ -193,3 +193,26 @@ testthat::expect_equal(length(out_traget_npcs), 10)
 
 # Test the class of the output
 testthat::expect_equal(class(out_traget_npcs), c("gspcrout", "list"))
+
+# Test: Works with mixed predictor matrix input --------------------------------
+
+# Use the functions with a given method
+out_X_mix <- cv_gspcr(
+    dv = GSPCRexdata$y$cont,
+    ivs = GSPCRexdata$X$mix,
+    fam = "gaussian",
+    nthrs = 5,
+    npcs_range = 1:3,
+    K = 3,
+    fit_measure = "F",
+    thrs = "PR2",
+    min_features = 1,
+    max_features = ncol(GSPCRexdata$X$mix),
+    oneSE = TRUE
+)
+
+# Test the length of the output is as expected
+testthat::expect_equal(length(out_X_mix), 10)
+
+# Test the class of the output
+testthat::expect_equal(class(out_X_mix), c("gspcrout", "list"))

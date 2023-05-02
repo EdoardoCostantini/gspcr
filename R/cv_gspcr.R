@@ -146,7 +146,7 @@ cv_gspcr <- function(
 
   # And update the effective number of the thresholds considered
   nthrs_eff <- ncol(pred_map)
-  
+
   # Create an object to store k-fold cross-validation log-likelihoods
   map_kfcv <- array(
     dim = c(max(npcs_range), nthrs_eff, K),
@@ -175,26 +175,43 @@ cv_gspcr <- function(
       # If there is more than 1 active variable
       if (sum(aset) > 1) {
 
-        # Scale Xs
-        Xtr_thr <- scale(Xtr[, aset], center = TRUE, scale = TRUE)
-        Xva_thr <- scale(Xva[, aset],
-          center = attributes(Xtr_thr)$`scaled:center`,
-          scale = attributes(Xtr_thr)$`scaled:scale`
-        )
-
-        # Perform PCA on the training data
-        svd_Xtr <- svd(Xtr_thr)
-
-        # Project training and validation data on the PCs
-        PC_tr <- Xtr_thr %*% svd_Xtr$v
-        PC_va <- Xva_thr %*% svd_Xtr$v
-
         # Check how many components are available (effective number)
         q_max_eff <- min(sum(aset), max(npcs_range))
         q_min_eff <- min(sum(aset), min(npcs_range))
 
         # Replace max and min in range
         npcs_range_eff <- npcs_range[npcs_range <= q_max_eff & npcs_range >= q_min_eff]
+
+        if(all(sapply(ivs, is.numeric))){
+
+          # Scale Xs
+          Xtr_thr <- scale(Xtr[, aset], center = TRUE, scale = TRUE)
+          Xva_thr <- scale(Xva[, aset],
+            center = attributes(Xtr_thr)$`scaled:center`,
+            scale = attributes(Xtr_thr)$`scaled:scale`
+          )
+
+          # Perform PCA on the training data
+          svd_Xtr <- svd(Xtr_thr)
+
+          # Project training and validation data on the PCs
+          PC_tr <- Xtr_thr %*% svd_Xtr$v
+          PC_va <- Xva_thr %*% svd_Xtr$v
+
+        } else {
+
+          # Perform PCAmix
+          pca_mix_out <- pca_mix(
+            X_tr = Xtr[, aset],
+            X_va = Xva[, aset],
+            npcs = q_max_eff
+          )
+
+          # Extract objects of interest
+          PC_tr <- pca_mix_out$PC_tr
+          PC_va <- pca_mix_out$PC_va
+
+        }
 
         # Select the available PC scores
         PC_tr_eff <- PC_tr[, 1:q_max_eff, drop = FALSE]

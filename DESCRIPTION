@@ -1,6 +1,6 @@
 Package: gspcr
 Title: Generalized Supervised Principal Component Regression
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: 
     person("Edoardo", "Costantini", , "costantini.edoardo@yahoo.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
@@ -28,6 +28,7 @@ Imports:
     MASS,
     MLmetrics,
     nnet,
+    PCAmixdata,
     reshape2,
     rlang
 VignetteBuilder: knitr

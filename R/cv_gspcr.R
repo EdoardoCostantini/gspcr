@@ -12,6 +12,7 @@
 #' @param fit_measure Type of measure to cross-validate.
 #' @param max_features Maximum number of features that can be selected
 #' @param min_features Minimum number of features that can be selected
+#' @param pca_implementation whether `PCAmixdata` or an `independent` implementation of PCAmix should be used to compute PCA.
 #' @param oneSE Whether the results with the 1SE rule should be stored
 #' @details
 #' The possible threshold types are:
@@ -48,6 +49,7 @@
 #' max_features <- ncol(ivs)
 #' min_features <- 1
 #' oneSE <- TRUE
+#' pca_implementation = "PCAmixdata"
 #'
 #' # Example usage
 #' out_cont <- cv_gspcr(
@@ -61,6 +63,7 @@
 #'    thrs = "normalized",
 #'    min_features = 1,
 #'    max_features = ncol(GSPCRexdata$X$cont),
+#'    pca_implementation = "PCAmixdata",
 #'    oneSE = TRUE
 #' )
 #'
@@ -76,6 +79,7 @@ cv_gspcr <- function(
   fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
   max_features = ncol(ivs),
   min_features = 5,
+  pca_implementation = "PCAmixdata",
   oneSE = TRUE
   ) {
 
@@ -91,6 +95,7 @@ cv_gspcr <- function(
     fit_measure = fit_measure,
     max_features = max_features,
     min_features = min_features,
+    pca_implementation = pca_implementation,
     oneSE = oneSE
   )
 
@@ -182,35 +187,41 @@ cv_gspcr <- function(
         # Replace max and min in range
         npcs_range_eff <- npcs_range[npcs_range <= q_max_eff & npcs_range >= q_min_eff]
 
-        if(all(sapply(ivs, is.numeric))){
+        if (pca_implementation == "PCAmixdata") {
+          if (all(sapply(ivs, is.numeric))) {
+            # Scale Xs
+            Xtr_thr <- scale(Xtr[, aset], center = TRUE, scale = TRUE)
+            Xva_thr <- scale(Xva[, aset],
+              center = attributes(Xtr_thr)$`scaled:center`,
+              scale = attributes(Xtr_thr)$`scaled:scale`
+            )
 
-          # Scale Xs
-          Xtr_thr <- scale(Xtr[, aset], center = TRUE, scale = TRUE)
-          Xva_thr <- scale(Xva[, aset],
-            center = attributes(Xtr_thr)$`scaled:center`,
-            scale = attributes(Xtr_thr)$`scaled:scale`
-          )
+            # Perform PCA on the training data
+            svd_Xtr <- svd(Xtr_thr)
 
-          # Perform PCA on the training data
-          svd_Xtr <- svd(Xtr_thr)
+            # Project training and validation data on the PCs
+            PC_tr <- Xtr_thr %*% svd_Xtr$v
+            PC_va <- Xva_thr %*% svd_Xtr$v
+          } else {
+            # Perform PCAmix
+            pca_mix_out <- pca_mix(
+              X_tr = Xtr[, aset],
+              X_va = Xva[, aset],
+              npcs = q_max_eff
+            )
 
-          # Project training and validation data on the PCs
-          PC_tr <- Xtr_thr %*% svd_Xtr$v
-          PC_va <- Xva_thr %*% svd_Xtr$v
-
-        } else {
-
-          # Perform PCAmix
-          pca_mix_out <- pca_mix(
+            # Extract objects of interest
+            PC_tr <- pca_mix_out$PC_tr
+            PC_va <- pca_mix_out$PC_va
+          }
+        }
+        if(pca_implementation == "independent"){
+          stop("The 'independent' implementation is not fully operational as of now. Please set the argument `pca_implementation` to its default 'PCAmixdata'.")
+          pca_mix_out <- gpca(
             X_tr = Xtr[, aset],
-            X_va = Xva[, aset],
-            npcs = q_max_eff
+            npcs = q_max_eff,
+            scale = "MLE"
           )
-
-          # Extract objects of interest
-          PC_tr <- pca_mix_out$PC_tr
-          PC_va <- pca_mix_out$PC_va
-
         }
 
         # Select the available PC scores

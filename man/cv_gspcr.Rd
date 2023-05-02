@@ -15,6 +15,7 @@ cv_gspcr(
   fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
   max_features = ncol(ivs),
   min_features = 5,
+  pca_implementation = "PCAmixdata",
   oneSE = TRUE
 )
 }
@@ -38,6 +39,8 @@ cv_gspcr(
 \item{max_features}{Maximum number of features that can be selected}
 
 \item{min_features}{Minimum number of features that can be selected}
+
+\item{pca_implementation}{whether \code{PCAmixdata} or an \code{independent} implementation of PCAmix should be used to compute PCA.}
 
 \item{oneSE}{Whether the results with the 1SE rule should be stored}
 }
@@ -77,6 +80,7 @@ fit_measure <- "F"
 max_features <- ncol(ivs)
 min_features <- 1
 oneSE <- TRUE
+pca_implementation = "PCAmixdata"
 
 # Example usage
 out_cont <- cv_gspcr(
@@ -90,6 +94,7 @@ out_cont <- cv_gspcr(
    thrs = "normalized",
    min_features = 1,
    max_features = ncol(GSPCRexdata$X$cont),
+   pca_implementation = "PCAmixdata",
    oneSE = TRUE
 )
 

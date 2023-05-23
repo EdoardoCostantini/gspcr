@@ -2,7 +2,7 @@
 # Objective: Test cp_thrh_NOR
 # Author:    Edoardo Costantini
 # Created:   2023-04-17
-# Modified:  2023-04-17
+# Modified:  2023-05-23
 # Notes:
 
 # Test: function works on continuous outcomes ----------------------------------
@@ -22,3 +22,38 @@ testthat::expect_true(all(thrs_NOR >= 0))
 
 # The vector has the names of the predictors
 testthat::expect_true(all.equal(names(thrs_NOR), colnames(mtcars[, -1])))
+
+# Test: results relationship to input scaling ----------------------------------
+
+# Unscaled inputs
+thrs_NOR <- cp_thrs_NOR(
+    dv = GSPCRexdata$y$cont * 10 + 10,
+    ivs = GSPCRexdata$X$cont,
+    s0_perc = NULL
+)
+
+# Scaled X
+thrs_NOR_scaled_X <- cp_thrs_NOR(
+    dv = GSPCRexdata$y$cont * 10 + 10,
+    ivs = scale(GSPCRexdata$X$cont),
+    s0_perc = NULL
+)
+
+# Scaled y
+thrs_NOR_sacled_y <- cp_thrs_NOR(
+    dv = scale(GSPCRexdata$y$cont),
+    ivs = GSPCRexdata$X$cont,
+    s0_perc = NULL
+)
+
+# Scaled y and X
+thrs_NOR_scaled_X_sacled_y <- cp_thrs_NOR(
+    dv = scale(GSPCRexdata$y$cont),
+    ivs = scale(GSPCRexdata$X$cont),
+    s0_perc = NULL
+)
+
+# Perform tests
+testthat::expect_false(all((thrs_NOR - thrs_NOR_scaled_X) < tol))
+testthat::expect_true(all((thrs_NOR - thrs_NOR_sacled_y) < tol))
+testthat::expect_false(all((thrs_NOR - thrs_NOR_scaled_X_sacled_y) < tol))

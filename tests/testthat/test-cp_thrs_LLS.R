@@ -2,8 +2,11 @@
 # Objective: Test cp_thrh_LLS
 # Author:    Edoardo Costantini
 # Created:   2023-04-17
-# Modified:  2023-04-17
+# Modified:  2023-05-23
 # Notes: 
+
+# Define tolerance
+tol <- 1e-5
 
 # Test: function works on continuous outcomes ----------------------------------
 
@@ -40,3 +43,38 @@ testthat::expect_true(all(thrs_bin_LLS < 0))
 
 # The vector has the names of the predictors
 testthat::expect_true(all.equal(names(thrs_bin_LLS), colnames(mtcars[, -9])))
+
+# Test: results independent of input scaling -----------------------------------
+
+# Unscaled inputs
+thrs_LLS <- cp_thrs_LLS(
+    dv = GSPCRexdata$y$cont * 10 + 10,
+    ivs = GSPCRexdata$X$cont,
+    fam = "gaussian"
+)
+
+# Scaled X
+thrs_LLS_scaled_X <- cp_thrs_LLS(
+    dv = GSPCRexdata$y$cont * 10 + 10,
+    ivs = scale(GSPCRexdata$X$cont),
+    fam = "gaussian"
+)
+
+# Scaled y
+thrs_LLS_sacled_y <- cp_thrs_LLS(
+    dv = scale(GSPCRexdata$y$cont),
+    ivs = GSPCRexdata$X$cont,
+    fam = "gaussian"
+)
+
+# Scaled y and X
+thrs_LLS_scaled_X_sacled_y <- cp_thrs_LLS(
+    dv = scale(GSPCRexdata$y$cont),
+    ivs = scale(GSPCRexdata$X$cont),
+    fam = "gaussian"
+)
+
+# Perform tests
+testthat::expect_true(all((thrs_LLS - thrs_LLS_scaled_X) < tol))
+testthat::expect_true(all((thrs_LLS - thrs_LLS_sacled_y) < tol))
+testthat::expect_true(all((thrs_LLS - thrs_LLS_scaled_X_sacled_y) < tol))

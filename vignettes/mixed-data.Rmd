@@ -41,6 +41,8 @@ In this vignette we explore how to use `GSPCR` for the analysis of a data set wi
 In certain real applications, the dependent variable might be recorded on a continuous numeric scale, while some or all independent variables might be recorded on a binary or even a nominal scale.
 `GSPCR` supports any combination of these measurement levels.
 
+Let's start by loading all of the packages we will need.
+
 ```{r setup}
 # Load R packages
 library(gspcr)      # this package!
@@ -52,7 +54,7 @@ set.seed(20230415)
 
 ```
 
-
+We can then explore the data we will use:
 
 ```{r}
 # Look at the helpfile
@@ -64,8 +66,43 @@ y <- GSPCRexdata$y$cont
 
 ```
 
-# Continuous dependent variable, mix of predictors
+# Continuous dependent variable
 
+A standard run of `cv_gspcr` with continuous dependent and indipendent variables can be specified like this:
+
+```{r }
+# Train the GSPCR model
+out <- cv_gspcr(
+  dv = GSPCRexdata$y$cont,
+  ivs = GSPCRexdata$X$cont,
+  fam = "gaussian",
+  nthrs = 20,
+  npcs_range = 1:5,
+  K = 10,
+  fit_measure = "F",
+  thrs = "PR2",
+  min_features = 1,
+  max_features = ncol(X),
+  oneSE = TRUE
+)
+
+# Use the plotting function
+plot_output <- plot(
+  x = out,
+  y = "F",
+  labels = TRUE,
+  errorBars = TRUE,
+  discretize = FALSE
+)
+
+# And plot
+plot_output
+
+```
+
+## Mix of predictors
+
+However, if it turns out that some of the predictors are discrete (i.e., binary, ordinal, or nominal) `cv_gspcr` will handle them by computing PCA through the PCAmix R package.
 To explore this scenario, we will run `gspcr` using the continuous dependent variable and the mix of continuous and categorical predictors in the example data set `GSPCRexdata`.
 As a threshold measure, we cannot use the `normalized` bivariate association used in the original `superpc` R package which requires continuous dependent and independent variables.
 
@@ -89,6 +126,74 @@ out <- cv_gspcr(
 plot_output <- plot(
   x = out,
   y = "F",
+  labels = TRUE,
+  errorBars = TRUE,
+  discretize = FALSE
+)
+
+# And plot
+plot_output
+
+```
+
+# Ordinal dependent variable
+
+When using a dv with a different measurement level you should change the `fam` argument to match the appropriate GLM family.
+The fit measure must also match the dependent variable.
+For more info on which family and which fit measure to use for different dependent variables, see the help file of `cv_gspcr()`.
+
+```{r }
+# Train the GSPCR model
+out <- cv_gspcr(
+  dv = GSPCRexdata$y$ord,
+  ivs = GSPCRexdata$X$mix,
+  fam = "cumulative",
+  nthrs = 20,
+  npcs_range = 1:5,
+  K = 10,
+  fit_measure = "BIC",
+  thrs = "PR2",
+  min_features = 1,
+  max_features = ncol(GSPCRexdata$X$mix),
+  oneSE = TRUE
+)
+
+# Use the plotting function
+plot_output <- plot(
+  x = out,
+  y = "BIC",
+  labels = TRUE,
+  errorBars = TRUE,
+  discretize = FALSE
+)
+
+# And plot
+plot_output
+
+```
+
+# Nominal dependent variable
+
+```{r }
+# Train the GSPCR model
+out <- cv_gspcr(
+  dv = GSPCRexdata$y$cat,
+  ivs = GSPCRexdata$X$mix,
+  fam = "baseline",
+  nthrs = 20,
+  npcs_range = 1:5,
+  K = 10,
+  fit_measure = "BIC",
+  thrs = "PR2",
+  min_features = 1,
+  max_features = ncol(GSPCRexdata$X$mix),
+  oneSE = TRUE
+)
+
+# Use the plotting function
+plot_output <- plot(
+  x = out,
+  y = "BIC",
   labels = TRUE,
   errorBars = TRUE,
   discretize = FALSE

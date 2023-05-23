@@ -2,7 +2,7 @@
 # Objective: Test pca_mix.R function
 # Author:    Edoardo Costantini
 # Created:   2023-05-02
-# Modified:  2023-05-02
+# Modified:  2023-05-23
 # Notes: 
 
 # Define tolerance
@@ -62,7 +62,7 @@ pca_mix_out_tv <- pca_mix(
 # Scale training data
 X_tr_scaled <- scale(X[train, ], center = TRUE, scale = TRUE)
 
-# Scale validation data base don training data
+# Scale validation data based on training data
 X_va_scaled <- scale(
     x = X[valid, ],
     center = attributes(X_tr_scaled)$`scaled:center`,

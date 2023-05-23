@@ -54,7 +54,8 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
   if (fam == "baseline") {
     glm_fit_tr <- nnet::multinom(
       formula = glm_formula,
-      data = train
+      data = train, 
+      trace = FALSE
     )
   }
   if (fam == "cumulative") {

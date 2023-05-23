@@ -2,7 +2,7 @@
 # Objective: Script to generate some example data for the package
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
-# Modified:  2023-03-31
+# Modified:  2023-05-23
 # Notes:     After updating the script and the RDS file, to update the data in 
 #            the package you need to run again usethis::use_data(GSPCRexdata) call
 
@@ -205,6 +205,29 @@ nFactors::nScree(x = eigenvalues)
 # Screeplot
 nFactors::plotuScree(x = eigenvalues)
 
+# Rescale data -----------------------------------------------------------------
+
+# Define vectors of scale styles
+v_scales <- c(
+    rep("standard", 10),
+    rep("narrower", 10),
+    rep("wider", 10),
+    rep("narrower_offset", 10),
+    rep("wider_offset", 10)
+)
+
+# Scramble them
+v_scales <- sample(v_scales, size = length(v_scales), replace = FALSE)
+
+# Define a data.frame to store the rescaled data
+X_rescaled <- XTP$X
+
+# Apply transformations
+X_rescaled[, v_scales == "narrower"] <- X_rescaled[, v_scales == "narrower"] * .1
+X_rescaled[, v_scales == "wider"] <- X_rescaled[, v_scales == "wider"] * 10
+X_rescaled[, v_scales == "narrower_offset"] <- X_rescaled[, v_scales == "narrower_offset"] * .1 - 10
+X_rescaled[, v_scales == "wider_offset"] <- X_rescaled[, v_scales == "wider_offset"] * 10 + 10
+
 # > Continuous -----------------------------------------------------------------
 
 # Generate DV based on the component scores
@@ -266,7 +289,7 @@ factor(
 # > Binary predictors ----------------------------------------------------------
 
 # Apply to every column of X
-X_binary_list <- lapply(XTP$X, discretise, K = 2, ordered = FALSE)
+X_binary_list <- lapply(X_rescaled, discretise, K = 2, ordered = FALSE)
 
 # Make it a data.frame
 X_binary_data <- as.data.frame(X_binary_list)
@@ -274,7 +297,7 @@ X_binary_data <- as.data.frame(X_binary_list)
 # > Ordinal predictors ---------------------------------------------------------
 
 # Apply to every column of X
-X_ordinal_list <- lapply(XTP$X, discretise, K = 5, ordered = TRUE)
+X_ordinal_list <- lapply(X_rescaled, discretise, K = 5, ordered = TRUE)
 
 # Make it a data.frame
 X_ordinal_data <- as.data.frame(X_ordinal_list)
@@ -282,7 +305,7 @@ X_ordinal_data <- as.data.frame(X_ordinal_list)
 # > Categorical predictors -----------------------------------------------------
 
 # Apply to every column of X
-X_cat_list <- lapply(XTP$X, discretise, K = 5, ordered = FALSE)
+X_cat_list <- lapply(X_rescaled, discretise, K = 5, ordered = FALSE)
 
 # Make it a data.frame
 X_cat_data <- as.data.frame(X_cat_list)
@@ -291,7 +314,7 @@ X_cat_data <- as.data.frame(X_cat_list)
 
 # Divide the columns in four categories
 X_mixed <- cbind(
-    XTP$X[, 1:20],
+    X_rescaled[, 1:20],
     X_binary_data[, 21:30],
     X_ordinal_data[, 31:40],
     X_cat_data[, 41:50]
@@ -309,7 +332,7 @@ GSPCRexdata <- list(
         pois = y_pois
     ),
     X = list(
-        cont = XTP$X,
+        cont = X_rescaled,
         bin = X_binary_data,
         ord = X_ordinal_data,
         cat = X_cat_data,

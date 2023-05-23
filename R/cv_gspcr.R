@@ -14,20 +14,20 @@
 #' @param min_features Minimum number of features that can be selected
 #' @param oneSE Whether the results with the 1SE rule should be stored
 #' @details
-#' The possible threshold types are:
+#' Here we list the supported association-threshold measures to determine the active set of predictors for a SPCR analysis (the supported measurement levels for the variables involved is reported between brackets):
 #' \itemize{
-#'   \item \code{LLS}
-#'   \item \code{PR2} - The Cox and Snell generalized R-squared is computed for the GLMs between \code{dv} and every column in \code{ivs}. Then, the square root of these values is used as to obtain the threshold values. For more information about the computation of the Cox and Snell R2 see the help file for [gspcr::cp_gR2()]. When using this measure for simple linear regressions (with continuous \code{dv} and \code{ivs}) is equivalent to the regular R-squared. Therefore, it can be thought of as equivalent to the bivariate correlations between \code{dv} and \code{ivs}.
-#'   \item \code{normalized}
+#'   \item \code{LLS} (any dv with any iv)
+#'   \item \code{PR2} (any dv with any iv) - The Cox and Snell generalized R-squared is computed for the GLMs between \code{dv} and every column in \code{ivs}. Then, the square root of these values is used to obtain the threshold values. For more information about the computation of the Cox and Snell R2 see the help file for [gspcr::cp_gR2()]. When using this measure for simple linear regressions (with continuous \code{dv} and \code{ivs}) is equivalent to the regular R-squared. Therefore, it can be thought of as equivalent to the bivariate correlations between \code{dv} and \code{ivs}.
+#'   \item \code{normalized} (continuous dv with continuous ivs)
 #' }
-#' The possible fit measures are:
+#' Here we list the supported fit measures to be used within the cross-validation procedure:
 #' \itemize{
-#'   \item \code{F}
-#'   \item \code{LRT}
-#'   \item \code{AIC}
-#'   \item \code{BIC}
-#'   \item \code{PR2}
-#'   \item \code{MSE}
+#'   \item \code{F} - (continuous dv)
+#'   \item \code{LRT} - (any dv)
+#'   \item \code{AIC} - (any dv)
+#'   \item \code{BIC} - (any dv)
+#'   \item \code{PR2} - (any dv)
+#'   \item \code{MSE} - (continuous dv)
 #' }
 #' @return Returns an object of class \code{gspcr}.
 #' @author Edoardo Costantini, 2023
@@ -135,7 +135,7 @@ cv_gspcr <- function(
   # Use thresholds as names
   colnames(pred_map) <- round(thrs_values, 3)
 
-  # If two thresholds are giving the same result reduce the burden
+  # If two thresholds are giving the same active set reduce the burden
   pred_map <- pred_map[, !duplicated(t(pred_map))]
 
   # Get rid of thresholds that are keeping too few predictors
@@ -147,7 +147,7 @@ cv_gspcr <- function(
   # And update the effective number of the thresholds considered
   nthrs_eff <- ncol(pred_map)
 
-  # Create an object to store k-fold cross-validation log-likelihoods
+  # Create an object to store k-fold cross-validation fit measures
   map_kfcv <- array(
     dim = c(max(npcs_range), nthrs_eff, K),
     dimnames = list(NULL, colnames(pred_map), NULL)
@@ -217,7 +217,7 @@ cv_gspcr <- function(
         PC_tr_eff <- PC_tr[, 1:q_max_eff, drop = FALSE]
         PC_va_eff <- PC_va[, 1:q_max_eff, drop = FALSE]
 
-        # Compute the F-statistic for the possible additive PCRs
+        # Compute the fit measures for the possible additive PCRs
         for (Q in npcs_range_eff) {
           # Q <- 1
 

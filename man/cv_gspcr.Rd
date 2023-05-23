@@ -7,7 +7,7 @@
 cv_gspcr(
   dv,
   ivs,
-  fam = "gaussian",
+  fam = c("gaussian", "binomial", "poisson", "baseline", "cumulative")[1],
   thrs = c("LLS", "PR2", "normalized")[1],
   nthrs = 10,
   npcs_range = 1:3,
@@ -49,6 +49,14 @@ Use K-fold cross-validation to decide on the number of principal components and 
 }
 \details{
 The variables in \code{ivs} do not need to be standardized beforehand as the function handles scaling appropriately based on the measurement levels of the data.
+The \code{fam} can be one of the following:
+\itemize{
+\item \code{"gaussian"} (continuous dv) to fit a linear regression model
+\item \code{"binomial"} (binary dv) to fit a logistic regression model
+\item \code{"poisson"} (count dv) to fit a poisson regression model
+\item \code{"baseline"} (nominal dv) to fit a baseline-category logit model (using \code{\link[nnet:multinom]{nnet::multinom()}})
+\item \code{"cumulative"} (ordinal dv) to fit a proportional odds logistic regression (using \code{\link[MASS:polr]{MASS::polr()}})
+}
 Here we list the supported association-threshold measures to determine the active set of predictors for a SPCR analysis (the supported measurement levels for the variables involved is reported between brackets):
 \itemize{
 \item \code{LLS} (any dv with any iv)

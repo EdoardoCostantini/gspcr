@@ -15,6 +15,14 @@
 #' @param oneSE Whether the results with the 1SE rule should be stored
 #' @details
 #' The variables in `ivs` do not need to be standardized beforehand as the function handles scaling appropriately based on the measurement levels of the data.
+#' The `fam` can be one of the following:
+#' \itemize{
+#'   \item \code{"gaussian"} (continuous dv) to fit a linear regression model
+#'   \item \code{"binomial"} (binary dv) to fit a logistic regression model
+#'   \item \code{"poisson"} (count dv) to fit a poisson regression model
+#'   \item \code{"baseline"} (nominal dv) to fit a baseline-category logit model (using [nnet::multinom()])
+#'   \item \code{"cumulative"} (ordinal dv) to fit a proportional odds logistic regression (using [MASS::polr()])
+#' }
 #' Here we list the supported association-threshold measures to determine the active set of predictors for a SPCR analysis (the supported measurement levels for the variables involved is reported between brackets):
 #' \itemize{
 #'   \item \code{LLS} (any dv with any iv)
@@ -69,7 +77,7 @@
 cv_gspcr <- function(
   dv, 
   ivs, 
-  fam = "gaussian",
+  fam = c("gaussian", "binomial", "poisson", "baseline", "cumulative")[1],
   thrs = c("LLS", "PR2", "normalized")[1],
   nthrs = 10,
   npcs_range = 1:3,

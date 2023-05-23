@@ -1,9 +1,11 @@
-#' Compute normalized association measures
+#' Compute normalized association measure
 #'
 #' A function to compute the normalized bivariate association measures between a \code{dv} and a collection of \code{ivs}.
 #'
-#' @param dv Vector of dependent variable values
-#' @param ivs Matrix of predictor values
+#' @param dv Vector of numeric dependent variable values
+#' @param ivs Matrix of numeric predictor values
+#' @param scale_dv Logical value defining whether `dv` should be scaled
+#' @param scale_ivs Logical value defining whether `ivs` should be scaled
 #' @param s0_perc Factor for the denominator of association statistic, between 0 and 1: the percentile of standard deviation values added to the denominator. Default is 0.5 (the median)
 #' 
 #' @details
@@ -23,7 +25,16 @@
 #' s0_perc <- 0
 #' 
 #' @export
-cp_thrs_NOR <- function(dv, ivs, s0_perc = NULL) {
+cp_thrs_NOR <- function(dv, ivs, s0_perc = NULL, scale_dv = TRUE, scale_ivs = TRUE) {
+
+    # Pre-process data if requested
+    if(scale_dv == TRUE){
+        dv  <- scale(dv)
+    }
+    if (scale_ivs == TRUE) {
+        ivs <- scale(ivs)
+    }
+
     # Set objects to the required dimension
     x <- t(as.matrix(ivs))
     y <- dv

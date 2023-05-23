@@ -14,6 +14,7 @@
 #' @param min_features Minimum number of features that can be selected
 #' @param oneSE Whether the results with the 1SE rule should be stored
 #' @details
+#' The variables in `ivs` do not need to be standardized beforehand as the function handles scaling appropriately based on the measurement levels of the data.
 #' Here we list the supported association-threshold measures to determine the active set of predictors for a SPCR analysis (the supported measurement levels for the variables involved is reported between brackets):
 #' \itemize{
 #'   \item \code{LLS} (any dv with any iv)

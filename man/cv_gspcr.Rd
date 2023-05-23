@@ -48,6 +48,7 @@ Returns an object of class \code{gspcr}.
 Use K-fold cross-validation to decide on the number of principal components and the threshold value for GSPCR.
 }
 \details{
+The variables in \code{ivs} do not need to be standardized beforehand as the function handles scaling appropriately based on the measurement levels of the data.
 Here we list the supported association-threshold measures to determine the active set of predictors for a SPCR analysis (the supported measurement levels for the variables involved is reported between brackets):
 \itemize{
 \item \code{LLS} (any dv with any iv)

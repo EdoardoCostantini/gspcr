@@ -29,31 +29,41 @@ testthat::expect_true(all.equal(names(thrs_NOR), colnames(mtcars[, -1])))
 thrs_NOR <- cp_thrs_NOR(
     dv = GSPCRexdata$y$cont * 10 + 10,
     ivs = GSPCRexdata$X$cont,
+    scale_dv = FALSE,
+    scale_ivs = FALSE,
     s0_perc = NULL
 )
 
 # Scaled X
 thrs_NOR_scaled_X <- cp_thrs_NOR(
     dv = GSPCRexdata$y$cont * 10 + 10,
-    ivs = scale(GSPCRexdata$X$cont),
+    ivs = GSPCRexdata$X$cont,
+    scale_dv = FALSE,
+    scale_ivs = TRUE,
     s0_perc = NULL
 )
 
 # Scaled y
 thrs_NOR_sacled_y <- cp_thrs_NOR(
-    dv = scale(GSPCRexdata$y$cont),
+    dv = GSPCRexdata$y$cont,
     ivs = GSPCRexdata$X$cont,
+    scale_dv = TRUE,
+    scale_ivs = FALSE,
     s0_perc = NULL
 )
 
 # Scaled y and X
 thrs_NOR_scaled_X_sacled_y <- cp_thrs_NOR(
-    dv = scale(GSPCRexdata$y$cont),
-    ivs = scale(GSPCRexdata$X$cont),
+    dv = GSPCRexdata$y$cont,
+    ivs = GSPCRexdata$X$cont,
+    scale_dv = TRUE,
+    scale_ivs = TRUE,
     s0_perc = NULL
 )
 
-# Perform tests
+# Scaling of X matters
 testthat::expect_false(all((thrs_NOR - thrs_NOR_scaled_X) < tol))
-testthat::expect_true(all((thrs_NOR - thrs_NOR_sacled_y) < tol))
 testthat::expect_false(all((thrs_NOR - thrs_NOR_scaled_X_sacled_y) < tol))
+
+# Scaling of y doe not matter!
+testthat::expect_true(all((thrs_NOR - thrs_NOR_sacled_y) < tol))

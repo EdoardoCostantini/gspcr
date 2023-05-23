@@ -99,7 +99,7 @@ Run `superpc` version
 ```{r }
 # Define a train data
 data.train <- list(
-  x = t(as.matrix(X)),
+  x = t(as.matrix(scale(X))),
   y = y,
   featurenames = colnames(X)
 )

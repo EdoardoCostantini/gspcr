@@ -2,16 +2,20 @@
 % Please edit documentation in R/cp_thrs_NOR.R
 \name{cp_thrs_NOR}
 \alias{cp_thrs_NOR}
-\title{Compute normalized association measures}
+\title{Compute normalized association measure}
 \usage{
-cp_thrs_NOR(dv, ivs, s0_perc = NULL)
+cp_thrs_NOR(dv, ivs, s0_perc = NULL, scale_dv = TRUE, scale_ivs = TRUE)
 }
 \arguments{
-\item{dv}{Vector of dependent variable values}
+\item{dv}{Vector of numeric dependent variable values}
 
-\item{ivs}{Matrix of predictor values}
+\item{ivs}{Matrix of numeric predictor values}
 
 \item{s0_perc}{Factor for the denominator of association statistic, between 0 and 1: the percentile of standard deviation values added to the denominator. Default is 0.5 (the median)}
+
+\item{scale_dv}{Logical value defining whether \code{dv} should be scaled}
+
+\item{scale_ivs}{Logical value defining whether \code{ivs} should be scaled}
 }
 \value{
 A vector of bivariate association measures between \code{dv} and \code{ivs}.

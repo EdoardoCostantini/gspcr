@@ -38,8 +38,43 @@ thrs_bin_PR2 <- cp_thrs_PR2(
 # Returns a numeric vector
 testthat::expect_true(is.numeric(thrs_bin_PR2))
 
-# Negative values
+# Values between 0 and 1
 testthat::expect_true(all(thrs_PR2 >= 0 & thrs_PR2 <= 1))
 
 # The vector has the names of the predictors
 testthat::expect_true(all.equal(names(thrs_bin_PR2), colnames(mtcars[, -9])))
+
+# Test: results independent of input scaling -----------------------------------
+
+# Unscaled inputs
+thrs_PR2 <- cp_thrs_PR2(
+    dv = GSPCRexdata$y$cont * 10 + 10,
+    ivs = GSPCRexdata$X$cont,
+    fam = "gaussian"
+)
+
+# Scaled X
+thrs_PR2_scaled_X <- cp_thrs_PR2(
+    dv = GSPCRexdata$y$cont * 10 + 10,
+    ivs = scale(GSPCRexdata$X$cont),
+    fam = "gaussian"
+)
+
+# Scaled y
+thrs_PR2_sacled_y <- cp_thrs_PR2(
+    dv = scale(GSPCRexdata$y$cont),
+    ivs = GSPCRexdata$X$cont,
+    fam = "gaussian"
+)
+
+# Scaled y and X
+thrs_PR2_scaled_X_sacled_y <- cp_thrs_PR2(
+    dv = scale(GSPCRexdata$y$cont),
+    ivs = scale(GSPCRexdata$X$cont),
+    fam = "gaussian"
+)
+
+# Perform tests
+testthat::expect_true(all((thrs_PR2 - thrs_PR2_scaled_X) < tol))
+testthat::expect_true(all((thrs_PR2 - thrs_PR2_sacled_y) < tol))
+testthat::expect_true(all((thrs_PR2 - thrs_PR2_scaled_X_sacled_y) < tol))

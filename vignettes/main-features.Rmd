@@ -53,7 +53,7 @@ Prepare data
 
 ```{r}
 # Comment goal of code
-X <- GSPCRexdata$X
+X <- GSPCRexdata$X$cont
 y <- GSPCRexdata$y$cont
 
 ```
@@ -99,7 +99,7 @@ Run `superpc` version
 ```{r }
 # Define a train data
 data.train <- list(
-  x = t(as.matrix(X)),
+  x = t(as.matrix(scale(X))),
   y = y,
   featurenames = colnames(X)
 )
@@ -368,6 +368,60 @@ colnames(res_1se) <- fit_measure_vec
 
 # Print rounded results
 round(t(res_1se), 3)
+
+```
+
+# Alternatives to CV
+
+To speed up the model-fitting process, it can be a good idea to find model-building strategies that are less time-consuming than CV.
+You can use the BIC fit measure without CV to select the appropriate threshold value and the number of components.
+To do so, you can specify the number of folds to 0 and the fit measure to BIC or AIC.
+
+```{r }
+#| label: fig-no-cv
+#| fig-cap: "Solution paths obtained without using cross-validation."
+#| fig-width: 9
+#| fig-height: 3
+
+# Define vector of measures to be used
+fit_measure_vec <- c("LRT", "AIC", "BIC")
+
+# Train the GSPCR model with the different values
+out_fit_meas <- lapply(fit_measure_vec, function(i) {
+    cv_gspcr(
+        dv = y,
+        ivs = X,
+        fam = "gaussian",
+        nthrs = 20,
+        npcs_range = c(1, 2, 4, 8, 16),
+        K = 1,
+        fit_measure = i,
+        thrs = "normalized",
+        min_features = 1,
+        max_features = ncol(X),
+        oneSE = TRUE
+    )
+})
+
+# Plot them
+plots <- lapply(seq_along(fit_measure_vec), function(i) {
+    # Reverse y?
+    rev <- grepl("MSE|AIC|BIC", fit_measure_vec[i])
+
+    # Make plots
+    plot(
+        x = out_fit_meas[[i]],
+        y = fit_measure_vec[[i]],
+        labels = TRUE,
+        y_reverse = rev,
+        errorBars = FALSE,
+        discretize = FALSE,
+        print = FALSE
+    )
+})
+
+# Patchwork ggplots
+plots[[1]] + plots[[2]] + plots[[3]]
 
 ```
 

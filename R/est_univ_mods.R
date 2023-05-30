@@ -15,7 +15,6 @@
 #'
 #' @export
 est_univ_mods <- function(dv, ivs, fam) {
-
     # Check which predictors are numeric
     numeric_preds <- apply(ivs, 2, is.numeric)
 
@@ -23,7 +22,7 @@ est_univ_mods <- function(dv, ivs, fam) {
     ivs[, numeric_preds] <- scale(ivs[, numeric_preds])
 
     # Standardize the dependent variable
-    if(fam == "gaussian"){
+    if (fam == "gaussian") {
         dv <- scale(dv)
     }
 
@@ -39,12 +38,16 @@ est_univ_mods <- function(dv, ivs, fam) {
     }
     if (fam == "baseline") {
         glm0 <- nnet::multinom(
-            formula = dv ~ 1
+            formula = dv ~ 1,
+            trace = FALSE
         )
 
         # Fit univariate models
         glm.fits <- lapply(1:ncol(ivs), function(j) {
-            nnet::multinom(dv ~ ivs[, j])
+            nnet::multinom(
+                formula = dv ~ ivs[, j],
+                trace = FALSE
+            )
         })
     }
     if (fam == "cumulative") {
@@ -78,5 +81,4 @@ est_univ_mods <- function(dv, ivs, fam) {
         lls = lls,
         coefs = coefs
     )
-
 }

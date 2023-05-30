@@ -42,7 +42,12 @@ cv_gspcr(
 \item{oneSE}{Whether the results with the 1SE rule should be stored}
 }
 \value{
-Returns an object of class \code{gspcr}.
+Returns an object of class \code{gspcr}, a list containing:
+\itemize{
+\item \code{sol_table} - a data.frame reporting the threshold number, value and the number of PCs identified by the procedure
+\item ...
+\item \code{gspcr_call} - the function call
+}
 }
 \description{
 Use K-fold cross-validation to decide on the number of principal components and the threshold value for GSPCR.

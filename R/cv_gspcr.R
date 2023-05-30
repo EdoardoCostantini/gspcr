@@ -38,7 +38,13 @@
 #'   \item \code{PR2} - (any dv)
 #'   \item \code{MSE} - (continuous dv)
 #' }
-#' @return Returns an object of class \code{gspcr}.
+#' @return Returns an object of class \code{gspcr}, which is a list containing:
+#' \itemize{
+#'   \item `sol_table` - a data.frame reporting the threshold number, value and the number of PCs identified by the procedure
+#'   \item ...
+#'   \item `gspcr_call` - the function call
+#' }
+#' 
 #' @author Edoardo Costantini, 2023
 #' @references
 #' 
@@ -232,8 +238,25 @@ cv_gspcr <- function(
     fit_measure = fit_measure
   )
 
+  # Make a solution table
+  sol_table <- data.frame(
+    thr_value = c(
+      standard = thrs_values[cv_sol$default[2]],
+      oneSE = thrs_values[cv_sol$oneSE[2]]
+    ),
+    thr_number = c(
+      standard = as.numeric(cv_sol$default[2]),
+      oneSE = as.numeric(cv_sol$oneSE[2])
+    ),
+    Q = c(
+      standard = as.numeric(cv_sol$default[1]),
+      oneSE = as.numeric(cv_sol$oneSE[1])
+    )
+  )
+
   # Return
   out <- list(
+    sol_table   = sol_table,
     thr         = thrs_values,
     thr_cv      = thrs_values[cv_sol$default[2]],
     thr_cv_1se  = thrs_values[cv_sol$oneSE[2]],

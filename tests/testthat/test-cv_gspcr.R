@@ -2,7 +2,7 @@
 # Objective: Test the cv_gspcr function
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
-# Modified:  2023-04-18
+# Modified:  2023-05-30
 # Notes: 
 
 # Test: Continuous outcome -----------------------------------------------------
@@ -23,7 +23,7 @@ out_cont <- cv_gspcr(
 )
 
 # Test the length of the output is as expected
-testthat::expect_equal(length(out_cont), 10)
+testthat::expect_equal(length(out_cont), 11)
 
 # Test the class of the output
 testthat::expect_equal(class(out_cont), c("gspcrout", "list"))
@@ -166,7 +166,7 @@ out_traget_npcs <- cv_gspcr(
 )
 
 # Test the length of the output is as expected
-testthat::expect_equal(length(out_traget_npcs), 10)
+testthat::expect_equal(length(out_traget_npcs), 11)
 
 # Test the class of the output
 testthat::expect_equal(class(out_traget_npcs), c("gspcrout", "list"))
@@ -189,7 +189,7 @@ out_traget_npcs <- cv_gspcr(
 )
 
 # Test the length of the output is as expected
-testthat::expect_equal(length(out_traget_npcs), 10)
+testthat::expect_equal(length(out_traget_npcs), 11)
 
 # Test the class of the output
 testthat::expect_equal(class(out_traget_npcs), c("gspcrout", "list"))
@@ -212,7 +212,7 @@ out_X_mix <- cv_gspcr(
 )
 
 # Test the length of the output is as expected
-testthat::expect_equal(length(out_X_mix), 10)
+testthat::expect_equal(length(out_X_mix), 11)
 
 # Test the class of the output
 testthat::expect_equal(class(out_X_mix), c("gspcrout", "list"))

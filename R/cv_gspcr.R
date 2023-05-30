@@ -191,110 +191,30 @@ cv_gspcr <- function(
       if (sum(aset) > 1) {
 
         # Check how many components are available (effective number)
-        q_max_eff <- min(sum(aset), max(npcs_range))
-        q_min_eff <- min(sum(aset), min(npcs_range))
+        Q_max_eff <- min(sum(aset), max(npcs_range))
+        Q_min_eff <- min(sum(aset), min(npcs_range))
 
         # Replace max and min in range
-        npcs_range_eff <- npcs_range[npcs_range <= q_max_eff & npcs_range >= q_min_eff]
+        npcs_range_eff <- npcs_range[npcs_range <= Q_max_eff & npcs_range >= Q_min_eff]
 
-        if(all(sapply(ivs, is.numeric))){
-
-          # Scale Xs
-          Xtr_thr <- scale(Xtr[, aset], center = TRUE, scale = TRUE)
-          Xva_thr <- scale(Xva[, aset],
-            center = attributes(Xtr_thr)$`scaled:center`,
-            scale = attributes(Xtr_thr)$`scaled:scale`
-          )
-
-          # Perform PCA on the training data
-          svd_Xtr <- svd(Xtr_thr)
-
-          # Project training and validation data on the PCs
-          PC_tr <- Xtr_thr %*% svd_Xtr$v
-          PC_va <- Xva_thr %*% svd_Xtr$v
-
-        } else {
-
-          # Perform PCAmix
-          pca_mix_out <- pca_mix(
-            X_tr = Xtr[, aset],
-            X_va = Xva[, aset],
-            npcs = q_max_eff
-          )
-
-          # Extract objects of interest
-          PC_tr <- pca_mix_out$PC_tr
-          PC_va <- pca_mix_out$PC_va
-
-        }
-
-        # Select the available PC scores
-        PC_tr_eff <- PC_tr[, 1:q_max_eff, drop = FALSE]
-        PC_va_eff <- PC_va[, 1:q_max_eff, drop = FALSE]
+        # Compute PC scores
+        pc_scores <- cp_pc_scores(
+          X_train = Xtr[, aset, drop = FALSE],
+          X_valid = Xva[, aset, drop = FALSE],
+          Q = Q_max_eff
+        )
 
         # Compute the fit measures for the possible additive PCRs
-        for (Q in npcs_range_eff) {
-          # Q <- 1
-
-          # Estimate new data log-likelihoods under the model of interest
-          mod_out <- LL_newdata(
+        for (q in npcs_range_eff) {
+          # q <- 1
+          map_kfcv[q, thr, k] <- cp_validation_fit(
             y_train = ytr,
             y_valid = yva,
-            X_train = PC_tr_eff[, 1:Q, drop = FALSE],
-            X_valid = PC_va_eff[, 1:Q, drop = FALSE],
-            fam = fam
+            X_train = pc_scores$PC_tr[, 1:q, drop = FALSE],
+            X_valid = pc_scores$PC_va[, 1:q, drop = FALSE],
+            fam = fam,
+            fit_measure = fit_measure
           )
-
-          # Estimate new data log-likelihoods under the null model
-          null_out <- LL_newdata(
-            y_train = ytr,
-            y_valid = yva,
-            X_train = 1,
-            X_valid = 1,
-            fam = fam
-          )
-
-          # Extract desired statistic
-          if (fit_measure == "F") {
-            # Compute F statistic with your function
-            map_kfcv[Q, thr, k] <- cp_F(
-              y = yva,
-              y_hat_restricted = null_out$yhat_va,
-              y_hat_full = mod_out$yhat_va,
-              n = length(yva),
-              p_restricted = 0,
-              p_full = Q
-            )
-          }
-          if (fit_measure == "LRT") {
-            map_kfcv[Q, thr, k] <- cp_LRT(
-              ll_restricted = null_out$LL,
-              ll_full = mod_out$LL
-            )
-          }
-          if (fit_measure == "AIC") {
-            map_kfcv[Q, thr, k] <- cp_AIC(
-              ll = mod_out$LL,
-              k = Q + 1 + 1
-            )
-          }
-          if (fit_measure == "BIC") {
-            map_kfcv[Q, thr, k] <- cp_BIC(
-              ll = mod_out$LL,
-              n = length(yva),
-              k = Q + 2
-            )
-          }
-          if (fit_measure == "PR2") {
-            map_kfcv[Q, thr, k] <- cp_gR2(
-              ll_n = null_out$LL,
-              ll_f = mod_out$LL,
-              n = length(yva)
-            )
-          }
-          if (fit_measure == "MSE") {
-            map_kfcv[Q, thr, k] <- MLmetrics::MSE(y_pred = mod_out$yhat_va, y_true = yva)
-          }
         }
       }
     }

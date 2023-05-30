@@ -168,12 +168,18 @@ cv_gspcr <- function(
   # Loop over K folds
   for (k in 1:K) {
     # k <- 1
-
-    # Create fold data:
-    Xtr <- ivs[part != k, , drop = FALSE]
-    Xva <- ivs[part == k, , drop = FALSE]
-    ytr <- dv[part != k]
-    yva <- dv[part == k]
+    if(length(unique(part)) != 1){
+      # Create fold data:
+      Xtr <- ivs[part != k, , drop = FALSE]
+      Xva <- ivs[part == k, , drop = FALSE]
+      ytr <- dv[part != k]
+      yva <- dv[part == k]      
+    } else {
+      Xtr <- ivs
+      Xva <- ivs
+      ytr <- dv
+      yva <- dv
+    }
 
     # Loop over threshold values
     for (thr in 1:nthrs_eff) {

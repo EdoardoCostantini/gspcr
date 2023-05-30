@@ -235,66 +235,14 @@ cv_gspcr <- function(
         # Compute the fit measures for the possible additive PCRs
         for (Q in npcs_range_eff) {
           # Q <- 1
-
-          # Estimate new data log-likelihoods under the model of interest
-          mod_out <- LL_newdata(
+          map_kfcv[Q, thr, k] <- cp_validation_fit(
             y_train = ytr,
             y_valid = yva,
             X_train = PC_tr_eff[, 1:Q, drop = FALSE],
             X_valid = PC_va_eff[, 1:Q, drop = FALSE],
-            fam = fam
+            fam = fam,
+            fit_measure = fit_measure
           )
-
-          # Estimate new data log-likelihoods under the null model
-          null_out <- LL_newdata(
-            y_train = ytr,
-            y_valid = yva,
-            X_train = 1,
-            X_valid = 1,
-            fam = fam
-          )
-
-          # Extract desired statistic
-          if (fit_measure == "F") {
-            # Compute F statistic with your function
-            map_kfcv[Q, thr, k] <- cp_F(
-              y = yva,
-              y_hat_restricted = null_out$yhat_va,
-              y_hat_full = mod_out$yhat_va,
-              n = length(yva),
-              p_restricted = 0,
-              p_full = Q
-            )
-          }
-          if (fit_measure == "LRT") {
-            map_kfcv[Q, thr, k] <- cp_LRT(
-              ll_restricted = null_out$LL,
-              ll_full = mod_out$LL
-            )
-          }
-          if (fit_measure == "AIC") {
-            map_kfcv[Q, thr, k] <- cp_AIC(
-              ll = mod_out$LL,
-              k = Q + 1 + 1
-            )
-          }
-          if (fit_measure == "BIC") {
-            map_kfcv[Q, thr, k] <- cp_BIC(
-              ll = mod_out$LL,
-              n = length(yva),
-              k = Q + 2
-            )
-          }
-          if (fit_measure == "PR2") {
-            map_kfcv[Q, thr, k] <- cp_gR2(
-              ll_n = null_out$LL,
-              ll_f = mod_out$LL,
-              n = length(yva)
-            )
-          }
-          if (fit_measure == "MSE") {
-            map_kfcv[Q, thr, k] <- MLmetrics::MSE(y_pred = mod_out$yhat_va, y_true = yva)
-          }
         }
       }
     }

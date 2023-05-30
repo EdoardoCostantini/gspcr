@@ -355,11 +355,7 @@ The results for all fit measures except `F` struggle with accounting for measure
 res_1se <- sapply(
     1:length(out_fit_meas),
     function(meth) {
-        c(
-            thr_value = out_fit_meas[[meth]]$thr_cv_1se,
-            thr_number = which(out_fit_meas[[meth]]$thr_cv_1se == out_fit_meas[[meth]]$thr),
-            Q = out_fit_meas[[meth]]$Q_cv_1se
-        )
+        as.numeric(out_fit_meas[[meth]]$sol_table["oneSE", ])
     }
 )
 

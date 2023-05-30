@@ -2,8 +2,11 @@
 # Objective: Test cp_thrh_PR2
 # Author:    Edoardo Costantini
 # Created:   2023-04-17
-# Modified:  2023-04-17
+# Modified:  2023-05-30
 # Notes:
+
+# Define tolerance
+tol <- 1e-5
 
 # Test: function works on continuous outcomes ----------------------------------
 

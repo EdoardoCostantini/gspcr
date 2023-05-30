@@ -191,55 +191,27 @@ cv_gspcr <- function(
       if (sum(aset) > 1) {
 
         # Check how many components are available (effective number)
-        q_max_eff <- min(sum(aset), max(npcs_range))
-        q_min_eff <- min(sum(aset), min(npcs_range))
+        Q_max_eff <- min(sum(aset), max(npcs_range))
+        Q_min_eff <- min(sum(aset), min(npcs_range))
 
         # Replace max and min in range
-        npcs_range_eff <- npcs_range[npcs_range <= q_max_eff & npcs_range >= q_min_eff]
+        npcs_range_eff <- npcs_range[npcs_range <= Q_max_eff & npcs_range >= Q_min_eff]
 
-        if(all(sapply(ivs, is.numeric))){
-
-          # Scale Xs
-          Xtr_thr <- scale(Xtr[, aset], center = TRUE, scale = TRUE)
-          Xva_thr <- scale(Xva[, aset],
-            center = attributes(Xtr_thr)$`scaled:center`,
-            scale = attributes(Xtr_thr)$`scaled:scale`
-          )
-
-          # Perform PCA on the training data
-          svd_Xtr <- svd(Xtr_thr)
-
-          # Project training and validation data on the PCs
-          PC_tr <- Xtr_thr %*% svd_Xtr$v
-          PC_va <- Xva_thr %*% svd_Xtr$v
-
-        } else {
-
-          # Perform PCAmix
-          pca_mix_out <- pca_mix(
-            X_tr = Xtr[, aset],
-            X_va = Xva[, aset],
-            npcs = q_max_eff
-          )
-
-          # Extract objects of interest
-          PC_tr <- pca_mix_out$PC_tr
-          PC_va <- pca_mix_out$PC_va
-
-        }
-
-        # Select the available PC scores
-        PC_tr_eff <- PC_tr[, 1:q_max_eff, drop = FALSE]
-        PC_va_eff <- PC_va[, 1:q_max_eff, drop = FALSE]
+        # Compute PC scores
+        pc_scores <- cp_pc_scores(
+          X_train = Xtr[, aset, drop = FALSE],
+          X_valid = Xva[, aset, drop = FALSE],
+          Q = Q_max_eff
+        )
 
         # Compute the fit measures for the possible additive PCRs
-        for (Q in npcs_range_eff) {
-          # Q <- 1
-          map_kfcv[Q, thr, k] <- cp_validation_fit(
+        for (q in npcs_range_eff) {
+          # q <- 1
+          map_kfcv[q, thr, k] <- cp_validation_fit(
             y_train = ytr,
             y_valid = yva,
-            X_train = PC_tr_eff[, 1:Q, drop = FALSE],
-            X_valid = PC_va_eff[, 1:Q, drop = FALSE],
+            X_train = pc_scores$PC_tr[, 1:q, drop = FALSE],
+            X_valid = pc_scores$PC_va[, 1:q, drop = FALSE],
             fam = fam,
             fit_measure = fit_measure
           )

@@ -425,6 +425,18 @@ plots[[1]] + plots[[2]] + plots[[3]]
 
 ```
 
+You can also look at the solutions:
+
+```{r }
+# Put solutions together
+rbind(
+    LRT = out_fit_meas[[1]]$sol_table["standard", ],
+    AIC = out_fit_meas[[2]]$sol_table["standard", ],
+    BIC = out_fit_meas[[3]]$sol_table["standard", ]
+)
+
+```
+
 # TL;DR, just give me the code!
 
 ```{r TLDR, ref.label = knitr::all_labels()[!knitr::all_labels() %in% c("global_options", "klippy")], echo = TRUE, eval = FALSE}

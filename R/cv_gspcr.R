@@ -38,7 +38,13 @@
 #'   \item \code{PR2} - (any dv)
 #'   \item \code{MSE} - (continuous dv)
 #' }
-#' @return Returns an object of class \code{gspcr}.
+#' @return Returns an object of class \code{gspcr}, which is a list containing:
+#' \itemize{
+#'   \item `sol_table` - a data.frame reporting the threshold number, value and the number of PCs identified by the procedure
+#'   \item ...
+#'   \item `gspcr_call` - the function call
+#' }
+#' 
 #' @author Edoardo Costantini, 2023
 #' @references
 #' 

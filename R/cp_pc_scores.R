@@ -20,8 +20,13 @@ cp_pc_scores <- function(X_train, X_valid, Q) {
     # If all variables are numeric, use regular PCA
     if (all(sapply(X_train, is.numeric))) {
         # Scale Xs
-        X_train_thr <- scale(X_train, center = TRUE, scale = TRUE)
-        X_valid_thr <- scale(X_valid,
+        X_train_thr <- scale(
+            x = X_train,
+            center = TRUE,
+            scale = TRUE
+        )
+        X_valid_thr <- scale(
+            x = X_valid,
             center = attributes(X_train_thr)$`scaled:center`,
             scale = attributes(X_train_thr)$`scaled:scale`
         )

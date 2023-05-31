@@ -9,8 +9,8 @@ cv_gspcr(
   ivs,
   fam = c("gaussian", "binomial", "poisson", "baseline", "cumulative")[1],
   thrs = c("LLS", "PR2", "normalized")[1],
-  nthrs = 10,
-  npcs_range = 1:3,
+  nthrs = 10L,
+  npcs_range = 1L:3L,
   K = 5,
   fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
   max_features = ncol(ivs),
@@ -27,9 +27,9 @@ cv_gspcr(
 
 \item{thrs}{Type of threshold to be used}
 
-\item{nthrs}{Number of threshold values to be used}
+\item{nthrs}{integer atomic vector of length 1 defining the number of threshold values to be used}
 
-\item{npcs_range}{range of number of principal components to be used}
+\item{npcs_range}{integer atomic vector defining the numbers of principal components to be used}
 
 \item{K}{Number of folds for the K-fold cross-validation procedure}
 
@@ -42,7 +42,7 @@ cv_gspcr(
 \item{oneSE}{Whether the results with the 1SE rule should be stored}
 }
 \value{
-Returns an object of class \code{gspcr}, a list containing:
+Returns an object of class \code{gspcr}, which is a list containing:
 \itemize{
 \item \code{sol_table} - a data.frame reporting the threshold number, value and the number of PCs identified by the procedure
 \item ...

@@ -26,9 +26,6 @@ Given training and validation datasets, this function returns the log-likelihood
 \details{
 This function trains a GLM regressing \code{y_train} on \code{X_train} using as link function what is specified in \code{fam}. Then, it computes the predictions for the validation data based on the trained model on the scale of the linear predictors (e.g., logit). The likelihood of the validation under the model is returned.
 }
-\references{
-Such, S. (2006). Such and such. Journal such and such, 101(473), 119-137.
-}
 \author{
 Edoardo Costantini, 2023
 }

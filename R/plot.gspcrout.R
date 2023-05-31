@@ -36,8 +36,8 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
     # Make scores from wide to long
     x.long <- reshape2::melt(
         data = x$scor,
-        value.name = x$gspcr_call$fit_measure,
-        varnames = c("npcs", x$gspcr_call$thrs)
+        value.name = "fit_measure",
+        varnames = c("npcs", "threshold")
     )
 
     # Make npcs a factor
@@ -45,8 +45,8 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
 
     # Make the X-axis into factor if required
     if (discretize == TRUE) {
-        x.long[, x$gspcr_call$thrs] <- factor(
-            x = round(x.long[, x$gspcr_call$thrs], 3),
+        x.long$threshold <- factor(
+            x = round(x.long$threshold, 3),
             levels = round(x$thr, 3)
         )
     }
@@ -59,13 +59,17 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
     store_plot <- x.long %>%
         ggplot2::ggplot(
             ggplot2::aes(
-                x = .data[[x$gspcr_call$thrs]],
-                y = .data[[x$gspcr_call$fit_measure]],
+                x = .data[["threshold"]],
+                y = .data[["fit_measure"]],
                 group = .data$npcs,
                 label = .data$npcs
             )
         ) +
         ggplot2::geom_line(colour = "gray") +
+        ggplot2::labs(
+            y = paste0("Fit measure: ", x$gspcr_call$fit_measure),
+            x = paste0("Association measure: ", x$gspcr_call$thr)
+        ) +
         ggplot2::theme_bw()
 
     # Add error bars if required

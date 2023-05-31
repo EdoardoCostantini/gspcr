@@ -28,7 +28,7 @@ check_fam <- function(fam) {
 
 check_thrs <- function(thrs) {
     # Is the requested thrs in the list of possible types?
-    is_thrs_in <- thrs %in% c("LLS", "PR2", "normalized")[1]
+    is_thrs_in <- thrs %in% c("LLS", "PR2", "normalized")
 
     # Throw error
     if (!is_thrs_in) {
@@ -82,7 +82,7 @@ check_npcs_range <- function(npcs_range, ivs) {
         stop(
             paste0(
                 "argument 'npcs_range' is misspecified. One or more values in '",
-                nthrs,
+                npcs_range,
                 "' are not positive."
             ),
             call. = FALSE

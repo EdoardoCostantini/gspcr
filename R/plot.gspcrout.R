@@ -67,8 +67,8 @@ plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discret
         ) +
         ggplot2::geom_line(colour = "gray") +
         ggplot2::labs(
-            y = paste0("Fit measure: ", x$gspcr_call$fit_measure),
-            x = paste0("Association measure: ", x$gspcr_call$thr)
+            y = x$gspcr_call$fit_measure,
+            x = x$gspcr_call$thr
         ) +
         ggplot2::theme_bw()
 

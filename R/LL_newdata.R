@@ -12,9 +12,6 @@
 #' 
 #' @return A list of objects.
 #' @author Edoardo Costantini, 2023
-#' @references
-#'
-#' Such, S. (2006). Such and such. Journal such and such, 101(473), 119-137.
 #'
 #' @export
 LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
@@ -22,8 +19,8 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
   ## Example inputs
   # y_train = as.matrix(mtcars[1:20, 1])
   # y_valid = as.matrix(mtcars[-c(1:20), 1])
-  # X_train = 1
-  # X_valid = 1
+  # X_train = as.matrix(mtcars[1:20, -1])
+  # X_valid = as.matrix(mtcars[-c(1:20), -1])
   # fam = "gaussian"
 
   ## Body

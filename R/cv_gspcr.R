@@ -6,8 +6,8 @@
 #' @param ivs Matrix of predictor values
 #' @param fam GLM framework for the dv
 #' @param thrs Type of threshold to be used
-#' @param nthrs Number of threshold values to be used
-#' @param npcs_range range of number of principal components to be used
+#' @param nthrs integer atomic vector of length 1 defining the number of threshold values to be used
+#' @param npcs_range integer atomic vector defining the numbers of principal components to be used
 #' @param K Number of folds for the K-fold cross-validation procedure
 #' @param fit_measure Type of measure to cross-validate.
 #' @param max_features Maximum number of features that can be selected
@@ -85,14 +85,24 @@ cv_gspcr <- function(
   ivs, 
   fam = c("gaussian", "binomial", "poisson", "baseline", "cumulative")[1],
   thrs = c("LLS", "PR2", "normalized")[1],
-  nthrs = 10,
-  npcs_range = 1:3,
+  nthrs = 10L,
+  npcs_range = 1L:3L,
   K = 5,
   fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
   max_features = ncol(ivs),
   min_features = 5,
   oneSE = TRUE
   ) {
+
+  # Perform input checks
+  check_fam(fam)
+  check_thrs(thrs)
+  check_nthrs(nthrs)
+  check_npcs_range(npcs_range, ivs)
+  check_K(K)
+  check_fit_measure(fit_measure)
+  check_max_features(max_features)
+  check_min_features(min_features)
 
   # Save the call
   gspcr_call <- list(

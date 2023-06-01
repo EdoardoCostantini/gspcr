@@ -2,18 +2,18 @@
 #'
 #' Computes the F statistic comparing two nested models.
 #'
-#' @param y the observed values on the dependent variable
-#' @param y_hat_restricted predicted values on \code{y} based on the restricted model
-#' @param y_hat_full predicted values on \code{y} based on the full model
-#' @param n sample size used to train the models
-#' @param p_restricted number of predictors involved in training the restricted model
-#' @param p_full number of predictors involved in training the full model
+#' @param y numeric vector storing the observed values on the dependent variable
+#' @param y_hat_restricted numeric vector storing the predicted values on \code{y} based on the restricted model
+#' @param y_hat_full numeric vector storing the predicted values on \code{y} based on the full model
+#' @param n numeric vector of length 1 storing the sample size used to train the models
+#' @param p_restricted numeric vector of length 1 storing the number of predictors involved in training the restricted model
+#' @param p_full numeric vector of length 1 storing the number of predictors involved in training the full model
 #' @details
 #' Note that:
 #' - The full model is always the model with more estimated parameters, the model with more predictor variables.
 #' - The restricted model is the model with fewer estimated parameters. 
 #' - The restricted model must be nested within the full model.
-#' @return F-statistic stored as a numeric unit vector of length 1.
+#' @return numeric vector of length 1 storing the F-statistic
 #' @author Edoardo Costantini, 2023
 #' @examples
 #' # Null vs full model

@@ -7,26 +7,39 @@
 cp_validation_fit(y_train, y_valid, X_train, X_valid, fam, fit_measure)
 }
 \arguments{
-\item{y_train}{Vector of DV values in the training dataset.}
+\item{y_train}{numeric vector or factor of dependent variable values from the training set}
 
-\item{y_valid}{Vector of DV values in the validation dataset.}
+\item{y_valid}{numeric vector or factor of dependent variable values from the validation set}
 
-\item{X_train}{Matrix of IV values in the training dataset. Can also be set to 1 to obtain the log-likelihood of the new data under the null model.}
+\item{X_train}{\eqn{n \times p} data.frame of independent variables (factors allowed) from the training set. Can also be set to 1 to obtain the log-likelihood of the new data under the null model.}
 
-\item{X_valid}{Matrix of IV values in the validation dataset. If \code{X_train} is set to 1 to obtain the log-likelihood of the new data under the null model, \code{X_valid} is ignored.}
+\item{X_valid}{\eqn{n \times p} data.frame of independent variables (factors allowed) from the validation set. If \code{X_train} is set to 1 to obtain the log-likelihood of the new data under the null model, \code{X_valid} is ignored.}
 
-\item{fam}{GLM framework for the dv.}
+\item{fam}{character vector of length 1 storing the description of the error distribution and link function to be used in the model (see \code{\link[=cv_gspcr]{cv_gspcr()}} for the list of possible options)}
 
-\item{fit_measure}{Character vector indicating which fit measure should be computed (F, LRT, AIC, BIC, PR2 ,MSE)}
+\item{fit_measure}{character vector indicating which fit measure should be computed (see \code{\link[=cv_gspcr]{cv_gspcr()}} for the list of possible options)}
 }
 \value{
-Description of function output
+numeric vector of length 1 storing the requested fit measure
 }
 \description{
 Given a training and validation data set, it computes a target fit measure on the validation data set.
 }
 \details{
 The validation data set can be specified to be the same as the training data set if desired.
+}
+\examples{
+# Example inputs
+y_train = as.matrix(mtcars[1:20, 1])
+y_valid = as.matrix(mtcars[-c(1:20), 1])
+X_train = as.matrix(mtcars[1:20, -1])
+X_valid = as.matrix(mtcars[-c(1:20), -1])
+fam = "gaussian"
+fit_measure = "BIC"
+
+# Use the function
+cp_validation_fit(y_train, y_valid, X_train, X_valid, fam, fit_measure)
+
 }
 \author{
 Edoardo Costantini, 2023

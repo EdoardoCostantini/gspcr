@@ -11,8 +11,8 @@
 #' A disjunctive table is a matrix representation of a multi-categorical variable. The dimensionality of the matrix is i times j, with i = number of observations, and j = number of categories. \code{y_{ij}} is equal to 1 if observation i responded with category j, and it is equal to 0 otherwise.
 #' The log-likelihood equation is based on Agresti (2002, p. 192).
 #' @return A list containing:
-#' - \code{ll}, an atomic vector of length 1 containing the log-likelihood value.
-#' - \code{sc}, a numeric matrix containing the systematic component for the input \code{x} and \code{mod}.
+#' - \code{ll} atomic vector of length 1 containing the log-likelihood value.
+#' - \code{sc} numeric matrix containing the systematic component for the input \code{x} and \code{mod}.
 #' @author Edoardo Costantini, 2023
 #' @references
 #'

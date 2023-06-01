@@ -7,18 +7,18 @@
 cp_thrs_NOR(dv, ivs, s0_perc = NULL, scale_dv = TRUE, scale_ivs = TRUE)
 }
 \arguments{
-\item{dv}{Vector of numeric dependent variable values}
+\item{dv}{numeric vector of dependent variable values}
 
-\item{ivs}{Matrix of numeric predictor values}
+\item{ivs}{\eqn{n \times p} matrix of numeric independent variables}
 
-\item{s0_perc}{Factor for the denominator of association statistic, between 0 and 1: the percentile of standard deviation values added to the denominator. Default is 0.5 (the median)}
+\item{s0_perc}{numeric vector of length 1 storing the factor for the denominator of association statistic (i.e., the percentile of standard deviation values added to the denominator, a value between 0 and 1.) The default is 0.5 (the median)}
 
-\item{scale_dv}{Logical value defining whether \code{dv} should be scaled}
+\item{scale_dv}{logical value defining whether \code{dv} should be scaled}
 
-\item{scale_ivs}{Logical value defining whether \code{ivs} should be scaled}
+\item{scale_ivs}{logical value defining whether \code{ivs} should be scaled}
 }
 \value{
-A vector of bivariate association measures between \code{dv} and \code{ivs}.
+numeric vector of bivariate association measures between \code{dv} and \code{ivs}. numeric vector of log-likelihood value from all of the univariate GLM models regressing \code{dv} on each column of \code{ivs}.
 }
 \description{
 A function to compute the normalized bivariate association measures between a \code{dv} and a collection of \code{ivs}.
@@ -31,6 +31,9 @@ This function is based on the function \code{cor.func} in the package \code{supe
 dv <- mtcars[, 1]
 ivs <- mtcars[, -1]
 s0_perc <- 0
+
+# Use the function
+cp_thrs_NOR(dv, ivs, s0_perc)
 
 }
 \references{

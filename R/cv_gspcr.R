@@ -2,48 +2,55 @@
 #'
 #' Use K-fold cross-validation to decide on the number of principal components and the threshold value for GSPCR.
 #'
-#' @param dv Vector of dependent variable values
-#' @param ivs Matrix of predictor values
-#' @param fam GLM framework for the dv
-#' @param thrs Type of threshold to be used
-#' @param nthrs integer atomic vector of length 1 defining the number of threshold values to be used
-#' @param npcs_range integer atomic vector defining the numbers of principal components to be used
-#' @param K Number of folds for the K-fold cross-validation procedure
-#' @param fit_measure Type of measure to cross-validate.
-#' @param max_features Maximum number of features that can be selected
-#' @param min_features Minimum number of features that can be selected
-#' @param oneSE Whether the results with the 1SE rule should be stored
+#' @param dv numeric vector or factor of dependent variable values
+#' @param ivs \eqn{n \times p} data.frame of independent variables (factors allowed)
+#' @param fam character vector of length 1 storing the description of the error distribution and link function to be used in the model
+#' @param thrs character vector of length 1 storing the type of threshold to be used (see below for available options)
+#' @param nthrs numeric vector of length 1 storing the number of threshold values to be used
+#' @param npcs_range numeric vector defining the numbers of principal components to be used
+#' @param K numeric vector of length 1 storing the number of folds for the K-fold cross-validation procedure
+#' @param fit_measure character vector of length 1 indicating the type of fit measure to be used in the cross-validation procedure
+#' @param max_features numeric vector of length 1 indicating the maximum number of features that can be selected
+#' @param min_features numeric vector of length 1 indicating the minimum number of features that should be selected
+#' @param oneSE logical value indicating whether the results with the 1se rule should be saved
 #' @details
-#' The variables in `ivs` do not need to be standardized beforehand as the function handles scaling appropriately based on the measurement levels of the data.
-#' The `fam` can be one of the following:
-#' \itemize{
-#'   \item \code{"gaussian"} (continuous dv) to fit a linear regression model
-#'   \item \code{"binomial"} (binary dv) to fit a logistic regression model
-#'   \item \code{"poisson"} (count dv) to fit a poisson regression model
-#'   \item \code{"baseline"} (nominal dv) to fit a baseline-category logit model (using [nnet::multinom()])
-#'   \item \code{"cumulative"} (ordinal dv) to fit a proportional odds logistic regression (using [MASS::polr()])
-#' }
-#' Here we list the supported association-threshold measures to determine the active set of predictors for a SPCR analysis (the supported measurement levels for the variables involved is reported between brackets):
-#' \itemize{
-#'   \item \code{LLS} (any dv with any iv)
-#'   \item \code{PR2} (any dv with any iv) - The Cox and Snell generalized R-squared is computed for the GLMs between \code{dv} and every column in \code{ivs}. Then, the square root of these values is used to obtain the threshold values. For more information about the computation of the Cox and Snell R2 see the help file for [gspcr::cp_gR2()]. When using this measure for simple linear regressions (with continuous \code{dv} and \code{ivs}) is equivalent to the regular R-squared. Therefore, it can be thought of as equivalent to the bivariate correlations between \code{dv} and \code{ivs}.
-#'   \item \code{normalized} (continuous dv with continuous ivs)
-#' }
-#' Here we list the supported fit measures to be used within the cross-validation procedure:
-#' \itemize{
-#'   \item \code{F} - (continuous dv)
-#'   \item \code{LRT} - (any dv)
-#'   \item \code{AIC} - (any dv)
-#'   \item \code{BIC} - (any dv)
-#'   \item \code{PR2} - (any dv)
-#'   \item \code{MSE} - (continuous dv)
-#' }
-#' @return Returns an object of class \code{gspcr}, which is a list containing:
-#' \itemize{
-#'   \item `sol_table` - a data.frame reporting the threshold number, value and the number of PCs identified by the procedure
-#'   \item ...
-#'   \item `gspcr_call` - the function call
-#' }
+#' The variables in \code{ivs} do not need to be standardized beforehand as the function handles scaling appropriately based on the measurement levels of the data.
+#' 
+#' The \code{fam} argument is used to define which model will be used when regressing the dependent variable on the principal components:
+#' - \code{gaussian}: fits a linear regression model (continuous dv)
+#' - \code{binomial}: fits a logistic regression model (binary dv)
+#' - \code{poisson}: fits a poisson regression model (count dv)
+#' - \code{baseline}: fits a baseline-category logit model (nominal dv, using [nnet::multinom()])
+#' - \code{cumulative}: fits a proportional odds logistic regression (ordinal dv, using [MASS::polr()])
+#' 
+#' The \code{thrs} argument defines the bivariate association-threshold measures used to determine the active set of predictors for a SPCR analysis. 
+#' The following association measures are supported (measurement levels allowed reported between brackets):
+#' - \code{LLS}: simple GLM regression likelihoods (any dv with any iv)
+#' - \code{PR2}: Cox and Snell generalized R-squared is computed for the GLMs between \code{dv} and every column in \code{ivs}. Then, the square root of these values is used to obtain the threshold values. For more information about the computation of the Cox and Snell R2 see the help file for [gspcr::cp_gR2()]. When using this measure for simple linear regressions (with continuous \code{dv} and \code{ivs}) is equivalent to the regular R-squared. Therefore, it can be thought of as equivalent to the bivariate correlations between \code{dv} and \code{ivs}. (any dv with any iv)
+#' - \code{normalized}: normalized correlation based on [superpc::superpc.cv()] (continuous dv with continuous ivs)
+#'
+#' The \code{fit_measure} argument defines which fit measure should be used within the cross-validation procedure.
+#' The supported measures are:
+#' - \code{F}: F-statistic computed with [cp_F()] (continuous dv)
+#' - \code{LRT}: likelihood-ratio test statistic computed with [cp_LRT()] (any dv)
+#' - \code{AIC}: Akaike's information criterion computed with [cp_AIC()] (any dv)
+#' - \code{BIC}: bayesian information criterion computed with [cp_BIC()] (any dv)
+#' - \code{PR2}: Cox and Snell generalized R-squared computed with [cp_gR2()] (any dv)
+#' - \code{MSE}: Mean squared error compute with [MLmetrics::MSE()] (continuous dv)
+#'
+#' @return 
+#' Object of class \code{gspcr}, which is a list containing:
+#' - \code{sol_table}: data.frame reporting the threshold number, value, and the number of PCs identified by the procedure
+#' - \code{thr}: vector of threshold values of the requested type used for the K-fold cross-validation procedure
+#' - \code{thr_cv}: numeric vector of length 1 indicating the threshold number that was selected by the K-fold cross-validation procedure using the default decision rule
+#' - \code{thr_cv_1se}: numeric vector of length 1 indicating the threshold number that was selected by the K-fold cross-validation procedure using the 1-standard-error rule
+#' - \code{Q_cv}: numeric vector of length 1 indicating the number of PCs that was selected by the K-fold cross-validation procedure using the default decision rule
+#' - \code{Q_cv_1se}: numeric vector of length 1 indicating the number of PCs that was selected by the K-fold cross-validation procedure using the 1-standard-error rule
+#' - \code{scor}: \eqn{npcs \times nthrs} matrix of fit-measure scores averaged across the K folds
+#' - \code{scor_lwr}: \eqn{npcs \times nthrs} matrix of fit-measure score lower bounds averaged across the K folds
+#' - \code{scor_upr}: \eqn{npcs \times nthrs} matrix of fit-measure score upper bounds averaged across the K folds
+#' - \code{pred_map}: matrix of \eqn{p \times nthrs} logical values indicating which predictors were active for every threshold value used
+#' - \code{gspcr_call}: the function call
 #' 
 #' @author Edoardo Costantini, 2023
 #' @references

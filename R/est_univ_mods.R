@@ -1,17 +1,24 @@
-#' Estimate univariate standard GLMs.
+#' Estimate simple GLM models
 #'
-#' Given a dependent variable, a set of possible predictors and a GLM family, this function estimates a null GLM and all of the univariate GLMs.
+#' Given a dependent variable, a set of possible predictors, and a GLM family, this function estimates a null GLM and all of the simple GLMs.
 #'
-#' @param dv Vector of dependent variable values
-#' @param ivs Matrix of predictor values
-#' @param fam GLM framework for the dv
-#' @details
-#' This function does such and such.
-#' @return A list of:
+#' @param dv numeric vector or factor of dependent variable values
+#' @param ivs \eqn{n \times p} data.frame of independent variables (factors allowed)
+#' @param fam character vector of length 1 storing the description of the error distribution and link function to be used in the model (see [gspcr::cv_gspcr()] for the list of possible options)
+#' @return List containing:
 #' - \code{ll0}: log-likelihoods for the null model
-#' - \code{lls}: log-likelihoods for all the univariate models
-#' - \code{coefs}: if \code{dv} and \code{ivs} are continuous, standardized univariate regression coefficients
+#' - \code{lls}: log-likelihoods for all the simple models
+#' - \code{coefs}: if \code{dv} and \code{ivs} are continuous, standardized simple regression coefficients
+#' @details 
+#' We use the expression "simple GLM models" to describe GLM models with a single dependent variable and a single predictor.
 #' @author Edoardo Costantini, 2023
+#' @examples 
+#' # Run the function on the example data set
+#' dv_con_ivs_con <- est_univ_mods(
+#'     dv = GSPCRexdata$y$cont,
+#'     ivs = GSPCRexdata$X$cont,
+#'     fam = "gaussian"
+#' )
 #'
 #' @export
 est_univ_mods <- function(dv, ivs, fam) {
@@ -26,12 +33,12 @@ est_univ_mods <- function(dv, ivs, fam) {
         dv <- scale(dv)
     }
 
-    # Train the null model and the p univariate models
+    # Train the null model and the p simple models
     if (fam == "gaussian" | fam == "binomial" | fam == "poisson") {
         # Fit null model
         glm0 <- stats::glm(dv ~ 1, family = fam)
 
-        # Fit univariate models
+        # Fit simple models
         glm.fits <- lapply(1:ncol(ivs), function(j) {
             stats::glm(dv ~ ivs[, j], family = fam)
         })
@@ -42,7 +49,7 @@ est_univ_mods <- function(dv, ivs, fam) {
             trace = FALSE
         )
 
-        # Fit univariate models
+        # Fit simple models
         glm.fits <- lapply(1:ncol(ivs), function(j) {
             nnet::multinom(
                 formula = dv ~ ivs[, j],
@@ -56,7 +63,7 @@ est_univ_mods <- function(dv, ivs, fam) {
             method = "logistic"
         )
 
-        # Fit univariate models
+        # Fit simple models
         glm.fits <- lapply(1:ncol(ivs), function(j) {
             MASS::polr(
                 formula = dv ~ ivs[, j],
@@ -72,7 +79,7 @@ est_univ_mods <- function(dv, ivs, fam) {
     # Give it good names
     names(lls) <- colnames(ivs)
 
-    # Extract univariate coefficients
+    # Extract simple coefficients
     coefs <- sapply(glm.fits, function(m) as.numeric(stats::coefficients(m)[2]))
 
     # Return the values

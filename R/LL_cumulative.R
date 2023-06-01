@@ -9,7 +9,7 @@
 #' If \code{x} and \code{y} are equal to the data on which \code{mod} has been trained, this function returns the same result as the default \code{logLink} function. If \code{x} and \code{y} are new, the function returns the log-likelihood of the new data under the trained model.
 #' The log-likelihood equation is based on Agresti (2002, p. 192).
 #' @return A list containing:
-#' - \code{ll}, an atomic vector of length 1 containing the log-likelihood value.
+#' - \code{ll} an atomic vector of length 1 containing the log-likelihood value.
 #' - \code{sc}, a numeric matrix containing the systematic component for the input \code{x} and \code{mod}.
 #' @author Edoardo Costantini, 2022
 #' @references

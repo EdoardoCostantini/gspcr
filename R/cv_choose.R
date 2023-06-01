@@ -2,17 +2,31 @@
 #'
 #' Extracting the CV choices of SPCR parameters.
 #'
-#' @param scor A \eqn{npcs \times nthrs} matrix of K-fold CV scores.
-#' @param scor_lwr A \eqn{npcs \times nthrs} matrix of score lower bounds.
-#' @param scor_upr A \eqn{npcs \times nthrs} matrix of score upper bounds.
-#' @param K The number of folds used for K-fold cross-validation.
-#' @param fit_measure The type of score to compute for the cross-validation procedure.
+#' @param scor \eqn{npcs \times nthrs} matrix of K-fold CV scores
+#' @param scor_lwr \eqn{npcs \times nthrs} matrix of score lower bounds
+#' @param scor_upr \eqn{npcs \times nthrs} matrix of score upper bounds
+#' @param K numeric vector of length 1 storing the number of folds for the K-fold cross-validation procedure
+#' @param fit_measure character vector of length 1 indicating the type of fit measure to be used in the to cross-validation procedure
 #' @details
 #' Given a matrix of \eqn{npcs \times nthrs}, returns the best choice based on the type of fit measure (best overall and 1se rule versions)
-#' @return A list of two unit vectors:
-#' - default = The default choice.
-#' - oneSE = The choice based on the one standard error rule.
+#' @return A list of two numeric vectors:
+#' - \code{default}: coordinates for \code{scor} defining the default solution (min or max value of the fit measure, depending on the type of \code{fit_measure})
+#' - \code{oneSE}: coordinates for \code{scor} defining the solution based on the one standard error rule
 #' @author Edoardo Costantini, 2023
+#' @examples 
+#' # Score matrices
+#' scor <- matrix(c(1, 2, 3, 4, 5, 6), nrow = 3, ncol = 2)
+#' scor_lwr <- matrix(c(1, 2, 3, 4, 5, 6) - 1.5, nrow = 3, ncol = 2)
+#' scor_upr <- matrix(c(1, 2, 3, 4, 5, 6) + 1.5, nrow = 3, ncol = 2)
+#' 
+#' # Number of folds
+#' K <- 10
+#' 
+#' # Type of fit_measure
+#' fit_measure <- "F"
+#' 
+#' # Use the function
+#' cv_choose(scor, scor_lwr, scor_upr, K, fit_measure)
 #'
 #' @export
 cv_choose <- function(scor, scor_lwr, scor_upr, K, fit_measure) {

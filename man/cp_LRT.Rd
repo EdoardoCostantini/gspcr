@@ -7,12 +7,12 @@
 cp_LRT(ll_restricted, ll_full)
 }
 \arguments{
-\item{ll_restricted}{log-likelihood of the observed data under the restricted model}
+\item{ll_restricted}{numeric vector of length 1 (or an object of class "logLik") storing the log-likelihood of the observed data under the restricted model}
 
-\item{ll_full}{log-likelihood of the observed data under the full model}
+\item{ll_full}{numeric vector of length 1 (or an object of class "logLik") storing the log-likelihood of the observed data under the full model}
 }
 \value{
-Description of function output
+numeric vector of length 1 storing the likelihood ratio test statistic
 }
 \description{
 Computes the likelihood ratio expressed as a difference between the log-likelihoods of observed data under two nested competing models.

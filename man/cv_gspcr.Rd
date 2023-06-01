@@ -19,34 +19,42 @@ cv_gspcr(
 )
 }
 \arguments{
-\item{dv}{Vector of dependent variable values}
+\item{dv}{numeric vector or factor of dependent variable values}
 
-\item{ivs}{Matrix of predictor values}
+\item{ivs}{\eqn{n \times p} data.frame of independent variables (factors allowed)}
 
-\item{fam}{GLM framework for the dv}
+\item{fam}{character vector of length 1 storing the description of the error distribution and link function to be used in the model}
 
-\item{thrs}{Type of threshold to be used}
+\item{thrs}{character vector of length 1 storing the type of threshold to be used (see below for available options)}
 
-\item{nthrs}{integer atomic vector of length 1 defining the number of threshold values to be used}
+\item{nthrs}{numeric vector of length 1 storing the number of threshold values to be used}
 
-\item{npcs_range}{integer atomic vector defining the numbers of principal components to be used}
+\item{npcs_range}{numeric vector defining the numbers of principal components to be used}
 
-\item{K}{Number of folds for the K-fold cross-validation procedure}
+\item{K}{numeric vector of length 1 storing the number of folds for the K-fold cross-validation procedure}
 
-\item{fit_measure}{Type of measure to cross-validate.}
+\item{fit_measure}{character vector of length 1 indicating the type of fit measure to be used in the cross-validation procedure}
 
-\item{max_features}{Maximum number of features that can be selected}
+\item{max_features}{numeric vector of length 1 indicating the maximum number of features that can be selected}
 
-\item{min_features}{Minimum number of features that can be selected}
+\item{min_features}{numeric vector of length 1 indicating the minimum number of features that should be selected}
 
-\item{oneSE}{Whether the results with the 1SE rule should be stored}
+\item{oneSE}{logical value indicating whether the results with the 1se rule should be saved}
 }
 \value{
-Returns an object of class \code{gspcr}, which is a list containing:
+Object of class \code{gspcr}, which is a list containing:
 \itemize{
-\item \code{sol_table} - a data.frame reporting the threshold number, value and the number of PCs identified by the procedure
-\item ...
-\item \code{gspcr_call} - the function call
+\item \code{sol_table}: data.frame reporting the threshold number, value, and the number of PCs identified by the procedure
+\item \code{thr}: vector of threshold values of the requested type used for the K-fold cross-validation procedure
+\item \code{thr_cv}: numeric vector of length 1 indicating the threshold number that was selected by the K-fold cross-validation procedure using the default decision rule
+\item \code{thr_cv_1se}: numeric vector of length 1 indicating the threshold number that was selected by the K-fold cross-validation procedure using the 1-standard-error rule
+\item \code{Q_cv}: numeric vector of length 1 indicating the number of PCs that was selected by the K-fold cross-validation procedure using the default decision rule
+\item \code{Q_cv_1se}: numeric vector of length 1 indicating the number of PCs that was selected by the K-fold cross-validation procedure using the 1-standard-error rule
+\item \code{scor}: \eqn{npcs \times nthrs} matrix of fit-measure scores averaged across the K folds
+\item \code{scor_lwr}: \eqn{npcs \times nthrs} matrix of fit-measure score lower bounds averaged across the K folds
+\item \code{scor_upr}: \eqn{npcs \times nthrs} matrix of fit-measure score upper bounds averaged across the K folds
+\item \code{pred_map}: matrix of \eqn{p \times nthrs} logical values indicating which predictors were active for every threshold value used
+\item \code{gspcr_call}: the function call
 }
 }
 \description{
@@ -54,28 +62,33 @@ Use K-fold cross-validation to decide on the number of principal components and 
 }
 \details{
 The variables in \code{ivs} do not need to be standardized beforehand as the function handles scaling appropriately based on the measurement levels of the data.
-The \code{fam} can be one of the following:
+
+The \code{fam} argument is used to define which model will be used when regressing the dependent variable on the principal components:
 \itemize{
-\item \code{"gaussian"} (continuous dv) to fit a linear regression model
-\item \code{"binomial"} (binary dv) to fit a logistic regression model
-\item \code{"poisson"} (count dv) to fit a poisson regression model
-\item \code{"baseline"} (nominal dv) to fit a baseline-category logit model (using \code{\link[nnet:multinom]{nnet::multinom()}})
-\item \code{"cumulative"} (ordinal dv) to fit a proportional odds logistic regression (using \code{\link[MASS:polr]{MASS::polr()}})
+\item \code{gaussian}: fits a linear regression model (continuous dv)
+\item \code{binomial}: fits a logistic regression model (binary dv)
+\item \code{poisson}: fits a poisson regression model (count dv)
+\item \code{baseline}: fits a baseline-category logit model (nominal dv, using \code{\link[nnet:multinom]{nnet::multinom()}})
+\item \code{cumulative}: fits a proportional odds logistic regression (ordinal dv, using \code{\link[MASS:polr]{MASS::polr()}})
 }
-Here we list the supported association-threshold measures to determine the active set of predictors for a SPCR analysis (the supported measurement levels for the variables involved is reported between brackets):
+
+The \code{thrs} argument defines the bivariate association-threshold measures used to determine the active set of predictors for a SPCR analysis.
+The following association measures are supported (measurement levels allowed reported between brackets):
 \itemize{
-\item \code{LLS} (any dv with any iv)
-\item \code{PR2} (any dv with any iv) - The Cox and Snell generalized R-squared is computed for the GLMs between \code{dv} and every column in \code{ivs}. Then, the square root of these values is used to obtain the threshold values. For more information about the computation of the Cox and Snell R2 see the help file for \code{\link[=cp_gR2]{cp_gR2()}}. When using this measure for simple linear regressions (with continuous \code{dv} and \code{ivs}) is equivalent to the regular R-squared. Therefore, it can be thought of as equivalent to the bivariate correlations between \code{dv} and \code{ivs}.
-\item \code{normalized} (continuous dv with continuous ivs)
+\item \code{LLS}: simple GLM regression likelihoods (any dv with any iv)
+\item \code{PR2}: Cox and Snell generalized R-squared is computed for the GLMs between \code{dv} and every column in \code{ivs}. Then, the square root of these values is used to obtain the threshold values. For more information about the computation of the Cox and Snell R2 see the help file for \code{\link[=cp_gR2]{cp_gR2()}}. When using this measure for simple linear regressions (with continuous \code{dv} and \code{ivs}) is equivalent to the regular R-squared. Therefore, it can be thought of as equivalent to the bivariate correlations between \code{dv} and \code{ivs}. (any dv with any iv)
+\item \code{normalized}: normalized correlation based on \code{\link[superpc:superpc.cv]{superpc::superpc.cv()}} (continuous dv with continuous ivs)
 }
-Here we list the supported fit measures to be used within the cross-validation procedure:
+
+The \code{fit_measure} argument defines which fit measure should be used within the cross-validation procedure.
+The supported measures are:
 \itemize{
-\item \code{F} - (continuous dv)
-\item \code{LRT} - (any dv)
-\item \code{AIC} - (any dv)
-\item \code{BIC} - (any dv)
-\item \code{PR2} - (any dv)
-\item \code{MSE} - (continuous dv)
+\item \code{F}: F-statistic computed with \code{\link[=cp_F]{cp_F()}} (continuous dv)
+\item \code{LRT}: likelihood-ratio test statistic computed with \code{\link[=cp_LRT]{cp_LRT()}} (any dv)
+\item \code{AIC}: Akaike's information criterion computed with \code{\link[=cp_AIC]{cp_AIC()}} (any dv)
+\item \code{BIC}: bayesian information criterion computed with \code{\link[=cp_BIC]{cp_BIC()}} (any dv)
+\item \code{PR2}: Cox and Snell generalized R-squared computed with \code{\link[=cp_gR2]{cp_gR2()}} (any dv)
+\item \code{MSE}: Mean squared error compute with \code{\link[MLmetrics:MSE]{MLmetrics::MSE()}} (continuous dv)
 }
 }
 \examples{

@@ -15,14 +15,22 @@
 \item \code{cat} with 50 categorical variables (unordered factors)
 \item \code{mix} with 20 continuous variables, 10 binary variables (factors), 10 ordinal variables (ordered factors), 10 categorical variables (unordered factors).
 }
-\item \code{y}: A data.frame with 1000 rows and 4 columns. The first column \code{cont} is a continuous variable produced using a linear model with the first two PCs underlying \code{X} as a data-generating model. The other columns are transformed versions of \code{cont} to match common discrete target distribution in the social sciences.
+\item \code{y}: A data.frame with 1000 rows and 5 columns. The first column \code{cont} is a continuous variable produced using a linear model with the first two PCs underlying \code{X} as a data-generating model.
+The other columns are transformed versions of \code{cont} to match common discrete target distribution in the social sciences.
+These are the variables stored:
+\itemize{
+\item \code{cont} continuous dependent variable (numeric vector)
+\item \code{bin} binary dependent variable (factor)
+\item \code{ord} ordinal dependent variable (ordered factor)
+\item \code{cat} nominal dependent variable (unordered factor)
+\item \code{pois} count dependent variable (numeric vector)
+}
 }
 }
 \description{
 Contains a data set used to develop and test the main features of the \code{gspcr} package. The data contains a dependent variable and 50 predictors generated based on true number of principal components.
 }
 \examples{
-
 # Check out the first 6 rows of the continuous predictors
 head(GSPCRexdata$X$cont)
 

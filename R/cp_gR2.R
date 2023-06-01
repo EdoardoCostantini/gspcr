@@ -2,13 +2,13 @@
 #'
 #' Computes the Cox and Snell generalized R-squared.
 #'
-#' @param ll_n log-likelihood of the null (restricted) model
-#' @param ll_f log-likelihood of the full model
-#' @param n sample size of the data used to estimate the models
+#' @param ll_n numeric vector of length 1 (or an object of class "logLik") storing the log-likelihood of the null (restricted) model
+#' @param ll_f numeric vector of length 1 (or an object of class "logLik") storing the log-likelihood of the full model
+#' @param n numeric vector of length 1 storing the sample size of the data used to estimate the models
 #' @details
 #' The Cox and Snell generalized R-squared is equal to the R-squared when applied to multiple linear regression. The highest value for this measure is 1 - exp(ll_n)^(2/n), which is usually < 1.
 #' The null (restricted) model must be nested within the full model.
-#' @return Cox and Snell generalized R-squared stored as an atomic numeric vector of length 1.
+#' @return numeric vector of length 1 storing the computed Cox and Snell generalized R-squared.
 #' @author Edoardo Costantini, 2023
 #' @references
 #'

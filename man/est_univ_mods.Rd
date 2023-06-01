@@ -2,30 +2,39 @@
 % Please edit documentation in R/est_univ_mods.R
 \name{est_univ_mods}
 \alias{est_univ_mods}
-\title{Estimate univariate standard GLMs.}
+\title{Estimate simple GLM models}
 \usage{
 est_univ_mods(dv, ivs, fam)
 }
 \arguments{
-\item{dv}{Vector of dependent variable values}
+\item{dv}{numeric vector or factor of dependent variable values}
 
-\item{ivs}{Matrix of predictor values}
+\item{ivs}{\eqn{n \times p} data.frame of independent variables (factors allowed)}
 
-\item{fam}{GLM framework for the dv}
+\item{fam}{character vector of length 1 storing the description of the error distribution and link function to be used in the model (see \code{\link[=cv_gspcr]{cv_gspcr()}} for the list of possible options)}
 }
 \value{
-A list of:
+List containing:
 \itemize{
 \item \code{ll0}: log-likelihoods for the null model
-\item \code{lls}: log-likelihoods for all the univariate models
-\item \code{coefs}: if \code{dv} and \code{ivs} are continuous, standardized univariate regression coefficients
+\item \code{lls}: log-likelihoods for all the simple models
+\item \code{coefs}: if \code{dv} and \code{ivs} are continuous, standardized simple regression coefficients
 }
 }
 \description{
-Given a dependent variable, a set of possible predictors and a GLM family, this function estimates a null GLM and all of the univariate GLMs.
+Given a dependent variable, a set of possible predictors, and a GLM family, this function estimates a null GLM and all of the simple GLMs.
 }
 \details{
-This function does such and such.
+We use the expression "simple GLM models" to describe GLM models with a single dependent variable and a single predictor.
+}
+\examples{
+# Run the function on the example data set
+dv_con_ivs_con <- est_univ_mods(
+    dv = GSPCRexdata$y$cont,
+    ivs = GSPCRexdata$X$cont,
+    fam = "gaussian"
+)
+
 }
 \author{
 Edoardo Costantini, 2023

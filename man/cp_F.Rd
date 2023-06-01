@@ -7,20 +7,20 @@
 cp_F(y, y_hat_restricted, y_hat_full, n = length(y), p_restricted = 0, p_full)
 }
 \arguments{
-\item{y}{the observed values on the dependent variable}
+\item{y}{numeric vector storing the observed values on the dependent variable}
 
-\item{y_hat_restricted}{predicted values on \code{y} based on the restricted model}
+\item{y_hat_restricted}{numeric vector storing the predicted values on \code{y} based on the restricted model}
 
-\item{y_hat_full}{predicted values on \code{y} based on the full model}
+\item{y_hat_full}{numeric vector storing the predicted values on \code{y} based on the full model}
 
-\item{n}{sample size used to train the models}
+\item{n}{numeric vector of length 1 storing the sample size used to train the models}
 
-\item{p_restricted}{number of predictors involved in training the restricted model}
+\item{p_restricted}{numeric vector of length 1 storing the number of predictors involved in training the restricted model}
 
-\item{p_full}{number of predictors involved in training the full model}
+\item{p_full}{numeric vector of length 1 storing the number of predictors involved in training the full model}
 }
 \value{
-F-statistic stored as a numeric unit vector of length 1.
+numeric vector of length 1 storing the F-statistic
 }
 \description{
 Computes the F statistic comparing two nested models.

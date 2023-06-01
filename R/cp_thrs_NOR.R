@@ -2,20 +2,17 @@
 #'
 #' A function to compute the normalized bivariate association measures between a \code{dv} and a collection of \code{ivs}.
 #'
-#' @param dv Vector of numeric dependent variable values
-#' @param ivs Matrix of numeric predictor values
-#' @param scale_dv Logical value defining whether `dv` should be scaled
-#' @param scale_ivs Logical value defining whether `ivs` should be scaled
-#' @param s0_perc Factor for the denominator of association statistic, between 0 and 1: the percentile of standard deviation values added to the denominator. Default is 0.5 (the median)
-#' 
+#' @param dv numeric vector of dependent variable values
+#' @param ivs \eqn{n \times p} matrix of numeric independent variables
+#' @param scale_dv logical value defining whether \code{dv} should be scaled
+#' @param scale_ivs logical value defining whether \code{ivs} should be scaled
+#' @param s0_perc numeric vector of length 1 storing the factor for the denominator of association statistic (i.e., the percentile of standard deviation values added to the denominator, a value between 0 and 1.) The default is 0.5 (the median)
 #' @details
 #' This function is based on the function \code{cor.func} in the package \code{superpc}.
-#' 
-#' @return A vector of bivariate association measures between \code{dv} and \code{ivs}.
-#' 
+#' @return numeric vector of bivariate association measures between \code{dv} and \code{ivs}. numeric vector of log-likelihood value from all of the univariate GLM models regressing \code{dv} on each column of \code{ivs}.
 #' @author Edoardo Costantini, 2023
-#' 
 #' @references
+#' 
 #' Bair E, Hastie T, Paul D, Tibshirani R (2006). “Prediction by supervised principal components.” J. Am. Stat. Assoc., 101(473), 119-137.
 #'
 #' @examples
@@ -23,6 +20,9 @@
 #' dv <- mtcars[, 1]
 #' ivs <- mtcars[, -1]
 #' s0_perc <- 0
+#' 
+#' # Use the function
+#' cp_thrs_NOR(dv, ivs, s0_perc)
 #' 
 #' @export
 cp_thrs_NOR <- function(dv, ivs, s0_perc = NULL, scale_dv = TRUE, scale_ivs = TRUE) {

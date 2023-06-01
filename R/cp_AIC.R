@@ -2,9 +2,9 @@
 #'
 #' Computes Akaike's information criterion for comparing competing models.
 #'
-#' @param ll log-likelihood of the model of interest
-#' @param k number of estimated parameters by the model
-#' @return AIC stored as a numeric unit vector of length 1.
+#' @param ll numeric vector of length 1 (or an object of class "logLik") storing the log-likelihood of the model of interest
+#' @param k numeric vector of length 1 storing the number of parameters estimated by the model
+#' @return numeric vector of length 1 storing the computed AIC.
 #' @author Edoardo Costantini, 2023
 #' @examples
 #' # Fit some model

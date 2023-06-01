@@ -7,25 +7,26 @@
 cp_thrs_LLS(dv, ivs, fam)
 }
 \arguments{
-\item{dv}{Vector of dependent variable values}
+\item{dv}{numeric vector or factor of dependent variable values}
 
-\item{ivs}{Matrix of predictor values}
+\item{ivs}{\eqn{n \times p} data.frame of independent variables (factors allowed)}
 
-\item{fam}{GLM framework for the dv}
+\item{fam}{character vector of length 1 storing the description of the error distribution and link function to be used in the model (see \code{\link[=cv_gspcr]{cv_gspcr()}} for the list of possible options)}
 }
 \value{
-A vector of bivariate association measures between \code{dv} and \code{ivs}.
+numeric vector of log-likelihood value from all of the univariate GLM models regressing \code{dv} on each column of \code{ivs}.
 }
 \description{
 Produces a vector of threshold values that define active predictors.
-}
-\details{
-This function does such and such.
 }
 \examples{
 # Example inputs
 dv <- mtcars[, 1]
 ivs <- mtcars[, -1]
+fam <- "gaussian"
+
+# Use function
+cp_thrs_LLS(dv, ivs, fam)
 
 }
 \author{

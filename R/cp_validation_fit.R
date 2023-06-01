@@ -2,16 +2,27 @@
 #'
 #' Given a training and validation data set, it computes a target fit measure on the validation data set.
 #'
-#' @param y_train Vector of DV values in the training dataset.
-#' @param y_valid Vector of DV values in the validation dataset.
-#' @param X_train Matrix of IV values in the training dataset. Can also be set to 1 to obtain the log-likelihood of the new data under the null model.
-#' @param X_valid Matrix of IV values in the validation dataset. If \code{X_train} is set to 1 to obtain the log-likelihood of the new data under the null model, \code{X_valid} is ignored.
-#' @param fam GLM framework for the dv.
-#' @param fit_measure Character vector indicating which fit measure should be computed (F, LRT, AIC, BIC, PR2 ,MSE)
+#' @param y_train numeric vector or factor of dependent variable values from the training set
+#' @param y_valid numeric vector or factor of dependent variable values from the validation set
+#' @param X_train \eqn{n \times p} data.frame of independent variables (factors allowed) from the training set. Can also be set to 1 to obtain the log-likelihood of the new data under the null model.
+#' @param X_valid \eqn{n \times p} data.frame of independent variables (factors allowed) from the validation set. If \code{X_train} is set to 1 to obtain the log-likelihood of the new data under the null model, \code{X_valid} is ignored.
+#' @param fam character vector of length 1 storing the description of the error distribution and link function to be used in the model (see [gspcr::cv_gspcr()] for the list of possible options)
+#' @param fit_measure character vector indicating which fit measure should be computed (see [gspcr::cv_gspcr()] for the list of possible options)
 #' @details
 #' The validation data set can be specified to be the same as the training data set if desired.
-#' @return Description of function output
+#' @return numeric vector of length 1 storing the requested fit measure
 #' @author Edoardo Costantini, 2023
+#' @examples 
+#' # Example inputs
+#' y_train = as.matrix(mtcars[1:20, 1])
+#' y_valid = as.matrix(mtcars[-c(1:20), 1])
+#' X_train = as.matrix(mtcars[1:20, -1])
+#' X_valid = as.matrix(mtcars[-c(1:20), -1])
+#' fam = "gaussian"
+#' fit_measure = "BIC"
+#' 
+#' # Use the function
+#' cp_validation_fit(y_train, y_valid, X_train, X_valid, fam, fit_measure)
 #'
 #' @export
 cp_validation_fit <- function(y_train, y_valid, X_train, X_valid, fam, fit_measure) {

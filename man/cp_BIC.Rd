@@ -2,19 +2,19 @@
 % Please edit documentation in R/cp_BIC.R
 \name{cp_BIC}
 \alias{cp_BIC}
-\title{Compute Bayesian information criterion}
+\title{Compute bayesian information criterion}
 \usage{
 cp_BIC(ll, n, k)
 }
 \arguments{
-\item{ll}{log-likelihood of the model of interest}
+\item{ll}{numeric vector of length 1 (or an object of class "logLik") storing the log-likelihood of the model of interest}
 
-\item{n}{sample size of data used to compute the log-likelihood}
+\item{n}{numeric vector of length 1 storing the sample size of data used to compute the log-likelihood}
 
-\item{k}{number of estimated parameters by the model}
+\item{k}{numeric vector of length 1 storing the number of estimated parameters by the model}
 }
 \value{
-BIC stored as a numeric unit vector of length 1.
+numeric vector of length 1 storing the computed BIC.
 }
 \description{
 Computes bayesian information criterion for comparing competing models.

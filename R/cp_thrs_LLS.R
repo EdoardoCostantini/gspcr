@@ -2,21 +2,19 @@
 #'
 #' Produces a vector of threshold values that define active predictors.
 #'
-#' @param dv Vector of dependent variable values
-#' @param ivs Matrix of predictor values
-#' @param fam GLM framework for the dv
-#'
-#' @details
-#' This function does such and such.
-#'
-#' @return A vector of bivariate association measures between \code{dv} and \code{ivs}.
-#'
+#' @param dv numeric vector or factor of dependent variable values
+#' @param ivs \eqn{n \times p} data.frame of independent variables (factors allowed)
+#' @param fam character vector of length 1 storing the description of the error distribution and link function to be used in the model (see [gspcr::cv_gspcr()] for the list of possible options)
+#' @return numeric vector of log-likelihood value from all of the univariate GLM models regressing \code{dv} on each column of \code{ivs}.
 #' @author Edoardo Costantini, 2023
-#'
 #' @examples
 #' # Example inputs
 #' dv <- mtcars[, 1]
 #' ivs <- mtcars[, -1]
+#' fam <- "gaussian"
+#' 
+#' # Use function
+#' cp_thrs_LLS(dv, ivs, fam)
 #'
 #' @export
 cp_thrs_LLS <- function(dv, ivs, fam) {

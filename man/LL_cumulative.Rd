@@ -16,7 +16,7 @@ LL_cumulative(y, x, mod)
 \value{
 A list containing:
 \itemize{
-\item \code{ll}, an atomic vector of length 1 containing the log-likelihood value.
+\item \code{ll} an atomic vector of length 1 containing the log-likelihood value.
 \item \code{sc}, a numeric matrix containing the systematic component for the input \code{x} and \code{mod}.
 }
 }

@@ -2,12 +2,16 @@
 #'
 #' Given a training and validation data set, it estimates the component loadings on the training data and returns the component scores on both the training and validation data.
 #'
-#' @param X_train Matrix of IV values in the training dataset.
-#' @param X_valid Matrix of IV values in the validation dataset.
-#' @param Q atomic numeric vector containing the number of principal components to be used
+#' @param X_train matrix of IV values in the training dataset
+#' @param X_valid matrix of IV values in the validation dataset
+#' @param Q numeric vector of length 1 storing the number of principal components to be used
 #' @details
-#' This function does such and such.
-#' @return Description of function output
+#' The function can be used to estimate the PC loadings on training data and project the validation data on the same principal component axis. It can also be used to compute PC scores on a single data set by providing it as both the training and validation data.
+#' @return list of two objects:
+#' \itemize{
+#'   \item \code{PC_tr} a n times Q matrix of PC scores for the observations in the training data
+#'   \item \code{PC_va} a n times Q matrix of PC scores for the observations in the validation data
+#' }
 #' @author Edoardo Costantini, 2023
 #'
 #' @export

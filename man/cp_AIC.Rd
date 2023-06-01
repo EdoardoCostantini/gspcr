@@ -7,12 +7,12 @@
 cp_AIC(ll, k)
 }
 \arguments{
-\item{ll}{log-likelihood of the model of interest}
+\item{ll}{numeric vector of length 1 (or an object of class "logLik") storing the log-likelihood of the model of interest}
 
-\item{k}{number of estimated parameters by the model}
+\item{k}{numeric vector of length 1 storing the number of parameters estimated by the model}
 }
 \value{
-AIC stored as a numeric unit vector of length 1.
+numeric vector of length 1 storing the computed AIC.
 }
 \description{
 Computes Akaike's information criterion for comparing competing models.

@@ -77,6 +77,7 @@ pca_mix <- function(X_tr, X_va, npcs = 1) {
     # Return
     list(
         PC_tr = PC_tr,
-        PC_va = PC_va
+        PC_va = PC_va,
+        pcamix = pcamix
     )
 }

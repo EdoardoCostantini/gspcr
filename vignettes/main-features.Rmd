@@ -190,6 +190,11 @@ plots[[1]] + plots[[2]] + plots[[3]]
 We can run it using different cross-validation score statistics. For a given number of PCs, equivalent solution paths are drawn by using the different fit measures.
 
 ```{r }
+#| label: fig-fit-measures
+#| fig-cap: "Solution paths for different fit measures."
+#| fig-width: 9
+#| fig-height: 6
+
 # Measures
 fit_measure_vec <- c("F", "LRT", "AIC", "BIC", "PR2", "MSE")
 
@@ -258,6 +263,11 @@ round(t(res), 3)
 This is true for any number of pcs:
 
 ```{r }
+#| label: fig-fit-measures-npc-5
+#| fig-cap: "Solution paths for different fit measures when using 5 PCs."
+#| fig-width: 9
+#| fig-height: 6
+
 # Measures
 fit_measure_vec <- c("F", "LRT", "AIC", "BIC", "PR2", "MSE")
 
@@ -306,6 +316,11 @@ An interesting detail in the plot is that they highlight how for high values of 
 # Cross-validation of the number of components
 
 ```{r }
+#| label: fig-cv-npcs
+#| fig-cap: "Solution paths for different fit measures when cross-validating the number of PCs."
+#| fig-width: 9
+#| fig-height: 6
+
 # Measures
 fit_measure_vec <- c("F", "LRT", "AIC", "BIC", "PR2", "MSE")
 
@@ -357,6 +372,11 @@ The results for all fit measures except `F` struggle with accounting for measure
 First, fit the models with many possible number of components:
 
 ```{r }
+#| label: fig-1se-rule
+#| fig-cap: "Solution paths for different fit measures when using the 1-standard-error rule."
+#| fig-width: 9
+#| fig-height: 6
+
 # Train the GSPCR model with many number of components
 out_fit_meas <- lapply(fit_measure_vec, function(i) {
     cv_gspcr(
@@ -439,6 +459,10 @@ round(t(res_1se), 3)
 Run the method with two simple component choices with and without cross-validation.
 
 ```{r }
+#| label: fig-cv-check
+#| fig-cap: "Solution paths for different fit measures using cross-validation."
+#| fig-width: 9
+#| fig-height: 6
 # Train the GSPCR model with many number of components
 out_fit_meas_cv <- lapply(fit_measure_vec, function(i) {
     cv_gspcr(
@@ -479,6 +503,10 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
 ```
 
 ```{r }
+#| label: fig-cv-check-no-cv
+#| fig-cap: "Solution paths for different fit measures without using CV."
+#| fig-width: 9
+#| fig-height: 6
 # Train the GSPCR model with many number of components
 out_fit_meas_no_CV <- lapply(fit_measure_vec, function(i) {
     cv_gspcr(

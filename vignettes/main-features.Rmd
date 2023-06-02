@@ -4,6 +4,7 @@ output:
   bookdown::html_document2:
     css: "style.css"
     number_sections: yes
+    code_folding: show
     toc: true
     toc_depth: 2
     toc_float:
@@ -142,7 +143,7 @@ data.frame(
 
 We can run it using the generalized R2 and the log-likelihoods of simple GLMs as a measure of association.
 
-```{r }
+```{r}
 #| label: fig-association-measures
 #| fig-cap: "Solution paths for different association measures."
 #| fig-width: 9
@@ -313,7 +314,9 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
 The plots show very similar solutions paths across fit measures.
 An interesting detail in the plot is that they highlight how for high values of the threshold parameter, only 4, 3, and 2 components could be used.
 
-# Cross-validation of the number of components
+# Number of components
+
+Cross-validation of the number of components.
 
 ```{r }
 #| label: fig-cv-npcs

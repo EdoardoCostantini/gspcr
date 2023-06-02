@@ -143,8 +143,13 @@ data.frame(
 We can run it using the generalized R2 and the log-likelihoods of simple GLMs as a measure of association.
 
 ```{r }
+#| label: fig-association-measures
+#| fig-cap: "Solution paths for different association measures."
+#| fig-width: 9
+#| fig-height: 3
+
 # Measures
-trhs_vec <- c("PR2", "LLS")
+trhs_vec <- c("normalized", "PR2", "LLS")
 
 # Train the GSPCR model with the different values
 out_trhs <- lapply(trhs_vec, function(i) {
@@ -153,7 +158,7 @@ out_trhs <- lapply(trhs_vec, function(i) {
         ivs = X,
         fam = "gaussian",
         nthrs = 20,
-        npcs_range = 1:5,
+        npcs_range = 1,
         K = 10,
         fit_measure = "F",
         thrs = i,
@@ -168,19 +173,19 @@ plots <- lapply(out_trhs, function(i) {
     plot(
         x = i,
         y = "F",
-        labels = TRUE,
-        errorBars = TRUE,
+        labels = FALSE,
+        errorBars = FALSE,
         discretize = FALSE,
         print = FALSE
     )
 })
 
 # Patchwork ggplots
-plot_output + plots[[1]] + plots[[2]]
+plots[[1]] + plots[[2]] + plots[[3]]
 
 ```
 
-# CV fit measures
+# Fit measures
 
 We can run it using different cross-validation score statistics. For a given number of PCs, equivalent solution paths are drawn by using the different fit measures.
 
@@ -298,7 +303,7 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
 The plots show very similar solutions paths across fit measures.
 An interesting detail in the plot is that they highlight how for high values of the threshold parameter, only 4, 3, and 2 components could be used.
 
-# CV the number of components
+# Cross-validation of the number of components
 
 ```{r }
 # Measures

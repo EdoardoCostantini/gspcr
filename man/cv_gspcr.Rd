@@ -90,6 +90,8 @@ The supported measures are:
 \item \code{PR2}: Cox and Snell generalized R-squared computed with \code{\link[=cp_gR2]{cp_gR2()}} (any dv)
 \item \code{MSE}: Mean squared error compute with \code{\link[MLmetrics:MSE]{MLmetrics::MSE()}} (continuous dv)
 }
+
+Details regarding the 1 standard error rule implemented here can be found in the documentation for the function \code{\link[=cv_choose]{cv_choose()}}.
 }
 \examples{
 # Example input values

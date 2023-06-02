@@ -20,15 +20,25 @@ cv_choose(scor, scor_lwr, scor_upr, K, fit_measure)
 \value{
 A list of two numeric vectors:
 \itemize{
-\item \code{default}: coordinates for \code{scor} defining the default solution (min or max value of the fit measure, depending on the type of \code{fit_measure})
-\item \code{oneSE}: coordinates for \code{scor} defining the solution based on the one standard error rule
+\item \code{default}: numeric vector of length 2 that reports the coordinates in \code{scor} defining the default solution.
+\item \code{oneSE}: numeric vector of length 2 that reports the coordinates for \code{scor} defining the solution based on the one standard error rule
 }
 }
 \description{
 Extracting the CV choices of SPCR parameters.
 }
 \details{
-Given a matrix of \eqn{npcs \times nthrs}, returns the best choice based on the type of fit measure (best overall and 1se rule versions)
+Given a matrix of \eqn{npcs \times nthrs}, returns the best choice based on the type of fit measure (best overall and 1se rule versions.)
+This function returns as solutions:
+\itemize{
+\item \code{default}: the best choice based on the given fit measure (e.g. highest likelihood ratio test statistic, lowest BIC)
+\item \code{oneSE}: the solution that defined the most parsimonious model within 1 standard error from the best one.
+When both the number of components and the threshold parameter are cross-validated, the 1-standard error rule first finds the candidate alternative solutions that have the same or more parsimonious threshold values, and then, within those, it finds the candidate alternative solutions with the smallest number of components.
+This decision is guided by the desire to prioritize a sparse solution where only important predictors are used to compute the principal components that are used.
+Selecting fewer components to the expense of a larger number of (potentially noise) predictors would be suboptimal.
+Therefore we favored an implementation that can return more components, but that guarantees a higher quality of the components for the predictive task.
+However, this solution might select more components than the original best choice.
+}
 }
 \examples{
 # Score matrices

@@ -1,0 +1,300 @@
+---
+title: "Walkthrough: using GSPCR on CFA generated data"
+output: 
+  bookdown::html_document2:
+    css: "style.css"
+    number_sections: yes
+    code_folding: show
+    toc: true
+    toc_depth: 2
+    toc_float:
+      collapsed: false
+vignette: >
+  %\VignetteIndexEntry{main-features}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r klippy, echo = FALSE}
+# Create a button for copy pasting code chunk to clipboard
+klippy::klippy(position = c("top", "right"))
+
+```
+
+```{r global_options, include = FALSE}
+# Load knitr package to change options
+library(knitr)
+
+# Set default options for the chunks
+opts_chunk$set(
+    echo = TRUE,
+    warning = FALSE,
+    message = FALSE,
+    comment = ""
+)
+
+# Set the width of the console output to a large number (for sidewise scroll)
+options(width = 1e3)
+
+```
+
+# Prepare data
+
+```{r setup}
+# Load R packages
+library(gspcr)      # this package!
+library(superpc)    # alternative comparison package
+library(patchwork)  # combining ggplots
+
+# Set a seed
+set.seed(20230415)
+
+```
+
+## Summary of data
+
+```{r }
+# CFA analysis
+
+# Number of items per latent construct
+n_it <- 3
+
+# Number of latent construct measures
+n_lv <- 10
+
+# Define CFA model
+item_names <- colnames(CFA_data$X)
+lv_names <- paste0("lv", 1:n_lv)
+lv_models <- sapply(1:n_lv, function(i) {
+    paste0(
+        lv_names[i],
+        " =~ ",
+        paste0(
+            item_names[((0:n_lv)[i] * n_it + 1):
+            ((0:n_lv)[i + 1] * n_it)],
+            collapse = " + "
+        )
+    )
+})
+CFA_model <- paste(lv_models, collapse = "\n")
+
+# Fit CFA
+fit <- lavaan::cfa(CFA_model, data = CFA_data$X, std.lv = TRUE)
+
+# Inspect factor loadings
+factor_loadings <- lavaan::inspect(fit, what = "std")$lambda
+
+# Subset correlation matrix
+load_mat_melt <- reshape2::melt(factor_loadings)
+
+# Round values
+load_mat_melt$value <- round(load_mat_melt$value, 3)
+
+# Make heatmap
+ggplot2::ggplot(
+    data = load_mat_melt,
+    ggplot2::aes(x = Var1, y = Var2, fill = value)
+) +
+    ggplot2::geom_tile(color = "white") +
+    ggplot2::scale_fill_gradient2(
+        low = "blue",
+        mid = "white",
+        high = "darkgray",
+        midpoint = 0,
+        limit = c(min(load_mat_melt$value), max(load_mat_melt$value)),
+        space = "Lab",
+        name = ""
+    ) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+        plot.title = ggplot2::element_text(
+            size = 10,
+            face = "bold",
+            hjust = 0.5
+        ),
+        axis.title.y = ggplot2::element_blank(),
+        axis.title.x = ggplot2::element_blank(),
+        legend.position = "bottom"
+    ) +
+    ggplot2::coord_fixed() +
+    ggplot2::scale_y_discrete(
+        drop = FALSE, # avoid dropping empty elements
+        limits = rev # reverse the y order
+    ) +
+    ggplot2::scale_x_discrete(
+        drop = FALSE, # avoid dropping empty elements
+        position = "top"
+    )
+
+```
+
+Y is generated as a linear combination of the first 5 latent variables.
+
+# Cross-validation solutions
+
+Fit the model to the alternative data with a clear structure:
+
+```{r }
+#| label: fig-fit-measures
+#| fig-cap: "Solution paths for different fit measures."
+#| fig-width: 9
+#| fig-height: 6
+# Measures
+fit_measure_vec <- c("F", "LRT", "AIC", "BIC", "PR2", "MSE")
+
+# Train the GSPCR model with the different values
+out_fit_meas <- lapply(fit_measure_vec, function(i) {
+    cv_gspcr(
+        dv = CFA_data$y,
+        ivs = CFA_data$X,
+        fam = "gaussian",
+        nthrs = 20,
+        npcs_range = c(1, 2, 4, 5, 6, 8, 10, 15),
+        K = 10,
+        fit_measure = i,
+        thrs = "PR2",
+        min_features = 1,
+        max_features = ncol(CFA_data$X),
+        oneSE = TRUE
+    )
+})
+
+```
+
+## Solution tables
+
+### Standard solution
+
+```{r }
+# Standard solutions
+res <- lapply(
+    1:length(out_fit_meas),
+    function(meth) {
+        # Identify threshold
+        thr_decision <- out_fit_meas[[meth]]$sol_table["standard", "thr_number"]
+
+        # Involved variables
+        var_inv <- names(which(out_fit_meas[[meth]]$pred_map[, thr_decision]))
+
+        # How many variables?
+        var_count <- length(var_inv)
+
+        # Save the names of the involved variables
+        var_names <- paste0(names(which(out_fit_meas[[meth]]$pred_map[, thr_decision])), collapse = ", ")
+
+        #
+        data.frame(
+            meth = fit_measure_vec[meth],
+            thr_value = round(t(out_fit_meas[[meth]]$sol_table)[1, "standard"], 3),
+            thr_number = t(out_fit_meas[[meth]]$sol_table)[2, "standard"],
+            Q = t(out_fit_meas[[meth]]$sol_table)[3, "standard"],
+            var_count = var_count,
+            var_names = var_names
+        )
+    }
+)
+
+# Print rounded results
+do.call(rbind, res)
+
+```
+
+### 1-SE solution
+
+```{r }
+# 1se solutions
+res_1se <- lapply(
+    1:length(out_fit_meas),
+    function(meth) {
+
+        # Identify threshold
+        thr_decision <- out_fit_meas[[meth]]$sol_table["oneSE", "thr_number"]
+
+        # Involved variables
+        var_inv <- names(which(out_fit_meas[[meth]]$pred_map[, thr_decision]))
+
+        # How many variables?
+        var_count <- length(var_inv)
+
+        # Save the names of the involved variables
+        var_names <- paste0(names(which(out_fit_meas[[meth]]$pred_map[, thr_decision])), collapse = ", ")
+
+        #
+        data.frame(
+            meth = fit_measure_vec[meth],
+            thr_value = round(t(out_fit_meas[[meth]]$sol_table)[1, "oneSE"], 3),
+            thr_number = t(out_fit_meas[[meth]]$sol_table)[2, "oneSE"],
+            Q = t(out_fit_meas[[meth]]$sol_table)[3, "oneSE"],
+            var_count = var_count,
+            var_names = var_names
+        )
+    }
+)
+
+# Print rounded results
+do.call(rbind, res_1se)
+
+```
+
+# No cross-validation solutions
+
+```{r }
+#| label: fig-fit-measures-no-cv
+#| fig-cap: "Solution paths for different fit measures without using cross-validation."
+#| fig-width: 9
+#| fig-height: 6
+
+# Train the GSPCR model with the different values
+out_fit_meas_no_cv <- lapply(fit_measure_vec, function(i) {
+    cv_gspcr(
+        dv = CFA_data$y,
+        ivs = CFA_data$X,
+        fam = "gaussian",
+        nthrs = 20,
+        npcs_range = c(1, 2, 4, 5, 6, 8, 10, 15),
+        K = 1,
+        fit_measure = i,
+        thrs = "PR2",
+        min_features = 1,
+        max_features = ncol(CFA_data$X),
+        oneSE = TRUE
+    )
+})
+
+```
+
+## Solution tables
+
+```{r }
+# Standard solutions
+res <- lapply(
+    1:length(out_fit_meas_no_cv),
+    function(meth) {
+        # Identify threshold
+        thr_decision <- out_fit_meas_no_cv[[meth]]$sol_table["standard", "thr_number"]
+
+        # Involved variables
+        var_inv <- names(which(out_fit_meas_no_cv[[meth]]$pred_map[, thr_decision]))
+
+        # How many variables?
+        var_count <- length(var_inv)
+
+        # Save the names of the involved variables
+        var_names <- paste0(names(which(out_fit_meas_no_cv[[meth]]$pred_map[, thr_decision])), collapse = ", ")
+
+        #
+        data.frame(
+            meth = fit_measure_vec[meth],
+            thr_value = round(t(out_fit_meas_no_cv[[meth]]$sol_table)[1, "standard"], 3),
+            thr_number = t(out_fit_meas_no_cv[[meth]]$sol_table)[2, "standard"],
+            Q = t(out_fit_meas_no_cv[[meth]]$sol_table)[3, "standard"],
+            var_count = var_count,
+            var_names = var_names
+        )
+    }
+)
+
+# Print rounded results
+do.call(rbind, res)
+
+```

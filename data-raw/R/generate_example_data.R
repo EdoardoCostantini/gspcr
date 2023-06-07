@@ -2,11 +2,106 @@
 # Objective: Script to generate some example data for the package
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
-# Modified:  2023-05-23
+# Modified:  2023-06-06
 # Notes:     After updating the script and the RDS file, to update the data in 
 #            the package you need to run again usethis::use_data(GSPCRexdata) call
 
 # Functions --------------------------------------------------------------------
+
+generate_X_block <- function(N, L, L_junk, loading = .85, J, mu, sd, rho_high, rho_junk) {
+
+    # Example inputs
+    # N = 50
+    # L = 10
+    # loading = .85
+    # L_junk = 7
+    # J = 3
+    # mu = 0
+    # sd = 1
+    # rho_high = .7
+    # rho_junk = .1
+
+    # Define other parameters of interest --------------------------------------
+
+    P <- L * J
+
+    # Latent Variables Covariance matrix ---------------------------------------
+
+    # Base latent variables covariance matrix
+    Phi <- toeplitz(c(1, rep(rho_high, L - 1)))
+
+    # Distinguish between important variables and possible auxiliary
+    if((L-L_junk+1) <= L){
+     index_junk_aux <- (L-L_junk+1):L
+    } else {
+     index_junk_aux <- NULL
+    }
+
+    # Change rho values (if needed)
+    Phi[index_junk_aux, ] <- rho_junk # junk
+
+    # Fix diagonal
+    diag(Phi) <- 1
+
+    # Make symmetric
+    Phi[upper.tri(Phi)] <- t(Phi)[upper.tri(Phi)]
+
+    # Factor loadings ----------------------------------------------------------
+
+    lambda <- rep(loading, P)
+
+    # Observed Items Error Covariance matrix ----------------------------------
+    # Note: here we create uncorrelated errors for the observed items
+
+    Theta <- diag(P)
+    for (i in 1:length(lambda)) {
+        Theta[i, i] <- 1 - lambda[i]^2
+    }
+
+    # Items Factor Complexity = 1 (simple measurement structure) --------------
+    # Reference: Bollen1989 p234
+
+    Lambda <- matrix(nrow = P, ncol = L)
+    start <- 1
+    for (j in 1:L) {
+        end <- (start + J) - 1
+        vec <- rep(0, P)
+        vec[start:end] <- lambda[start:end]
+        Lambda[, j] <- vec
+        start <- end + 1
+    }
+
+    # Sample Scores -----------------------------------------------------------
+
+    scs_lv <- MASS::mvrnorm(N, rep(0, L), Phi)
+    scs_delta <- MASS::mvrnorm(N, rep(0, P), Theta)
+
+    # Compute Observed Scores -------------------------------------------------
+
+    x <- matrix(nrow = N, ncol = P)
+    for (i in 1:N) {
+        x[i, ] <- t(0 + Lambda %*% scs_lv[i, ] + scs_delta[i, ])
+    }
+
+    # Give meaningful names ---------------------------------------------------
+
+    colnames(x) <- paste0("X", 1:ncol(x))
+    colnames(scs_lv) <- paste0("Z", 1:ncol(scs_lv))
+
+    # Scale it correctly
+    x_scaled <- apply(x, 2, function(j) j * sd)
+    x_center <- x_scaled + mu
+    x_cont <- data.frame(x_center)
+
+    # Return ------------------------------------------------------------------
+    return(
+        list(
+            X = data.frame(x_cont),
+            Z = data.frame(scs_lv),
+            index_junk_aux = index_junk_aux
+        )
+    )
+}
 
 generateXTP <- function(I, J, VAFr = c(.5, .4, .2), VAFsum = 100, CPVE = 0.9) {
     # Internals -------------------------------------------------------------
@@ -162,7 +257,6 @@ discretise <- function(x, K = 5, ordered = FALSE) {
         ordered = ordered
     )
 }
-
 
 # Generate data ----------------------------------------------------------------
 
@@ -345,3 +439,61 @@ usethis::use_data(GSPCRexdata, overwrite = TRUE)
 
 # Save example dataset (note really needed but useful to have somewhere)
 saveRDS(GSPCRexdata, "./data-raw/data/GSPCRexdata.rds")
+
+# CFA as data generating model -------------------------------------------------
+
+# Set.seed
+set.seed(20230607)
+
+# Number of latent variables
+Q <- 10
+
+# Number of latent variables to define Y
+Qy <- 5
+
+# Generate some X
+X_block <- generate_X_block(
+        N = 5e3,
+        L = Q,
+        loading = .95,
+        L_junk = 3,
+        J = 3,
+        mu = 0,
+        sd = 1,
+        rho_high = .05,
+        rho_junk = .05
+)
+
+# Compute PCA with prcomp
+PCX <- prcomp(X_block$X)
+
+# Extract eigenvalues
+eigenvalues <- PCX$sdev^2
+
+# Cumulative proportion of explained variance
+cumsum(prop.table(eigenvalues))[1:Q]
+
+# Non-graphical solutions
+nFactors::nScree(x = eigenvalues)
+
+# Screeplot
+nFactors::plotuScree(x = eigenvalues)
+
+# Generate DV based on the component scores
+y <- generateDV(
+    X = as.matrix(X_block$Z)[, 1:Qy, drop = FALSE],
+    R2 = 0.95,
+    beta = 1
+)
+
+# Collect data in a list
+CFA_data <- list(
+    y = y,
+    X = X_block$X
+)
+
+# Make use of this data in the package
+usethis::use_data(CFA_data, overwrite = TRUE)
+
+# Save example dataset (note really needed but useful to have somewhere)
+saveRDS(CFA_data, "./data-raw/data/CFA_data.rds")

@@ -33,11 +33,8 @@ This function returns as solutions:
 \itemize{
 \item \code{default}: the best choice based on the given fit measure (e.g. highest likelihood ratio test statistic, lowest BIC)
 \item \code{oneSE}: the solution that defined the most parsimonious model within 1 standard error from the best one.
-When both the number of components and the threshold parameter are cross-validated, the 1-standard error rule first finds the candidate alternative solutions that have the same or more parsimonious threshold values, and then, within those, it finds the candidate alternative solutions with the smallest number of components.
-This decision is guided by the desire to prioritize a sparse solution where only important predictors are used to compute the principal components that are used.
-Selecting fewer components to the expense of a larger number of (potentially noise) predictors would be suboptimal.
-Therefore we favored an implementation that can return more components, but that guarantees a higher quality of the components for the predictive task.
-However, this solution might select more components than the original best choice.
+When both the number of components and the threshold parameter are cross-validated, the 1-standard error rule finds the candidate alternative solutions using the lowest number of PCs and having the best fit-measure.
+This decision is guided by the desire to counterbalance the tendency of GSPCR of selecting the highest number of components available when using cross-validation.
 }
 }
 \examples{

@@ -1854,7 +1854,7 @@ ggplot2::ggplot(
 <h1><span class="header-section-number">2</span> Cross-validation solutions</h1>
 <p>Fit the model to the alternative data with a clear structure:</p>
 <pre class="r"><code># Measures
-fit_measure_vec &lt;- c(&quot;F&quot;, &quot;LRT&quot;, &quot;AIC&quot;, &quot;BIC&quot;, &quot;PR2&quot;, &quot;MSE&quot;)
+fit_measure_vec &lt;- c(&quot;MSE&quot;, &quot;LRT&quot;, &quot;PR2&quot;, &quot;F&quot;, &quot;AIC&quot;, &quot;BIC&quot;)
 
 # Train the GSPCR model with the different values
 out_fit_meas &lt;- lapply(fit_measure_vec, function(i) {
@@ -1906,13 +1906,13 @@ res &lt;- lapply(
 
 # Print rounded results
 do.call(rbind, res)</code></pre>
-<pre><code>  meth thr_value thr_number  Q var_count                                                                                 var_names
-1    F     0.108          3  1        15                          X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
-2  LRT     0.108          3  5        15                          X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
-3  AIC     0.108          3  5        15                          X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
-4  BIC     0.108          3  5        15                          X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
-5  PR2     0.108          3  6        15                          X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
-6  MSE     0.087          2 10        20 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X17, X18, X24, X29</code></pre>
+<pre><code>  meth thr_value thr_number Q var_count                                                        var_names
+1  MSE     0.108          3 8        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
+2  LRT     0.108          3 5        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
+3  PR2     0.108          3 5        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
+4    F     0.108          3 1        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
+5  AIC     0.108          3 5        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
+6  BIC     0.108          3 5        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15</code></pre>
 </div>
 <div id="se-solution" class="section level3" number="2.1.2">
 <h3><span class="header-section-number">2.1.2</span> 1-SE solution</h3>
@@ -1948,12 +1948,12 @@ res_1se &lt;- lapply(
 # Print rounded results
 do.call(rbind, res_1se)</code></pre>
 <pre><code>  meth thr_value thr_number Q var_count                                                        var_names
-1    F     0.108          3 1        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
+1  MSE     0.108          3 5        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
 2  LRT     0.108          3 4        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
-3  AIC     0.108          3 6        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
-4  BIC     0.108          3 4        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
-5  PR2     0.108          3 5        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
-6  MSE     0.108          3 5        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15</code></pre>
+3  PR2     0.108          3 6        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
+4    F     0.108          3 1        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
+5  AIC     0.108          3 6        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
+6  BIC     0.108          3 4        15 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15</code></pre>
 </div>
 </div>
 </div>
@@ -2008,12 +2008,12 @@ res &lt;- lapply(
 # Print rounded results
 do.call(rbind, res)</code></pre>
 <pre><code>  meth thr_value thr_number  Q var_count                                                                                                                              var_names
-1    F     0.108          3  1        15                                                                       X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
+1  MSE     0.066          1 15        29 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X17, X18, X19, X20, X21, X22, X23, X24, X26, X27, X28, X29, X30
 2  LRT     0.066          1 15        29 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X17, X18, X19, X20, X21, X22, X23, X24, X26, X27, X28, X29, X30
-3  AIC     0.108          3  6        15                                                                       X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
-4  BIC     0.108          3  5        15                                                                       X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
-5  PR2     0.066          1 15        29 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X17, X18, X19, X20, X21, X22, X23, X24, X26, X27, X28, X29, X30
-6  MSE     0.066          1 15        29 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X17, X18, X19, X20, X21, X22, X23, X24, X26, X27, X28, X29, X30</code></pre>
+3  PR2     0.066          1 15        29 X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15, X16, X17, X18, X19, X20, X21, X22, X23, X24, X26, X27, X28, X29, X30
+4    F     0.108          3  1        15                                                                       X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
+5  AIC     0.108          3  6        15                                                                       X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15
+6  BIC     0.108          3  5        15                                                                       X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15</code></pre>
 </div>
 </div>
 

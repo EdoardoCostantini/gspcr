@@ -140,7 +140,7 @@ Fit the model to the alternative data with a clear structure:
 #| fig-width: 9
 #| fig-height: 6
 # Measures
-fit_measure_vec <- c("F", "LRT", "AIC", "BIC", "PR2", "MSE")
+fit_measure_vec <- c("MSE", "LRT", "PR2", "F", "AIC", "BIC")
 
 # Train the GSPCR model with the different values
 out_fit_meas <- lapply(fit_measure_vec, function(i) {

@@ -54,13 +54,3 @@ testthat::expect_equal(as.vector(cv_choose.out$default), c(1, 1))
 
 # Check 1SE results for an F fit_measure
 testthat::expect_equal(as.vector(cv_choose.out$oneSE), c(2, 1))
-
-# ls(out_fit_meas[[3]])
-
-# cv_choose(
-#   scor = out_fit_meas[[3]]$scor,
-#   scor_lwr = out_fit_meas[[3]]$scor_lwr,
-#   scor_upr = out_fit_meas[[3]]$scor_upr,
-#   K = 10,
-#   fit_measure = "AIC"
-# )

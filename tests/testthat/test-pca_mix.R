@@ -91,3 +91,22 @@ cors_va <- sapply(1:npcs, function(j) {
 # Check they are all equal to 1
 testthat::expect_true(all(abs(cors_tr) - 1 < tol))
 testthat::expect_true(all(abs(cors_va) - 1 < tol))
+
+# Test: npcs = 1 works with mixed data -----------------------------------------
+
+# Define a training validation index
+train <- sample(1:nrow(iris))[1:100]
+valid <- -train
+
+# Use pca_mix on training and validation
+pca_mix_out <- tryCatch(
+    pca_mix_out_tv <- pca_mix(
+        X_tr = iris[train, ],
+        X_va = iris[valid, ],
+        npcs = 1
+    ),
+    error = function(e) print(e)
+)
+
+# Check is the result an error?
+testthat::expect_false("error" %in% class(pca_mix_out))

@@ -58,21 +58,23 @@ pca_mix <- function(X_tr, X_va, npcs = 1) {
         X.quanti = X_tr_quanti,
         X.quali = X_tr_quali,
         rename.level = TRUE,
-        ndim = npcs,
+        ndim = max(2, npcs),
         graph = FALSE
     )
-
-    # Project training and validation data on the PCs
+    
+    # Project training data on the PCs
     PC_tr <- stats::predict(
         pcamix,
         X.quanti = X_tr_quanti,
         X.quali = X_tr_quali
-    )
+    )[, 1:npcs, drop = FALSE]
+
+    # Project validation data on the PCs
     PC_va <- stats::predict(
         pcamix,
         X.quanti = X_va_quanti,
         X.quali = X_va_quali
-    )
+    )[, 1:npcs, drop = FALSE]
 
     # Return
     list(

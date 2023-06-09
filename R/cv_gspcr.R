@@ -38,6 +38,7 @@
 #' - \code{PR2}: Cox and Snell generalized R-squared computed with [cp_gR2()] (any dv)
 #' - \code{MSE}: Mean squared error compute with [MLmetrics::MSE()] (continuous dv)
 #'
+#' Details regarding the 1 standard error rule implemented here can be found in the documentation for the function [gspcr::cv_choose()].
 #' @return 
 #' Object of class \code{gspcr}, which is a list containing:
 #' - \code{sol_table}: data.frame reporting the threshold number, value, and the number of PCs identified by the procedure

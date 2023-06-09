@@ -8,10 +8,15 @@
 #' @param K numeric vector of length 1 storing the number of folds for the K-fold cross-validation procedure
 #' @param fit_measure character vector of length 1 indicating the type of fit measure to be used in the to cross-validation procedure
 #' @details
-#' Given a matrix of \eqn{npcs \times nthrs}, returns the best choice based on the type of fit measure (best overall and 1se rule versions)
+#' Given a matrix of \eqn{npcs \times nthrs}, returns the best choice based on the type of fit measure (best overall and 1se rule versions.)
+#' This function returns as solutions:
+#' - \code{default}: the best choice based on the given fit measure (e.g. highest likelihood ratio test statistic, lowest BIC)
+#' - \code{oneSE}: the solution that defined the most parsimonious model within 1 standard error from the best one. 
+#' When both the number of components and the threshold parameter are cross-validated, the 1-standard error rule finds the candidate alternative solutions using the lowest number of PCs and having the best fit-measure. 
+#' This decision is guided by the desire to counterbalance the tendency of GSPCR of selecting the highest number of components available when using cross-validation.
 #' @return A list of two numeric vectors:
-#' - \code{default}: coordinates for \code{scor} defining the default solution (min or max value of the fit measure, depending on the type of \code{fit_measure})
-#' - \code{oneSE}: coordinates for \code{scor} defining the solution based on the one standard error rule
+#' - \code{default}: numeric vector of length 2 that reports the coordinates in \code{scor} defining the default solution.
+#' - \code{oneSE}: numeric vector of length 2 that reports the coordinates for \code{scor} defining the solution based on the one standard error rule
 #' @author Edoardo Costantini, 2023
 #' @examples 
 #' # Score matrices
@@ -68,18 +73,25 @@ cv_choose <- function(scor, scor_lwr, scor_upr, K, fit_measure) {
 
     # Are there such solutions?
     if (nrow(candidates) >= 1) {
-        # Select the solutions with highest threshold (smallest number of predictors)
-        candidates <- candidates[candidates[, "col"] == max(candidates[, "col"]), , drop = FALSE]
-
         # Select the solutions with lowest npcs (smallest number of components)
         candidates <- candidates[candidates[, "row"] == min(candidates[, "row"]), , drop = FALSE]
 
-        # Select the solution with the smallest measure out of the candidate models
+        # Select the candidate with the best fit
+        if (fit_measure == "F" | fit_measure == "LRT" | fit_measure == "PR2") {
+            candidates <- candidates[which.max(candidates[, "values"]), , drop = FALSE]
+        }
+        if (fit_measure == "MSE" | fit_measure == "BIC" | fit_measure == "AIC") {
+            candidates <- candidates[which.min(candidates[, "values"]), , drop = FALSE]
+        }
+
+        # Store the solution 
         cv.1se <- candidates[, -3, drop = FALSE]
     } else {
+        # Store default solution
         cv.1se <- cv.default
     }
 
+    # Return the solutions
     return(
         list(
             default = cv.default[1, ],

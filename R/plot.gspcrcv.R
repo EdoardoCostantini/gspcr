@@ -18,7 +18,7 @@
 #' @author Edoardo Costantini, 2023
 #'
 #' @export
-plot.gspcrout <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discretize = TRUE, y_reverse = FALSE, print = TRUE, ...) {
+plot.gspcrcv <- function(x, y = NULL, labels = TRUE, errorBars = FALSE, discretize = TRUE, y_reverse = FALSE, print = TRUE, ...) {
     # Check y
     if (is.null(y)) {
         y <- x$gspcr_call$fit_measure

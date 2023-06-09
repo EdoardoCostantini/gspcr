@@ -288,7 +288,7 @@ cv_gspcr <- function(
   )
 
   # Assign class to object
-  class(out) <- c("gspcrout", "list")
+  class(out) <- c("gspcrcv", "list")
 
   # Return gspcr object
   return(out)

@@ -1,5 +1,5 @@
 # Project:   gspcr
-# Objective: Testing the plot.gspcrout function
+# Objective: Testing the plot.gspcrcv function
 # Author:    Edoardo Costantini
 # Created:   2023-03-29
 # Modified:  2023-04-18

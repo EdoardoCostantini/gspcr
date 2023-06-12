@@ -3,12 +3,12 @@
 #' Predicts dependent variable values based on (new) predictor variables values.
 #'
 #' @param object An object of class \code{gspcr}.
-#' @details
-#' This function does such and such.
-#' @return Description of function output
+#' @param newdata optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted linear predictors are used.
+#' @param ... further arguments passed to or from other methods.
+#' @return Vector of prediction in "response" format for numerical data and probability of class membership for categorical data
 #' @author Edoardo Costantini, 2023
 #' @export
-predict.gspcrout <- function(object, ..., newdata = NULL) {
+predict.gspcrout <- function(object, newdata = NULL, ...) {
 
     # Use input data if newdata is empty
     if(is.null(newdata)){

@@ -4,19 +4,20 @@
 \alias{predict.gspcrout}
 \title{Predict GSPCR model dependent variable scores}
 \usage{
-\method{predict}{gspcrout}(object, ..., newdata = NULL)
+\method{predict}{gspcrout}(object, newdata = NULL, ...)
 }
 \arguments{
 \item{object}{An object of class \code{gspcr}.}
+
+\item{newdata}{optionally, a data frame in which to look for variables with which to predict. If omitted, the fitted linear predictors are used.}
+
+\item{...}{further arguments passed to or from other methods.}
 }
 \value{
-Description of function output
+Vector of prediction in "response" format for numerical data and probability of class membership for categorical data
 }
 \description{
 Predicts dependent variable values based on (new) predictor variables values.
-}
-\details{
-This function does such and such.
 }
 \author{
 Edoardo Costantini, 2023

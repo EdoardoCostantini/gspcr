@@ -2,7 +2,7 @@
 # Objective: #TODO
 # Author:    Edoardo Costantini
 # Created:   2023-06-01
-# Modified:  2023-06-01
+# Modified:  2023-06-12
 # Notes: 
 
 # Separate training data from the rest
@@ -38,15 +38,19 @@ gspcr_est <- est_gspcr(
 )
 
 # Predict on same data
-y_hat <- predict(
+y_hat_in_sample <- predict(
     object = gspcr_est
 )
 
 # Predict new data
-y_hat <- predict(
+y_hat_out_sample <- predict(
     object = gspcr_est,
     newdata = GSPCRexdata$X$cont[-train, ]
 )
+
+# Test values are numeric
+testthat::expect_true(all(is.numeric(y_hat_in_sample)))
+testthat::expect_true(all(is.numeric(y_hat_out_sample)))
 
 # Binary outcome ---------------------------------------------------------------
 

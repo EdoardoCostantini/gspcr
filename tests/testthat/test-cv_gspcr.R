@@ -26,7 +26,7 @@ out_cont <- cv_gspcr(
 testthat::expect_equal(length(out_cont), 11)
 
 # Test the class of the output
-testthat::expect_equal(class(out_cont), c("gspcrout", "list"))
+testthat::expect_equal(class(out_cont), c("gspcrcv", "list"))
 
 # Test: Binary outcome ---------------------------------------------------------
 
@@ -46,7 +46,7 @@ out_bin <- cv_gspcr(
 )
 
 # Test the class of the output
-testthat::expect_equal(class(out_bin), c("gspcrout", "list"))
+testthat::expect_equal(class(out_bin), c("gspcrcv", "list"))
 
 # Test: Multi-categorical outcome ----------------------------------------------
 
@@ -66,7 +66,7 @@ out_cat <- cv_gspcr(
 )
 
 # Test the class of the output
-testthat::expect_equal(class(out_cat), c("gspcrout", "list"))
+testthat::expect_equal(class(out_cat), c("gspcrcv", "list"))
 
 # Test: Ordinal outcome --------------------------------------------------------
 
@@ -86,7 +86,7 @@ out_ord <- cv_gspcr(
 )
 
 # Test the class of the output
-testthat::expect_equal(class(out_ord), c("gspcrout", "list"))
+testthat::expect_equal(class(out_ord), c("gspcrcv", "list"))
 
 # Test: Count outcome --------------------------------------------------------
 
@@ -106,7 +106,7 @@ out_pois <- cv_gspcr(
 )
 
 # Test the class of the output
-testthat::expect_equal(class(out_pois), c("gspcrout", "list"))
+testthat::expect_equal(class(out_pois), c("gspcrcv", "list"))
 
 # Test: LLS as threshold -------------------------------------------------------
 
@@ -126,7 +126,7 @@ out_cont_F_lls <- cv_gspcr(
 )
 
 # Test the class of the output
-testthat::expect_equal(class(out_cont_F_lls), c("gspcrout", "list"))
+testthat::expect_equal(class(out_cont_F_lls), c("gspcrcv", "list"))
 
 # Test: PR2 as threshold -------------------------------------------------------
 
@@ -146,7 +146,7 @@ out_cont_F_PR2 <- cv_gspcr(
 )
 
 # Test the class of the output
-testthat::expect_equal(class(out_cont_F_PR2), c("gspcrout", "list"))
+testthat::expect_equal(class(out_cont_F_PR2), c("gspcrcv", "list"))
 
 # Test: Target number of components --------------------------------------------
 
@@ -169,7 +169,7 @@ out_traget_npcs <- cv_gspcr(
 testthat::expect_equal(length(out_traget_npcs), 11)
 
 # Test the class of the output
-testthat::expect_equal(class(out_traget_npcs), c("gspcrout", "list"))
+testthat::expect_equal(class(out_traget_npcs), c("gspcrcv", "list"))
 
 # Test: Works with an arbitrary target of number of components -----------------
 
@@ -192,7 +192,7 @@ out_traget_npcs <- cv_gspcr(
 testthat::expect_equal(length(out_traget_npcs), 11)
 
 # Test the class of the output
-testthat::expect_equal(class(out_traget_npcs), c("gspcrout", "list"))
+testthat::expect_equal(class(out_traget_npcs), c("gspcrcv", "list"))
 
 # Test: Works with mixed predictor matrix input --------------------------------
 
@@ -215,4 +215,4 @@ out_X_mix <- cv_gspcr(
 testthat::expect_equal(length(out_X_mix), 11)
 
 # Test the class of the output
-testthat::expect_equal(class(out_X_mix), c("gspcrout", "list"))
+testthat::expect_equal(class(out_X_mix), c("gspcrcv", "list"))

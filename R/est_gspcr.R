@@ -8,7 +8,7 @@
 #' @param active_set logical vector indicating which predictor should be used
 #' @param ndim numeric vector defining the number of principal components to be used (2 or more)
 #' @details
-#' This function does such and such.
+#' After deciding on the number of components and the active set, this estimates the GSPCR model.
 #' @return Description of function output
 #' @author Edoardo Costantini, 2023
 #' @references
@@ -57,8 +57,19 @@ est_gspcr <- function(dv, ivs, fam, active_set, ndim) {
     }
 
     # Return the pca mix object and the trained model
-    list(
+    out <- list(
         glm_fit = glm_fit,
-        pca_mix_out = PCA_out
+        fam = fam,
+        pca = PCA_out,
+        dv = dv, 
+        ivs = ivs, 
+        active_set = active_set,
+        ndim = ndim
     )
+
+    # Assign class to object
+    class(out) <- c("gspcrout", "list")
+
+    # Return it
+    return(out)
 }

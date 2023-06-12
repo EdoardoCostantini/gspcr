@@ -8,7 +8,7 @@
 # Separate training data from the rest
 train <- sample(
     x = 1:nrow(GSPCRexdata$X$cont),
-    size = nrow(GSPCRexdata$X$cont) * 3 / 4
+    size = nrow(GSPCRexdata$X$cont) * 99/100
 )
 
 # Continuous outcome -----------------------------------------------------------
@@ -37,11 +37,15 @@ gspcr_est <- est_gspcr(
     active_set = out_cont$pred_map[, out_cont$sol_table[1, "thr_number"]]
 )
 
-# Predict new Y data
-y_hat <- predict.gspcrout(
-    glm_fit = gspcr_est$glm_fit,
-    pcamix = gspcr_est$pca_mix_out$pcamix, 
-    x = GSPCRexdata$X$cont[-train, out_cont$pred_map[, out_cont$sol_table[1, "thr_number"]]]
+# Predict on same data
+y_hat <- predict(
+    object = gspcr_est
+)
+
+# Predict new data
+y_hat <- predict(
+    object = gspcr_est,
+    newdata = GSPCRexdata$X$cont[-train, ]
 )
 
 # Binary outcome ---------------------------------------------------------------
@@ -70,12 +74,15 @@ gspcr_est <- est_gspcr(
     active_set = out_bin$pred_map[, out_bin$sol_table[1, "thr_number"]]
 )
 
-# Predict new Y data
-y_hat <- predict.gspcrout(
-    glm_fit = gspcr_est$glm_fit,
-    pcamix = gspcr_est$pca_mix_out$pcamix, 
-    fam = "binomial",
-    x = GSPCRexdata$X$cont[-train, out_bin$pred_map[, out_bin$sol_table[1, "thr_number"]]]
+# Predict on same data
+y_hat <- predict(
+    object = gspcr_est
+)
+
+# Predict new data
+y_hat <- predict(
+    object = gspcr_est,
+    newdata = GSPCRexdata$X$cont[-train, ]
 )
 
 # Test values are between 0 and 1
@@ -107,16 +114,22 @@ gspcr_est <- est_gspcr(
     active_set = out_ord$pred_map[, out_ord$sol_table[1, "thr_number"]]
 )
 
-# Predict new Y data
-y_hat <- predict.gspcrout(
-    glm_fit = gspcr_est$glm_fit,
-    pcamix = gspcr_est$pca_mix_out$pcamix, 
-    fam = "cumulative",
-    x = GSPCRexdata$X$cont[-train, out_ord$pred_map[, out_ord$sol_table[1, "thr_number"]]]
+# Predict on same data
+y_hat <- predict(
+    object = gspcr_est
+)
+
+# Predict new data
+y_hat <- predict(
+    object = gspcr_est,
+    newdata = GSPCRexdata$X$cont[-train, ]
 )
 
 # Test values are between 0 and 1
 testthat::expect_true(all(0 < y_hat & y_hat < 1))
+
+# Test the number of categories is right
+testthat::expect_true(ncol(y_hat) == nlevels(GSPCRexdata$y$ord))
 
 # Multinomial outcome ---------------------------------------------------------------
 
@@ -144,13 +157,19 @@ gspcr_est <- est_gspcr(
     active_set = out_cat$pred_map[, out_cat$sol_table[1, "thr_number"]]
 )
 
-# Predict new Y data
-y_hat <- predict.gspcrout(
-    glm_fit = gspcr_est$glm_fit,
-    pcamix = gspcr_est$pca_mix_out$pcamix, 
-    fam = "baseline",
-    x = GSPCRexdata$X$cont[-train, out_cat$pred_map[, out_cat$sol_table[1, "thr_number"]]]
+# Predict on same data
+y_hat <- predict(
+    object = gspcr_est
+)
+
+# Predict new data
+y_hat <- predict(
+    object = gspcr_est,
+    newdata = GSPCRexdata$X$cont[-train, ]
 )
 
 # Test all values are between 0 and 1
 testthat::expect_true(all(0 < y_hat & y_hat < 1))
+
+# Test the number of categories is right
+testthat::expect_true(ncol(y_hat) == nlevels(GSPCRexdata$y$cat))

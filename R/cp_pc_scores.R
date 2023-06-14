@@ -2,8 +2,8 @@
 #'
 #' Given a training and validation data set, it estimates the component loadings on the training data and returns the component scores on both the training and validation data.
 #'
-#' @param X_train matrix of IV values in the training dataset
-#' @param X_valid matrix of IV values in the validation dataset
+#' @param X_train data.frame of IV values in the training dataset
+#' @param X_valid data.frame of IV values in the validation dataset
 #' @param Q numeric vector of length 1 storing the number of principal components to be used
 #' @details
 #' The function can be used to estimate the PC loadings on training data and project the validation data on the same principal component axis. It can also be used to compute PC scores on a single data set by providing it as both the training and validation data.
@@ -17,8 +17,8 @@
 #' @export
 cp_pc_scores <- function(X_train, X_valid, Q) {
     # Example inputs
-    # X_train = as.matrix(mtcars[1:20, -1])
-    # X_valid = as.matrix(mtcars[-c(1:20), -1])
+    # X_train = mtcars[1:20, -1]
+    # X_valid = mtcars[-c(1:20), -1]
     # Q = 3
 
     # If all variables are numeric, use regular PCA

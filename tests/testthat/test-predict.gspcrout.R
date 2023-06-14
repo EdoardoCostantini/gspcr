@@ -33,7 +33,7 @@ gspcr_est <- est_gspcr(
     dv = GSPCRexdata$y$cont[train],
     ivs = GSPCRexdata$X$cont[train, ],
     fam = "gaussian",
-    ndim = max(2, out_cont$sol_table[1, "Q"]),
+    ndim = out_cont$sol_table[1, "Q"],
     active_set = out_cont$pred_map[, out_cont$sol_table[1, "thr_number"]]
 )
 
@@ -74,7 +74,7 @@ gspcr_est <- est_gspcr(
     dv = GSPCRexdata$y$bin[train],
     ivs = GSPCRexdata$X$cont[train, ],
     fam = "binomial",
-    ndim = max(2, out_bin$sol_table[1, "Q"]),
+    ndim = out_bin$sol_table[1, "Q"],
     active_set = out_bin$pred_map[, out_bin$sol_table[1, "thr_number"]]
 )
 
@@ -114,7 +114,7 @@ gspcr_est <- est_gspcr(
     dv = GSPCRexdata$y$ord[train],
     ivs = GSPCRexdata$X$cont[train, ],
     fam = "cumulative",
-    ndim = max(2, out_ord$sol_table[1, "Q"]),
+    ndim = out_ord$sol_table[1, "Q"],
     active_set = out_ord$pred_map[, out_ord$sol_table[1, "thr_number"]]
 )
 
@@ -157,7 +157,7 @@ gspcr_est <- est_gspcr(
     dv = GSPCRexdata$y$cat[train],
     ivs = GSPCRexdata$X$cont[train, ],
     fam = "baseline",
-    ndim = max(2, out_cat$sol_table[1, "Q"]),
+    ndim = out_cat$sol_table[1, "Q"],
     active_set = out_cat$pred_map[, out_cat$sol_table[1, "thr_number"]]
 )
 

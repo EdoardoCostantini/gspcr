@@ -30,7 +30,7 @@ est_gspcr <- function(dv, ivs, fam, active_set, ndim) {
     # Assemble data for easy use in future prediction functions
     data_glm <- data.frame(
         dv = dv,
-        PCs = PCA_out$PC_tr
+        PCA_out$PC_tr
     )
 
     # Regress the outcome on the PCs (GLM framework)

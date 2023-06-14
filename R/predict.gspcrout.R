@@ -46,7 +46,7 @@ predict.gspcrout <- function(object, newdata = NULL, ...) {
 
     # Assemble data
     data_glm <- data.frame(
-        PCs = x_PC
+        x_PC
     )
 
     # Predict new y based on the GLM estimated before

@@ -30,10 +30,10 @@
 #' @export
 pca_mix <- function(X_tr, X_va, npcs = 1) {
     # Identify numeric variables
-    num <- names(which(sapply(X_tr, is.numeric)))
+    num <- names(which(apply(X_tr, 2, is.numeric)))
 
     # Identify categorical variables
-    fac <- names(which(sapply(X_tr, is.factor)))
+    fac <- names(which(apply(X_tr, 2, is.factor)))
 
     # Group quantitive variables if any
     if (length(num) > 0) {

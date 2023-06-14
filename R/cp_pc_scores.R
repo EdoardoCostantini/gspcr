@@ -57,6 +57,10 @@ cp_pc_scores <- function(X_train, X_valid, Q) {
         PC_va <- pca_mix_out$PC_va
     }
 
+    # Harmonize names
+    colnames(PC_tr) <- paste0("PC", 1:ncol(PC_tr))
+    colnames(PC_va) <- paste0("PC", 1:ncol(PC_va))
+
     # Select the desired number of PC scores
     list(
         PC_tr = PC_tr[, 1:Q, drop = FALSE],

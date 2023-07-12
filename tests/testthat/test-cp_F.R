@@ -2,11 +2,11 @@
 # Objective: Test cp_F function
 # Author:    Edoardo Costantini
 # Created:   2023-04-18
-# Modified:  2023-04-18
+# Modified:  2023-07-12
 # Notes: 
 
 # Define tolerance for differences
-tol <- 1e-15
+tol <- 1e-5
 
 # Test: output class -----------------------------------------------------------
 

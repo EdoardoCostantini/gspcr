@@ -7,9 +7,9 @@
 cp_pc_scores(X_train, X_valid, Q)
 }
 \arguments{
-\item{X_train}{matrix of IV values in the training dataset}
+\item{X_train}{data.frame of IV values in the training dataset}
 
-\item{X_valid}{matrix of IV values in the validation dataset}
+\item{X_valid}{data.frame of IV values in the validation dataset}
 
 \item{Q}{numeric vector of length 1 storing the number of principal components to be used}
 }

@@ -1,12 +1,12 @@
 # Generalized Supervised Principal Component regression
 
-An R package implementing a version of the Supervised Principal Component regression (SPCR, Bair Et. Al., 2006) that allows for any measuremen t level for the variables dependent and independent variables.
-This package builds upon and expands the method implemented in the R package [superpc](https://github.com/jedazard/superpc).
+An R package implementing a version of the Supervised Principal Component regression (SPCR, Bair Et. Al., 2006) that allows for any measurement level of the dependent and independent variables.
+This package builds upon the method implemented in the R package [`superpc`](https://github.com/jedazard/superpc).
 
 ## Details
 
 SPCR regresses a dependent variable onto a few supervised principal components computed from a large set of predictors.
-The steps followed by SPCR are the following:
+The *steps* followed by SPCR are the following:
 
 1. Regress the dependent variable onto each column of a data set of *p* possible predictors via *p* simple linear regressions.
 2. Define a subset of the original *p* variables by discarding all variables whose univariate regression coefficient is less than a chosen threshold.
@@ -14,8 +14,8 @@ The steps followed by SPCR are the following:
 4. Regress the dependent variable onto the *q* PCs.
 
 A key aspect of the method is that both the number of PCs and the threshold value can be determined by cross-validation.
-GSPCR extends SPCR by allowing the dependent variable to be of any measurement level (i.e., ratio, interval, ordinal, nominal) by introducing likelihood-based thresholds for the univariate regressions in step 1.
-Furthermore, GSPCR allows the predictors to be of any type by combining the PCAmix framework (Kiers, 1991; Chavent Et. Al., 2017) with SPCR.
+GSPCR *extends* SPCR by allowing the dependent variable to be of any measurement level (i.e., ratio, interval, ordinal, nominal) by introducing likelihood-based thresholds for the univariate regressions in step 1.
+Furthermore, GSPCR allows the predictors to be of any type by combining the PCAmix framework (Kiers, 1991; Chavent Et. Al., 2017) with SPCR in step 3.
 
 ## Features
 

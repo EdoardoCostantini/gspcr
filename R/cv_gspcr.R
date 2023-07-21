@@ -2,47 +2,99 @@
 #'
 #' Use K-fold cross-validation to decide on the number of principal components and the threshold value for GSPCR.
 #'
-#' @param dv Vector of dependent variable values
-#' @param ivs Matrix of predictor values
-#' @param fam GLM framework for the dv
-#' @param thrs Type of threshold to be used
-#' @param nthrs Number of threshold values to be used
-#' @param maxnpcs Maximum number of principal components to be used
-#' @param K Number of folds for the K-fold cross-validation procedure
-#' @param fit_measure Type of measure to cross-validate.
-#' @param max_features Maximum number of features that can be selected
-#' @param min_features Minimum number of features that can be selected
-#' @param oneSE Whether the results with the 1SE rule should be stored
+#' @param dv numeric vector or factor of dependent variable values
+#' @param ivs \eqn{n \times p} data.frame of independent variables (factors allowed)
+#' @param fam character vector of length 1 storing the description of the error distribution and link function to be used in the model
+#' @param thrs character vector of length 1 storing the type of threshold to be used (see below for available options)
+#' @param nthrs numeric vector of length 1 storing the number of threshold values to be used
+#' @param npcs_range numeric vector defining the numbers of principal components to be used
+#' @param K numeric vector of length 1 storing the number of folds for the K-fold cross-validation procedure
+#' @param fit_measure character vector of length 1 indicating the type of fit measure to be used in the cross-validation procedure
+#' @param max_features numeric vector of length 1 indicating the maximum number of features that can be selected
+#' @param min_features numeric vector of length 1 indicating the minimum number of features that should be selected
+#' @param oneSE logical value indicating whether the results with the 1se rule should be saved
 #' @details
-#' The possible threshold types are:
-#' \itemize{
-#'   \item \code{LLS}
-#'   \item \code{PR2}
-#'   \item \code{normalized}
-#' }
-#' The possible fit measures are:
-#' \itemize{
-#'   \item \code{F}
-#'   \item \code{LRT}
-#'   \item \code{AIC}
-#'   \item \code{BIC}
-#'   \item \code{PR2}
-#'   \item \code{MSE}
-#' }
-#' @return Returns an object of class \code{gspcr}.
+#' The variables in \code{ivs} do not need to be standardized beforehand as the function handles scaling appropriately based on the measurement levels of the data.
+#' 
+#' The \code{fam} argument is used to define which model will be used when regressing the dependent variable on the principal components:
+#' - \code{gaussian}: fits a linear regression model (continuous dv)
+#' - \code{binomial}: fits a logistic regression model (binary dv)
+#' - \code{poisson}: fits a poisson regression model (count dv)
+#' - \code{baseline}: fits a baseline-category logit model (nominal dv, using [nnet::multinom()])
+#' - \code{cumulative}: fits a proportional odds logistic regression (ordinal dv, using [MASS::polr()])
+#' 
+#' The \code{thrs} argument defines the bivariate association-threshold measures used to determine the active set of predictors for a SPCR analysis. 
+#' The following association measures are supported (measurement levels allowed reported between brackets):
+#' - \code{LLS}: simple GLM regression likelihoods (any dv with any iv)
+#' - \code{PR2}: Cox and Snell generalized R-squared is computed for the GLMs between \code{dv} and every column in \code{ivs}. Then, the square root of these values is used to obtain the threshold values. For more information about the computation of the Cox and Snell R2 see the help file for [gspcr::cp_gR2()]. When using this measure for simple linear regressions (with continuous \code{dv} and \code{ivs}) is equivalent to the regular R-squared. Therefore, it can be thought of as equivalent to the bivariate correlations between \code{dv} and \code{ivs}. (any dv with any iv)
+#' - \code{normalized}: normalized correlation based on [superpc::superpc.cv()] (continuous dv with continuous ivs)
+#'
+#' The \code{fit_measure} argument defines which fit measure should be used within the cross-validation procedure.
+#' The supported measures are:
+#' - \code{F}: F-statistic computed with [cp_F()] (continuous dv)
+#' - \code{LRT}: likelihood-ratio test statistic computed with [cp_LRT()] (any dv)
+#' - \code{AIC}: Akaike's information criterion computed with [cp_AIC()] (any dv)
+#' - \code{BIC}: bayesian information criterion computed with [cp_BIC()] (any dv)
+#' - \code{PR2}: Cox and Snell generalized R-squared computed with [cp_gR2()] (any dv)
+#' - \code{MSE}: Mean squared error compute with [MLmetrics::MSE()] (continuous dv)
+#'
+#' Details regarding the 1 standard error rule implemented here can be found in the documentation for the function [gspcr::cv_choose()].
+#' @return 
+#' Object of class \code{gspcr}, which is a list containing:
+#' - \code{sol_table}: data.frame reporting the threshold number, value, and the number of PCs identified by the procedure
+#' - \code{thr}: vector of threshold values of the requested type used for the K-fold cross-validation procedure
+#' - \code{thr_cv}: numeric vector of length 1 indicating the threshold number that was selected by the K-fold cross-validation procedure using the default decision rule
+#' - \code{thr_cv_1se}: numeric vector of length 1 indicating the threshold number that was selected by the K-fold cross-validation procedure using the 1-standard-error rule
+#' - \code{Q_cv}: numeric vector of length 1 indicating the number of PCs that was selected by the K-fold cross-validation procedure using the default decision rule
+#' - \code{Q_cv_1se}: numeric vector of length 1 indicating the number of PCs that was selected by the K-fold cross-validation procedure using the 1-standard-error rule
+#' - \code{scor}: \eqn{npcs \times nthrs} matrix of fit-measure scores averaged across the K folds
+#' - \code{scor_lwr}: \eqn{npcs \times nthrs} matrix of fit-measure score lower bounds averaged across the K folds
+#' - \code{scor_upr}: \eqn{npcs \times nthrs} matrix of fit-measure score upper bounds averaged across the K folds
+#' - \code{pred_map}: matrix of \eqn{p \times nthrs} logical values indicating which predictors were active for every threshold value used
+#' - \code{gspcr_call}: the function call
+#' 
 #' @author Edoardo Costantini, 2023
 #' @references
-#'
+#' 
 #' Bair, E., Hastie, T., Paul, D., & Tibshirani, R. (2006). Prediction by supervised principal components. Journal of the American Statistical Association, 101(473), 119-137.
+#'
+#' @examples
+#' # Example input values
+#' dv <- mtcars[, 1]
+#' ivs <- mtcars[, -1]
+#' thrs <- "PR2"
+#' nthrs <- 5
+#' fam <- "gaussian"
+#' npcs_range <- 1:3
+#' K <- 3
+#' fit_measure <- "F"
+#' max_features <- ncol(ivs)
+#' min_features <- 1
+#' oneSE <- TRUE
+#'
+#' # Example usage
+#' out_cont <- cv_gspcr(
+#'    dv = GSPCRexdata$y$cont,
+#'    ivs = GSPCRexdata$X$cont,
+#'    fam = "gaussian",
+#'    nthrs = 5,
+#'    npcs_range = 1:3,
+#'    K = 3,
+#'    fit_measure = "F",
+#'    thrs = "normalized",
+#'    min_features = 1,
+#'    max_features = ncol(GSPCRexdata$X$cont),
+#'    oneSE = TRUE
+#' )
 #'
 #' @export
 cv_gspcr <- function(
   dv, 
   ivs, 
-  fam = "gaussian",
+  fam = c("gaussian", "binomial", "poisson", "baseline", "cumulative")[1],
   thrs = c("LLS", "PR2", "normalized")[1],
-  nthrs = 10,
-  maxnpcs = 3,
+  nthrs = 10L,
+  npcs_range = 1L:3L,
   K = 5,
   fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
   max_features = ncol(ivs),
@@ -50,18 +102,15 @@ cv_gspcr <- function(
   oneSE = TRUE
   ) {
 
-  # Example inputs
-  # dv <- mtcars[, 1]
-  # ivs <- mtcars[, -1]
-  # thrs = c("LLS", "PR2", "normalized")[3]
-  # nthrs = 5
-  # fam <- c("gaussian", "binomial", "poisson")[1]
-  # maxnpcs <- 10
-  # K = 2
-  # fit_measure = c("LRT", "F", "MSE")[2]
-  # max_features = ncol(ivs)
-  # min_features = 1
-  # oneSE = TRUE
+  # Perform input checks
+  check_fam(fam)
+  check_thrs(thrs)
+  check_nthrs(nthrs)
+  check_npcs_range(npcs_range, ivs)
+  check_K(K)
+  check_fit_measure(fit_measure)
+  check_max_features(max_features, ivs)
+  check_min_features(min_features, ivs)
 
   # Save the call
   gspcr_call <- list(
@@ -70,7 +119,7 @@ cv_gspcr <- function(
     fam = fam,
     thrs = thrs,
     nthrs = nthrs,
-    maxnpcs = maxnpcs,
+    npcs_range = npcs_range,
     K = K,
     fit_measure = fit_measure,
     max_features = max_features,
@@ -81,136 +130,34 @@ cv_gspcr <- function(
   # Sample size
   n <- nrow(ivs)
 
-  # Compute baseline and univariate models for thresholding
-  if (fam == "gaussian" | fam == "binomial" | fam == "poisson") {
-    # Fit null model
-    glm0 <- stats::glm(dv ~ 1, family = fam)
-
-    # Fit univariate models
-    glm.fits <- lapply(1:ncol(ivs), function(j) {
-      stats::glm(dv ~ ivs[, j], family = fam)
-    })
-  }
-  if (fam == "baseline") {
-    glm0 <- nnet::multinom(
-      formula = dv ~ 1
+  # Compute association measures
+  if (thrs == "LLS") {
+    ascores <- cp_thrs_LLS(
+      dv = dv,
+      ivs = ivs,
+      fam = fam
     )
-
-    # Fit univariate models
-    glm.fits <- lapply(1:ncol(ivs), function(j) {
-      nnet::multinom(dv ~ ivs[, j])
-    })
   }
-  if (fam == "cumulative") {
-    glm0 <- MASS::polr(
-      formula = dv ~ 1,
-      method = "logistic"
+
+  if (thrs == "PR2") {
+    ascores <- cp_thrs_PR2(
+      dv = dv,
+      ivs = ivs,
+      fam = fam
     )
-
-    # Fit univariate models
-    glm.fits <- lapply(1:ncol(ivs), function(j) {
-      MASS::polr(
-        formula = dv ~ ivs[, j],
-        method = "logistic"
-      )
-    })
-  }
-
-  # Extract Log-likelihood values
-  ll0 <- as.numeric(stats::logLik(glm0))
-  lls <- sapply(glm.fits, function(m) as.numeric(stats::logLik(m)))
-
-  # Create active sets based on threshold type
-
-  if(thrs == "LLS"){
-
-    # Use the logLikelihoods as bivariate association scores
-    ascores <- lls
-
-    # Give it good names
-    names(ascores) <- colnames(ivs)
-
-    # Define the upper and lower bounds of the association
-    lower <- min(ascores)
-    upper <- max(ascores)
-
-  }
-
-  if(thrs == "PR2"){
-
-    # Compute pseudo R-squared
-    CNR2 <- 1 - exp(-2 / n * (lls - ll0))
-
-    # Give it good names
-    names(CNR2) <- colnames(ivs)
-
-    # Make them correlation coefficients
-    ascores <- sqrt(CNR2)
-
-    # Define upper and lower bounds of the association
-    lower <- stats::quantile(ascores, 1 - (max_features / ncol(ivs)))
-    upper <- stats::quantile(ascores, 1 - (min_features / ncol(ivs)))
-
   }
 
   if (thrs == "normalized") {
-    
-    # Set objects to the required dimension
-    x <- t(as.matrix(ivs))
-    y <- dv
-    featurenames <- colnames(ivs)
-
-    # Empty
-    s0.perc <- NULL
-
-    # Sample size
-    n <- length(y)
-
-    # Compute vector of feature means
-    xbar <- x %*% rep(1 / n, n)
-
-    # Same as computing the row means
-    cbind(xbar, rowMeans(x))
-
-    # Compute the diagonal of the cross-product matrix between variables
-    sxx <- ((x - as.vector(xbar))^2) %*% rep(1, n)
-
-    # Compute the cross-product matrix between X and Y
-    sxy <- (x - as.vector(xbar)) %*% (y - mean(y))
-
-    # Total sum of squares
-    syy <- sum((y - mean(y))^2)
-
-    # Ratio of the two
-    numer <- sxy / sxx
-
-    # Compute sd?
-    stdev <- sqrt((syy / sxx - numer^2) / (n - 2))
-
-    # add "fudge"(?) to the denominator
-    if (is.null(s0.perc)) {
-      fudge <- stats::median(stdev)
-    }
-    if (!is.null(s0.perc)) {
-      if (s0.perc >= 0) {
-        fudge <- stats::quantile(stdev, s0.perc)
-      }
-      if (s0.perc < 0) {
-        fudge <- 0
-      }
-    }
-
-    # Ratio between numerator and stdev
-    tt <- numer / (stdev + fudge)
-
-    # Store the normalized correlation scores
-    ascores <- abs(tt)[, 1]
-
-    # Define upper and lower bounds of the normalized correlation
-    lower <- stats::quantile(abs(ascores), 1 - (max_features / nrow(x)))
-    upper <- stats::quantile(abs(ascores), 1 - (min_features / nrow(x)))
-
+    ascores <- cp_thrs_NOR(
+      dv = dv,
+      ivs = ivs,
+      s0_perc = NULL
+    )
   }
+
+  # Define upper and lower bounds of the association
+  lower <- stats::quantile(ascores, 1 - (max_features / ncol(ivs)))
+  upper <- stats::quantile(ascores, 1 - (min_features / ncol(ivs)))
 
   # Define threshold values
   thrs_values <- seq(from = lower, to = upper, length.out = nthrs)
@@ -221,7 +168,7 @@ cv_gspcr <- function(
   # Use thresholds as names
   colnames(pred_map) <- round(thrs_values, 3)
 
-  # If two thresholds are giving the same result reduce the burden
+  # If two thresholds are giving the same active set reduce the burden
   pred_map <- pred_map[, !duplicated(t(pred_map))]
 
   # Get rid of thresholds that are keeping too few predictors
@@ -232,10 +179,10 @@ cv_gspcr <- function(
 
   # And update the effective number of the thresholds considered
   nthrs_eff <- ncol(pred_map)
-  
-  # Create an object to store k-fold cross-validation log-likelihoods
+
+  # Create an object to store k-fold cross-validation fit measures
   map_kfcv <- array(
-    dim = c(maxnpcs, nthrs_eff, K),
+    dim = c(max(npcs_range), nthrs_eff, K),
     dimnames = list(NULL, colnames(pred_map), NULL)
   )
 
@@ -245,12 +192,18 @@ cv_gspcr <- function(
   # Loop over K folds
   for (k in 1:K) {
     # k <- 1
-
-    # Create fold data:
-    Xtr <- ivs[part != k, , drop = FALSE]
-    Xva <- ivs[part == k, , drop = FALSE]
-    ytr <- dv[part != k]
-    yva <- dv[part == k]
+    if(length(unique(part)) != 1){
+      # Create fold data:
+      Xtr <- ivs[part != k, , drop = FALSE]
+      Xva <- ivs[part == k, , drop = FALSE]
+      ytr <- dv[part != k]
+      yva <- dv[part == k]      
+    } else {
+      Xtr <- ivs
+      Xva <- ivs
+      ytr <- dv
+      yva <- dv
+    }
 
     # Loop over threshold values
     for (thr in 1:nthrs_eff) {
@@ -261,80 +214,31 @@ cv_gspcr <- function(
       # If there is more than 1 active variable
       if (sum(aset) > 1) {
 
-        # Scale Xs
-        Xtr_thr <- scale(Xtr[, aset], center = TRUE, scale = TRUE)
-        Xva_thr <- scale(Xva[, aset],
-          center = attributes(Xtr_thr)$`scaled:center`,
-          scale = attributes(Xtr_thr)$`scaled:scale`
+        # Check how many components are available (effective number)
+        Q_max_eff <- min(sum(aset), max(npcs_range))
+        Q_min_eff <- min(sum(aset), min(npcs_range))
+
+        # Replace max and min in range
+        npcs_range_eff <- npcs_range[npcs_range <= Q_max_eff & npcs_range >= Q_min_eff]
+
+        # Compute PC scores
+        pc_scores <- cp_pc_scores(
+          X_train = Xtr[, aset, drop = FALSE],
+          X_valid = Xva[, aset, drop = FALSE],
+          Q = Q_max_eff
         )
 
-        # Perform PCA on the training data
-        svd_Xtr <- svd(Xtr_thr)
-
-        # Project training and validation data on the PCs
-        PC_tr <- Xtr_thr %*% svd_Xtr$v
-        PC_va <- Xva_thr %*% svd_Xtr$v
-
-        # Check how many components are available (effective number)
-        q_eff <- min(sum(aset), maxnpcs)
-
-        # Select the available PC scores
-        PC_tr_eff <- PC_tr[, 1:q_eff, drop = FALSE]
-        PC_va_eff <- PC_va[, 1:q_eff, drop = FALSE]
-
-        # Compute the F-statistic for the possible additive PCRs
-        for (Q in 1:q_eff) {
-          # Q <- 1
-
-          # Estimate new data log-likelihoods under the model of interest
-          mod_out <- LL_newdata(
+        # Compute the fit measures for the possible additive PCRs
+        for (q in npcs_range_eff) {
+          # q <- 1
+          map_kfcv[q, thr, k] <- cp_validation_fit(
             y_train = ytr,
             y_valid = yva,
-            X_train = PC_tr_eff[, 1:Q, drop = FALSE],
-            X_valid = PC_va_eff[, 1:Q, drop = FALSE],
-            fam = fam
+            X_train = pc_scores$PC_tr[, 1:q, drop = FALSE],
+            X_valid = pc_scores$PC_va[, 1:q, drop = FALSE],
+            fam = fam,
+            fit_measure = fit_measure
           )
-
-          # Estimate new data log-likelihoods under the null model
-          null_out <- LL_newdata(
-            y_train = ytr,
-            y_valid = yva,
-            X_train = 1,
-            X_valid = 1,
-            fam = fam
-          )
-
-          # Extract desired statistic
-          if (fit_measure == "F") {
-            # Compute residuals
-            Er <- TSS <- sum((yva - null_out$yhat_va)^2) # baseline prediction error
-            Ef <- SSE <- sum((yva - mod_out$yhat_va)^2) # model prediction error
-
-            # Compute degrees of freedom
-            dfR <- (n - 0 - 1) # for the restricted model
-            dfF <- (n - Q - 1) # for the full model
-
-            # Compute the f statistic
-            Fstat <- ((Er - Ef) / (dfR - dfF)) / (Ef / dfF)
-
-            # Store the F stats
-            map_kfcv[Q, thr, k] <- Fstat
-          }
-          if (fit_measure == "LRT") {
-            map_kfcv[Q, thr, k] <- 2 * (mod_out$LL - null_out$LL)
-          }
-          if (fit_measure == "AIC") {
-            map_kfcv[Q, thr, k] <- 2 * (Q + 1 + 1) - 2 * mod_out$LL
-          }
-          if (fit_measure == "BIC") {
-            map_kfcv[Q, thr, k] <- log(length(yva)) * (Q + 1 + 1) - 2 * mod_out$LL
-          }
-          if (fit_measure == "PR2") {
-            map_kfcv[Q, thr, k] <- 1 - exp(-2 / length(yva) * (mod_out$LL - null_out$LL))
-          }
-          if (fit_measure == "MSE") {
-            map_kfcv[Q, thr, k] <- MLmetrics::MSE(y_pred = null_out$yhat_va, y_true = yva)
-          }
         }
       }
     }
@@ -352,8 +256,25 @@ cv_gspcr <- function(
     fit_measure = fit_measure
   )
 
+  # Make a solution table
+  sol_table <- data.frame(
+    thr_value = c(
+      standard = thrs_values[cv_sol$default[2]],
+      oneSE = thrs_values[cv_sol$oneSE[2]]
+    ),
+    thr_number = c(
+      standard = as.numeric(cv_sol$default[2]),
+      oneSE = as.numeric(cv_sol$oneSE[2])
+    ),
+    Q = c(
+      standard = as.numeric(cv_sol$default[1]),
+      oneSE = as.numeric(cv_sol$oneSE[1])
+    )
+  )
+
   # Return
   out <- list(
+    sol_table   = sol_table,
     thr         = thrs_values,
     thr_cv      = thrs_values[cv_sol$default[2]],
     thr_cv_1se  = thrs_values[cv_sol$oneSE[2]],
@@ -367,7 +288,7 @@ cv_gspcr <- function(
   )
 
   # Assign class to object
-  class(out) <- c("gspcrout", "list")
+  class(out) <- c("gspcrcv", "list")
 
   # Return gspcr object
   return(out)

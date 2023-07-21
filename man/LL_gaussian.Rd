@@ -16,8 +16,8 @@ LL_gaussian(y, x, mod)
 \value{
 A list containing:
 \itemize{
-\item \code{ll}, an atomic vector of length 1 containing the log-likelihood value.
-\item \code{sc}, an atomic vector containing the systematic component for the input \code{x} and \code{mod}.
+\item \code{ll} an atomic vector of length 1 containing the log-likelihood value.
+\item \code{sc} an atomic vector containing the systematic component for the input \code{x} and \code{mod}.
 }
 }
 \description{

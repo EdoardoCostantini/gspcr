@@ -6,15 +6,12 @@
 #' @param y_valid Vector of DV values in the validation dataset.
 #' @param X_train Matrix of IV values in the training dataset. Can also be set to 1 to obtain the log-likelihood of the new data under the null model.
 #' @param X_valid Matrix of IV values in the validation dataset. If \code{X_train} is set to 1 to obtain the log-likelihood of the new data under the null model, \code{X_valid} is ignored.
-#' @param fam GLM framework for the dv.
+#' @param fam character vector of length 1 storing the description of the error distribution and link function to be used in the model (see [gspcr::cv_gspcr()] for the list of possible options)
 #' @details
 #' This function trains a GLM regressing \code{y_train} on \code{X_train} using as link function what is specified in \code{fam}. Then, it computes the predictions for the validation data based on the trained model on the scale of the linear predictors (e.g., logit). The likelihood of the validation under the model is returned.
 #' 
 #' @return A list of objects.
 #' @author Edoardo Costantini, 2023
-#' @references
-#'
-#' Such, S. (2006). Such and such. Journal such and such, 101(473), 119-137.
 #'
 #' @export
 LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
@@ -22,8 +19,8 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
   ## Example inputs
   # y_train = as.matrix(mtcars[1:20, 1])
   # y_valid = as.matrix(mtcars[-c(1:20), 1])
-  # X_train = 1
-  # X_valid = 1
+  # X_train = as.matrix(mtcars[1:20, -1])
+  # X_valid = as.matrix(mtcars[-c(1:20), -1])
   # fam = "gaussian"
 
   ## Body
@@ -54,7 +51,8 @@ LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
   if (fam == "baseline") {
     glm_fit_tr <- nnet::multinom(
       formula = glm_formula,
-      data = train
+      data = train, 
+      trace = FALSE
     )
   }
   if (fam == "cumulative") {

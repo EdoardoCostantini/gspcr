@@ -1,23 +1,26 @@
 #' Average fit measures computed in the K-fold cross-validation procedure
 #'
-#' A low-level function to average results from an array of K-fold CV fit measures.
+#' Function to average results from an array of K-fold CV fit measures.
 #'
-#' @param cv_array A an array of q nt k dimensionality.
-#' @param fit_measure The type of fit measure stored in the array
+#' @param cv_array \eqn{Q \times nthrs \times K} array containing fit measures computed for different combinations of the number of components, threshold values, and number of CV-folds.
+#' @param fit_measure character vector of length 1 indicating the type of fit measure to be used in the to cross-validation procedure
 #' @details
-#' The input of this function is an array of q nt k, where q is the number of principal components, nt is the number of thresholds and k is the number of folds.
-#' @return A list of three q nt matrices.
-#' - scor: contains the average CV scores across the K folds
-#' - scor_upr: contains the average CV scores across the K folds + 1 standard deviation
-#' - scor_lwr: contains the average CV scores across the K folds - 1 standard deviation
+#' The input of this function is an array of \eqn{Q \times nthrs \times K}, where \code{Q} is the number of principal components, \code{nthrs} is the number of thresholds, and \code{K} is the number of folds.
+#' @return list of three \eqn{Q \times nthrs} matrices:
+#' - \code{scor}: contains the average CV scores across the K folds
+#' - \code{scor_upr}: contains the average CV scores across the K folds + 1 standard deviation
+#' - \code{scor_lwr}: contains the average CV scores across the K folds - 1 standard deviation
 #' @author Edoardo Costantini, 2023
-#' @references
-#'
-#' Such, S. (2006). Such and such. Journal such and such, 101(473), 119-137.
-#'
+#' @examples 
+#' # Example inputs
+#' cv_array = array(abs(rnorm(10 * 3 * 2)), dim = c(10, 3, 2))
+#' fit_measure = "F"
+#' 
+#' # Use the function
+#' cv_average(cv_array, fit_measure)
+#' 
 #' @export
 cv_average <- function(cv_array, fit_measure) {
-    # Description: given an array of npcs * thrsh * K dimensions, returns its average
     # Example internals:
     # - cv_array = array(abs(rnorm(10 * 3 * 2)), dim = c(10, 3, 2))
     # - fit_measure = "F"

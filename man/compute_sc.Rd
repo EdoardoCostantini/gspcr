@@ -7,20 +7,18 @@
 compute_sc(mod, predictors)
 }
 \arguments{
-\item{mod}{A fit object returned by one of \code{stats::lm}, \code{stats::glm}, \code{nnet::multinom}, or \code{MASS::polr}.}
+\item{mod}{a fit object returned by one of \code{stats::lm}, \code{stats::glm}, \code{nnet::multinom}, or \code{MASS::polr}.}
 
-\item{predictors}{Dataset of predictor values to compute the systematic component based on.}
+\item{predictors}{matrix or data.frame of predictor values to compute the systematic component based on.}
 }
 \value{
-A matrix of \eqn{n \times k}, where \eqn{k} is equal to 1 for all but multi-categorical models. This matrix contains the systematic component values for the provided predictors.
+a matrix of \eqn{n \times k}, where \eqn{k} is equal to 1 for all but multi-categorical models. This matrix contains the systematic component values for the provided predictors.
 }
 \description{
-A low-level function to compute the systematic component of a GLM of interest.
+Compute the systematic component of a GLM of interest.
 }
 \details{
 This function takes different model objects and knows how to treat the coefficient vector (or matrix) to obtain the systematic component.
-
-\code{data} should be a data.frame with the first column being the dependent variable on which the model has been trained. This first variable should be called \code{y}.
 }
 \author{
 Edoardo Costantini, 2023

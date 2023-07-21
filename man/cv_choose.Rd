@@ -7,28 +7,51 @@
 cv_choose(scor, scor_lwr, scor_upr, K, fit_measure)
 }
 \arguments{
-\item{scor}{A \eqn{npcs \times nthrs} matrix of K-fold CV scores.}
+\item{scor}{\eqn{npcs \times nthrs} matrix of K-fold CV scores}
 
-\item{scor_lwr}{A \eqn{npcs \times nthrs} matrix of score lower bounds.}
+\item{scor_lwr}{\eqn{npcs \times nthrs} matrix of score lower bounds}
 
-\item{scor_upr}{A \eqn{npcs \times nthrs} matrix of score upper bounds.}
+\item{scor_upr}{\eqn{npcs \times nthrs} matrix of score upper bounds}
 
-\item{K}{The number of folds used for K-fold cross-validation.}
+\item{K}{numeric vector of length 1 storing the number of folds for the K-fold cross-validation procedure}
 
-\item{fit_measure}{The type of score to compute for the cross-validation procedure.}
+\item{fit_measure}{character vector of length 1 indicating the type of fit measure to be used in the to cross-validation procedure}
 }
 \value{
-A list of two unit vectors:
+A list of two numeric vectors:
 \itemize{
-\item default = The default choice.
-\item oneSE = The choice based on the one standard error rule.
+\item \code{default}: numeric vector of length 2 that reports the coordinates in \code{scor} defining the default solution.
+\item \code{oneSE}: numeric vector of length 2 that reports the coordinates for \code{scor} defining the solution based on the one standard error rule
 }
 }
 \description{
 Extracting the CV choices of SPCR parameters.
 }
 \details{
-Given a matrix of \eqn{npcs \times nthrs}, returns the best choice based on the type of fit measure (best overall and 1se rule versions)
+Given a matrix of \eqn{npcs \times nthrs}, returns the best choice based on the type of fit measure (best overall and 1se rule versions.)
+This function returns as solutions:
+\itemize{
+\item \code{default}: the best choice based on the given fit measure (e.g. highest likelihood ratio test statistic, lowest BIC)
+\item \code{oneSE}: the solution that defined the most parsimonious model within 1 standard error from the best one.
+When both the number of components and the threshold parameter are cross-validated, the 1-standard error rule finds the candidate alternative solutions using the lowest number of PCs and having the best fit-measure.
+This decision is guided by the desire to counterbalance the tendency of GSPCR of selecting the highest number of components available when using cross-validation.
+}
+}
+\examples{
+# Score matrices
+scor <- matrix(c(1, 2, 3, 4, 5, 6), nrow = 3, ncol = 2)
+scor_lwr <- matrix(c(1, 2, 3, 4, 5, 6) - 1.5, nrow = 3, ncol = 2)
+scor_upr <- matrix(c(1, 2, 3, 4, 5, 6) + 1.5, nrow = 3, ncol = 2)
+
+# Number of folds
+K <- 10
+
+# Type of fit_measure
+fit_measure <- "F"
+
+# Use the function
+cv_choose(scor, scor_lwr, scor_upr, K, fit_measure)
+
 }
 \author{
 Edoardo Costantini, 2023

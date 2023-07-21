@@ -2,7 +2,7 @@
 # Objective: Testing the compute_sc function
 # Author:    Edoardo Costantini
 # Created:   2023-04-11
-# Modified:  2023-04-13
+# Modified:  2023-05-31
 # Notes: 
 
 # Prepare the data -------------------------------------------------------------
@@ -46,6 +46,7 @@ sc_fun_lm_out <- compute_sc(
     mod = lm_out,
     predictors = mtcars_fact[new_data, c("cyl", "disp")]
 )
+
 # Use the function with GLM (and a single predictor)
 sc_fun_glm_out1 <- compute_sc(
     mod = glm_out1,

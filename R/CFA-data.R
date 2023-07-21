@@ -1,0 +1,19 @@
+#' CFA example data
+#'
+#' Contains a data set used to develop and test the main features of the \code{gspcr} package. The data contains 50 predictors generated based on true number of principal components.
+#'
+#' @name CFA_data
+#' @docType data
+#' @format \code{CFA_data} is a list containing two objects:
+#' - \code{X}: A data.frame with 5000 rows (observations) and 30 columns (possible predictors.) This data was generated based on a CFA model describing 10 independent latent variables measured by 3 items each, and a factor loading matrix describing simple structure.
+#' - \code{y}: A numeric vector of length 1000. This variable was genearted as a linear combination of 5 latent variables used to generate \code{X}.
+#' @details 
+#' A supervised PCA approach should identify that only 5 components are useful for the prediction of \code{y} and that only the first 15 variables should be used to compute them.
+#' @keywords datasets
+#' @examples
+#' # Check out the first 6 rows of the predictors
+#' head(CFA_data$X)
+#'
+#' # Check out first 6 elements of the dependent variable
+#' head(CFA_data$y)
+NULL

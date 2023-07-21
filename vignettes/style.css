@@ -1,0 +1,39 @@
+/* Headers */
+h1 {
+    font-size: 22px
+}
+
+h2 {
+    font-size: 16px;
+    line-height: 1.5;
+    padding-left: 2.35em;
+    text-indent: -2.35em;
+}
+
+h3 {
+    font-size: 14px;
+    line-height: 1.5;
+    /* font-weight: normal; */
+    padding-left: 2.35em;
+    text-indent: -2.35em;
+}
+
+/* Main text */
+p {
+    font-size: 14px
+}
+
+/* TOC */
+.tocify-subheader>.tocify-item {
+    padding-left: 4.7em;
+    text-indent: -2.35em;
+}
+
+/* 
+Allow sideways scroll
+- Source: https://stackoverflow.com/questions/36230790/missing-horizontal-scroll-bar-in-r-markdown-html-code-chunks-and-output
+*/
+pre, code {
+    white-space: pre !important;
+    overflow-x: scroll !important
+}

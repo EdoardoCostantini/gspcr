@@ -1,15 +1,13 @@
 #' Compute the GLM systematic component.
 #'
-#' A low-level function to compute the systematic component of a GLM of interest.
+#' Compute the systematic component of a GLM of interest.
 #'
-#' @param mod A fit object returned by one of `stats::lm`, `stats::glm`, `nnet::multinom`, or `MASS::polr`.
-#' @param predictors Dataset of predictor values to compute the systematic component based on.
+#' @param mod a fit object returned by one of `stats::lm`, `stats::glm`, `nnet::multinom`, or `MASS::polr`.
+#' @param predictors matrix or data.frame of predictor values to compute the systematic component based on.
 #' @details
 #' This function takes different model objects and knows how to treat the coefficient vector (or matrix) to obtain the systematic component.
 #'
-#' `data` should be a data.frame with the first column being the dependent variable on which the model has been trained. This first variable should be called `y`.
-#'
-#' @return A matrix of \eqn{n \times k}, where \eqn{k} is equal to 1 for all but multi-categorical models. This matrix contains the systematic component values for the provided predictors.
+#' @return a matrix of \eqn{n \times k}, where \eqn{k} is equal to 1 for all but multi-categorical models. This matrix contains the systematic component values for the provided predictors.
 #' @author Edoardo Costantini, 2023
 #'
 #' @export

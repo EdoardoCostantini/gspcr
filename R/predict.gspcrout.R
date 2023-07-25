@@ -71,43 +71,17 @@ predict.gspcrout <- function(object, newdata = NULL, ...) {
                 quote = FALSE
             )
 
-            # identify which variables have constant values
-            contant_values <- sapply(x_quali, function(j) {
-                length(unique(j)) == 1
+            # Predict one at the time to avoid any problem
+            x_PC <- lapply(seq_along(1:nrow(newdata)), function(i) {
+                stats::predict(
+                    object$pca$pcamix,
+                    X.quanti = x_quanti[i, , drop = FALSE],
+                    X.quali = x_quali[i, , drop = FALSE]
+                )
             })
 
-            # Create a fake data row
-            x_quali_newraw <- x_quali[1, ]
-            x_quanti_newraw <- x_quanti[1, ]
-
-            # Add a different value for every variable impacted
-            for (j in which(contant_values)) {
-                # Extract the levels of the factor
-                lvls <- levels(x_quali[, j])
-
-                # identify the single used level
-                used_lvl <- unique(x_quali[, j])
-
-                # identify the first unused level (any other would do)
-                unused_lvl <- lvls[!levels(x_quali[, j]) %in% used_lvl][1]
-
-                # Replace it in the fake row
-                x_quali_newraw[, j] <- unused_lvl
-            }
-
-            # Append the extra row to the new data
-            x_quali <- rbind(x_quali, EXTRA = x_quali_newraw)
-            x_quanti <- rbind(x_quanti, EXTRA = x_quanti_newraw)
-
-            # Run PCAmix on the augmented data
-            x_PC <- stats::predict(
-                object$pca$pcamix,
-                X.quanti = x_quanti,
-                X.quali = x_quali
-            )
-
-            # Remove the extra row, if there was a problem with constant values
-            x_PC <- x_PC[-nrow(x_PC), , drop = FALSE]
+            # Put predictions together in a single matrix-like object
+            x_PC <- do.call(rbind, x_PC)
 
             # Return the scores
             return(x_PC)

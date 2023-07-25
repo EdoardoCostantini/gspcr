@@ -59,26 +59,29 @@ predict.gspcrout <- function(object, newdata = NULL, ...) {
             # I can get rid of this and just keep the simple normal predict behavior.
         },
         error = function(err) {
-            # Error handler message
-            cat(
-                paste0(
-                    "\n\n",
-                    "The following error occurred when trying to project the new data on the PC axis: ",
-                    "\n\n",
-                    "\"",
-                    err,
-                    "\"",
-                    "\n\n",
-                    "Do not worry, this was solved by augmenting the data with an extra row before projecting it, and then getting rid of the extra row before using the projected scores in the subsequent step. If you still get an error after this, then something else went wrong.",
-                    "\n\n",
-                    "This is the data that caused the problem: ",
-                    "\n\n"
-                )
-            )
+            # # Error handler message
+            # cat(
+            #     paste0(
+            #         "\n\n",
+            #         "The following error occurred when trying to project the new data on the PC axis: ",
+            #         "\n\n",
+            #         "\"",
+            #         err,
+            #         "\"",
+            #         "\n\n",
+            #         "Do not worry, this was solved by augmenting the data with an extra row before projecting it, and then getting rid of the extra row before using the projected scores in the subsequent step. If you still get an error after this, then something else went wrong.",
+            #         "\n\n",
+            #         "This was the data that caused the problem: ",
+            #         "\n\n"
+            #     )
+            # )
 
-            # Print the data causing the problem
-            print(cbind(x_quanti, x_quali))
-            cat("\n")
+            # # Print the data causing the problem
+            # cat("x.qunati\n")
+            # print(x_quanti)
+            # cat("\nx.quali\n")
+            # print(x_quali)
+            # cat("\n")
 
             # Predict one at the time to avoid any problem
             x_PC <- lapply(seq_along(1:nrow(newdata)), function(i) {

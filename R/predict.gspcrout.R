@@ -78,6 +78,7 @@ predict.gspcrout <- function(object, newdata = NULL, ...) {
 
             # Print the data causing the problem
             print(cbind(x_quanti, x_quali))
+            cat("\n")
 
             # Predict one at the time to avoid any problem
             x_PC <- lapply(seq_along(1:nrow(newdata)), function(i) {

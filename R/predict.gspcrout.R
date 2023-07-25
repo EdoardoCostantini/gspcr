@@ -12,9 +12,9 @@ predict.gspcrout <- function(object, newdata = NULL, ...) {
 
     # Use input data if newdata is empty
     if(is.null(newdata)){
-        newdata <- object$ivs[, object$active_set]
+        newdata <- object$ivs[, object$active_set, drop = FALSE]
     } else {
-        newdata <- newdata[, object$active_set]
+        newdata <- newdata[, object$active_set, drop = FALSE]
     }
 
     # Identify numeric variables

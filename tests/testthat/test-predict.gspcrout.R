@@ -1,9 +1,12 @@
 # Project:   gspcr
-# Objective: #TODO
+# Objective: Test predict.gspcrout
 # Author:    Edoardo Costantini
 # Created:   2023-06-01
-# Modified:  2023-06-12
+# Modified:  2023-07-25
 # Notes: 
+
+# Set a seed
+set.seed(20230724)
 
 # Separate training data from the rest
 train <- sample(

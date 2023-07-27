@@ -137,13 +137,7 @@ Once the cross-validation procedure has identified the values of the threshold a
 
 ```{R}
 # Estimate GSPCR on the whole training data
-gspcr_est <- est_gspcr(
-    dv = y[train],
-    ivs = X[train, ],
-    fam = "gaussian",
-    ndim = out$sol_table[1, "Q"],
-    active_set = out$pred_map[, out$sol_table[1, "thr_number"]]
-)
+gspcr_est <- est_gspcr(out)
 
 ```
 
@@ -152,7 +146,7 @@ gspcr_est <- est_gspcr(
 We can now **obtain predictions** for new unseen data using the `predict()` function
 
 ```{R}
-# Predict new data with constants
+# Predict new data
 y_hat <- predict(
     object = gspcr_est,
     newdata = X[-train, ]

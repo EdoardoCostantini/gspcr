@@ -2,7 +2,7 @@
 # Objective: Script containing functions to check correct inputs specifications
 # Author:    Edoardo Costantini
 # Created:   2023-05-31
-# Modified:  2023-05-31
+# Modified:  2023-07-27
 # Notes:
 
 # Argument: fam ----------------------------------------------------------------
@@ -195,13 +195,11 @@ check_max_features <- function(max_features, ivs) {
     # The number of features requested is less than or equal to the total number of columns
     is_less_than_p <- max(max_features) <= ncol(ivs)
     if (!is_less_than_p) {
-        stop(
-            paste0(
-                "argument 'max_features' is misspecified. You cannot ask for more features than the number of columns in the input data 'ivs'. Get rid of (", paste(max_features[max_features > ncol(ivs)], collapse = ", "), ") from the range of PCs requested."
-            ),
-            call. = FALSE
-        )
+        max_features <- ncol(ivs)
     }
+
+    # Return max_features as is or updated
+    max_features
 }
 
 # Argument: min_features -------------------------------------------------------
@@ -238,7 +236,7 @@ check_min_features <- function(min_features, ivs) {
     if (!is_less_than_p) {
         stop(
             paste0(
-                "argument 'min_features' is misspecified. You cannot ask for more features than the number of columns in the input data 'ivs'. Get rid of (", paste(min_features[min_features > ncol(ivs)], collapse = ", "), ") from the range of PCs requested."
+                "argument 'min_features' is misspecified. You cannot ask for more features than the number of columns in the input data 'ivs'. Lower the number of minimum features."
             ),
             call. = FALSE
         )

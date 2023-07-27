@@ -102,7 +102,13 @@ cv_gspcr <- function(
   oneSE = TRUE
   ) {
 
-  # Perform input checks
+  # If ivs is not a data.frame make it one
+  if (is.matrix(ivs)) {
+    ivs <- as.data.frame(ivs, stringsAsFactors = TRUE)
+  }
+
+  # Perform other input checks
+  ivs <- check_constants(ivs)
   check_fam(fam)
   check_thrs(thrs)
   check_nthrs(nthrs)

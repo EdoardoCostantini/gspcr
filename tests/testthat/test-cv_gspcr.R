@@ -2,7 +2,7 @@
 # Objective: Test the cv_gspcr function
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
-# Modified:  2023-05-30
+# Modified:  2023-07-27
 # Notes: 
 
 # Test: Continuous outcome -----------------------------------------------------
@@ -216,3 +216,22 @@ testthat::expect_equal(length(out_X_mix), 11)
 
 # Test the class of the output
 testthat::expect_equal(class(out_X_mix), c("gspcrcv", "list"))
+
+# Test: handle constants in data -----------------------------------------------
+
+# A dataset with a constant variable
+X_constant <- iris[1:50, -1]
+
+# Use the functions with a given method
+out_X_constant <- cv_gspcr(
+    dv = iris[1:50, 1],
+    ivs = X_constant,
+    nthrs = 5,
+    K = 2,
+    min_features = 1,
+    max_features = ncol(iris[1:50, -1]),
+    npcs_range = 1:2
+)
+
+# Test the class of the output
+testthat::expect_equal(class(out_X_constant), c("gspcrcv", "list"))

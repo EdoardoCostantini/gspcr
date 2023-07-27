@@ -244,3 +244,25 @@ check_min_features <- function(min_features, ivs) {
         )
     }
 }
+
+# Argument: ivs -------------------------------------------------------
+
+check_constants <- function(ivs) {
+
+    # Check constants
+    keeplist <- lapply(lapply(ivs, as.numeric), stats::var) != 0
+
+    # Check at least 2 columns are kept
+    if(sum(keeplist) < 2){
+        stop(
+            paste0(
+                "The input data ivs contains only 1 column that is not a constant. GSPCR does not make sense if you have a single predictor."
+            ),
+            call. = FALSE
+        )
+    }
+
+    # Return matrix of non-costants
+    ivs[, keeplist, drop = FALSE]
+
+}

@@ -4,16 +4,18 @@
 \alias{est_gspcr}
 \title{Estimate Generalized Principal Component Regression}
 \usage{
-est_gspcr(dv, ivs, fam, active_set, ndim)
+est_gspcr(object = NULL, dv, ivs, fam, active_set, ndim)
 }
 \arguments{
+\item{object}{\code{gspcrcv} object resulting from the call of \code{cv_gspcr()}. If this is specified, then every other argument can be left blank.}
+
 \item{dv}{numeric vector or factor of dependent variable values}
 
 \item{ivs}{\eqn{n \times p} data.frame of independent variables (factors allowed)}
 
 \item{fam}{character vector of length 1 storing the description of the error distribution and link function to be used in the model}
 
-\item{active_set}{logical vector indicating which predictor should be used}
+\item{active_set}{names of the columns of ivs to be used as predictors}
 
 \item{ndim}{numeric vector defining the number of principal components to be used (2 or more)}
 }
@@ -25,6 +27,7 @@ Estimate SPCA on the data given chosen parameter values
 }
 \details{
 After deciding on the number of components and the active set, this estimates the GSPCR model.
+This function can be used by specifying the object argument or by filling in custom values for every argument. If both the object and any other argument are specified, then the argument values will be prioritized.
 }
 \references{
 Bair, E., Hastie, T., Paul, D., & Tibshirani, R. (2006). Prediction by supervised principal components. Journal of the American Statistical Association, 101(473), 119-137.

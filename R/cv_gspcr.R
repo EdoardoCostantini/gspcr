@@ -115,7 +115,7 @@ cv_gspcr <- function(
   check_npcs_range(npcs_range, ivs)
   check_K(K)
   check_fit_measure(fit_measure)
-  check_max_features(max_features, ivs)
+  max_features <- check_max_features(max_features, ivs)
   check_min_features(min_features, ivs)
 
   # Save the call

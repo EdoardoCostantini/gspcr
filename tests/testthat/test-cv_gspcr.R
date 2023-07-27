@@ -5,6 +5,8 @@
 # Modified:  2023-07-27
 # Notes: 
 
+set.seed(20230727)
+
 # Test: Continuous outcome -----------------------------------------------------
 
 # Use the functions with a given method

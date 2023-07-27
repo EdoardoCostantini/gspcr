@@ -102,14 +102,20 @@ cv_gspcr <- function(
   oneSE = TRUE
   ) {
 
-  # Perform input checks
+  # If ivs is not a data.frame make it one
+  if (is.matrix(ivs)) {
+    ivs <- as.data.frame(ivs, stringsAsFactors = TRUE)
+  }
+
+  # Perform other input checks
+  ivs <- check_constants(ivs)
   check_fam(fam)
   check_thrs(thrs)
   check_nthrs(nthrs)
   check_npcs_range(npcs_range, ivs)
   check_K(K)
   check_fit_measure(fit_measure)
-  check_max_features(max_features, ivs)
+  max_features <- check_max_features(max_features, ivs)
   check_min_features(min_features, ivs)
 
   # Save the call

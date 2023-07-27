@@ -2,7 +2,7 @@
 # Objective: Test predict.gspcrout
 # Author:    Edoardo Costantini
 # Created:   2023-06-01
-# Modified:  2023-07-25
+# Modified:  2023-07-27
 # Notes: 
 
 # Set a seed
@@ -233,3 +233,46 @@ testthat::expect_true(
         y_hat_no_constants[names(y_hat_constants)]
     )
 )
+
+# Test: predict when constant in present in data -------------------------------
+
+# A dataset with a constant variable
+X_constant <- iris[1:50, -1]
+
+# Use the functions with a given method
+out_X_constant <- cv_gspcr(
+    dv = iris[1:50, 1],
+    ivs = X_constant,
+    nthrs = 5,
+    K = 2,
+    min_features = 1,
+    max_features = ncol(iris[1:50, -1]),
+    npcs_range = 1:2
+)
+
+# Estimate GSPCR
+gspcr_est <- est_gspcr(
+    dv = iris[1:50, 1],
+    ivs = X_constant,
+    fam = "gaussian",
+    ndim = out_X_constant$sol_table[1, "Q"],
+    active_set = names(out_X_constant$pred_map[, out_X_constant$sol_table[1, "thr_number"]])
+)
+
+# A new dataset with a constant variable
+X_constant_new <- iris[sample(1:50, 10, replace = TRUE), -1]
+
+# Predict old data
+y_hat_old <- predict(
+    object = gspcr_est
+)
+
+# Predict new data
+y_hat_new <- predict(
+    object = gspcr_est,
+    newdata = X_constant_new
+)
+
+# Test values are numeric
+testthat::expect_true(all(is.numeric(y_hat_old)))
+testthat::expect_true(all(is.numeric(y_hat_new)))

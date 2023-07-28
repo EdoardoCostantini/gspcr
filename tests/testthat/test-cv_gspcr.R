@@ -237,3 +237,30 @@ out_X_constant <- cv_gspcr(
 
 # Test the class of the output
 testthat::expect_equal(class(out_X_constant), c("gspcrcv", "list"))
+
+# Test: treatment of ordered factor is as nominal variables --------------------
+
+set.seed(1234)
+
+# Use cv_gspcr on ordinal predictors
+out_X_ord <- cv_gspcr(
+    dv = GSPCRexdata$y$cont,
+    ivs = GSPCRexdata$X$ord,
+    nthrs = 5,
+    npcs_range = 1:2,
+    K = 3
+)
+
+set.seed(1234)
+
+# Use pca_mix on nominal data
+out_X_cat <- cv_gspcr(
+    dv = GSPCRexdata$y$cont,
+    ivs = GSPCRexdata$X$cat,
+    nthrs = 5,
+    npcs_range = 1:2,
+    K = 3
+)
+
+# Check is the result an error?
+testthat::expect_equal(out_X_ord$sol_table, out_X_cat$sol_table)

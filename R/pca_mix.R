@@ -30,13 +30,13 @@
 #' @export
 pca_mix <- function(X_tr, X_va, npcs = 1) {
     # Identify numeric variables
-    num <- names(which(sapply(X_tr, is.numeric)))
+    num <- sapply(X_tr, is.numeric)
 
     # Identify categorical variables
-    fac <- names(which(sapply(X_tr, is.factor)))
+    fac <- sapply(X_tr, is.factor)
 
     # Group quantitive variables if any
-    if (length(num) > 0) {
+    if (any(num)) {
         X_tr_quanti <- X_tr[, num, drop = FALSE]
         X_va_quanti <- X_va[, num, drop = FALSE]
     } else {
@@ -45,7 +45,7 @@ pca_mix <- function(X_tr, X_va, npcs = 1) {
     }
 
     # Group qualitative variables if any
-    if (length(fac) > 0) {
+    if (any(fac)) {
         X_tr_quali <- X_tr[, fac, drop = FALSE]
         X_va_quali <- X_va[, fac, drop = FALSE]
     } else {

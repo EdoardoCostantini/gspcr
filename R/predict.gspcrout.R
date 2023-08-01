@@ -18,20 +18,20 @@ predict.gspcrout <- function(object, newdata = NULL, ...) {
     }
 
     # Identify numeric variables
-    num <- names(which(sapply(newdata, is.numeric)))
+    num <- sapply(newdata, is.numeric)
 
     # Identify categorical variables
-    fac <- names(which(sapply(newdata, is.factor)))
+    fac <- sapply(newdata, is.factor)
 
     # Group quantitative variables if any
-    if (length(num) > 0) {
+    if (any(num)) {
         x_quanti <- newdata[, num, drop = FALSE]
     } else {
         x_quanti <- NULL
     }
 
     # Group qualitative variables if any
-    if (length(fac) > 0) {
+    if (any(fac)) {
         x_quali <- newdata[, fac, drop = FALSE]
     } else {
         x_quali <- NULL

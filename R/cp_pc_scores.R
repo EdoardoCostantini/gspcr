@@ -21,8 +21,11 @@ cp_pc_scores <- function(X_train, X_valid, Q) {
     # X_valid = mtcars[-c(1:20), -1]
     # Q = 3
 
+    # Check if all variables are numeric
+    all_numeric <- all(sapply(X_train, is.numeric))
+
     # If all variables are numeric, use regular PCA
-    if (all(sapply(X_train, is.numeric))) {
+    if (all_numeric) {
         # Scale Xs
         X_train_thr <- scale(
             x = X_train,
@@ -44,7 +47,7 @@ cp_pc_scores <- function(X_train, X_valid, Q) {
     }
 
     # If some variables are not numeric (e.g., factors), use PCAmix
-    if (!all(sapply(X_train, is.numeric))) {
+    if (!all_numeric) {
         # Perform PCAmix
         pca_mix_out <- pca_mix(
             X_tr = X_train,

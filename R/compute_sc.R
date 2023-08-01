@@ -36,12 +36,12 @@ compute_sc <- function(mod, predictors) {
             x <- stats::model.matrix(
                 object = ~.,
                 data = predictors
-            )[, -1]
+            )[, -1, drop = FALSE]
 
             # Compute bx
             bx <- x %*% matrix(mod$coefficients)
 
-            #Compute aj - bx
+            # Compute aj - bx
             sc <- sapply(mod$zeta, function(a) {
                 a - bx
             })

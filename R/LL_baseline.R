@@ -31,20 +31,20 @@ LL_baseline <- function(y, x, mod) {
         y <- FactoMineR::tab.disjonctif(y)
     }
 
-    # Define J
-    J <- ncol(y)
-
-    # Get rid of the baseline line for y
+    # Drop first column of y
     y <- y[, -1, drop = FALSE]
+
+    # Define J = ncat - 1 or ncol of sc
+    J <- ncol(sc)
 
     # Define a vector to store individual contributions to the likelihood
     contr_i <- rep(NA, nrow(y))
 
     # Compute individual contributions
     for (i in 1:nrow(y)) {
-        contr_ij_pt1 <- rep(NA, J - 1)
-        contr_ij_pt2 <- rep(NA, J - 1)
-        for (j in 1:(J - 1)) {
+        contr_ij_pt1 <- rep(NA, J)
+        contr_ij_pt2 <- rep(NA, J)
+        for (j in seq_along(1:J)) {
             contr_ij_pt1[j] <- y[i, j] * sc[i, j]
             contr_ij_pt2[j] <- exp(sc[i, j])
         }

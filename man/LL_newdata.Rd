@@ -4,7 +4,7 @@
 \alias{LL_newdata}
 \title{Log-Likelihood for new data}
 \usage{
-LL_newdata(y_train, y_valid, X_train, X_valid, fam)
+LL_newdata(y_train, y_valid, X_train = NULL, X_valid = NULL, fam)
 }
 \arguments{
 \item{y_train}{Vector of DV values in the training dataset.}

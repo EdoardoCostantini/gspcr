@@ -19,22 +19,14 @@ LL_newdata <- function(y_train, y_valid, X_train = NULL, X_valid = NULL, fam) {
   # Fix empty and NULL columns if it happens
   if (is.null(X_train)) {
     X_train <- data.frame(X = rep(1, length(y_train)))
-  } else {
-    if (ncol(X_train) == 0) {
-      X_train <- data.frame(X = rep(1, length(y_train)))
-    }
   }
   if (is.null(X_valid)) {
     X_valid <- data.frame(X = rep(1, length(y_valid)))
-  } else {
-    if (ncol(X_valid) == 0) {
-      X_valid <- data.frame(X = rep(1, length(y_valid)))
-    }
   }
 
   # Collect data in data.frames
-  train <- data.frame(y = y_train, X = X_train)
-  valid <- data.frame(y = y_valid, X = X_valid)
+  train <- data.frame(y = y_train, X_train)
+  valid <- data.frame(y = y_valid, X_valid)
 
   # Define formula
   if (ncol(X_train) == 1 & length(unique(X_train[, 1])) == 1) {

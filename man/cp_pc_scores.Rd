@@ -16,8 +16,8 @@ cp_pc_scores(X_train, X_valid, Q)
 \value{
 list of two objects:
 \itemize{
-\item \code{PC_tr} a n times Q matrix of PC scores for the observations in the training data
-\item \code{PC_va} a n times Q matrix of PC scores for the observations in the validation data
+\item \code{PC_tr} a n times Q data.frame of PC scores for the observations in the training data
+\item \code{PC_va} a n times Q data.frame of PC scores for the observations in the validation data
 }
 }
 \description{

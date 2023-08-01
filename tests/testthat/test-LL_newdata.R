@@ -122,18 +122,7 @@ mod_out <- LL_newdata(
 # Test output object has expected length
 testthat::expect_true(length(mod_out) == 3)
 
-# Test: empty predictor matrix goes to null model ------------------------------
-
-# Use the function with empty training and validation data
-mod_out <- LL_newdata(
-    y_train = mtcars_fact[, "gear"],
-    y_valid = mtcars_fact[, "gear"],
-    X_train = mtcars_fact[, -c(1:ncol(mtcars_fact)), drop = FALSE],
-    X_valid = mtcars_fact[, -c(1:ncol(mtcars_fact)), drop = FALSE],
-    fam = "baseline"
-)
-
-testthat::expect_true(ncol(coef(mod_out$mod)) == 1)
+# Test: NULL predictor goes to null model --------------------------------------
 
 # Use the function with NULL training and validation data
 mod_out <- LL_newdata(

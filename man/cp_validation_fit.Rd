@@ -30,10 +30,10 @@ The validation data set can be specified to be the same as the training data set
 }
 \examples{
 # Example inputs
-y_train = as.matrix(mtcars[1:20, 1])
-y_valid = as.matrix(mtcars[-c(1:20), 1])
-X_train = as.matrix(mtcars[1:20, -1])
-X_valid = as.matrix(mtcars[-c(1:20), -1])
+y_train = mtcars[1:20, 1]
+y_valid = mtcars[-c(1:20), 1]
+X_train = mtcars[1:20, -1]
+X_valid = mtcars[-c(1:20), -1]
 fam = "gaussian"
 fit_measure = "BIC"
 

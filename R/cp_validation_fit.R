@@ -14,10 +14,10 @@
 #' @author Edoardo Costantini, 2023
 #' @examples 
 #' # Example inputs
-#' y_train = as.matrix(mtcars[1:20, 1])
-#' y_valid = as.matrix(mtcars[-c(1:20), 1])
-#' X_train = as.matrix(mtcars[1:20, -1])
-#' X_valid = as.matrix(mtcars[-c(1:20), -1])
+#' y_train = mtcars[1:20, 1]
+#' y_valid = mtcars[-c(1:20), 1]
+#' X_train = mtcars[1:20, -1]
+#' X_valid = mtcars[-c(1:20), -1]
 #' fam = "gaussian"
 #' fit_measure = "BIC"
 #' 
@@ -26,13 +26,6 @@
 #'
 #' @export
 cp_validation_fit <- function(y_train, y_valid, X_train, X_valid, fam, fit_measure) {
-    # Example inputs
-    # y_train = as.matrix(mtcars[1:20, 1])
-    # y_valid = as.matrix(mtcars[-c(1:20), 1])
-    # X_train = as.matrix(mtcars[1:20, -1])
-    # X_valid = as.matrix(mtcars[-c(1:20), -1])
-    # fam = "gaussian"
-    # fit_measure = "BIC"
 
     # Estimate new data log-likelihoods under the model of interest
     mod_out <- LL_newdata(

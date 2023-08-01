@@ -9,17 +9,13 @@
 #' The function can be used to estimate the PC loadings on training data and project the validation data on the same principal component axis. It can also be used to compute PC scores on a single data set by providing it as both the training and validation data.
 #' @return list of two objects:
 #' \itemize{
-#'   \item \code{PC_tr} a n times Q matrix of PC scores for the observations in the training data
-#'   \item \code{PC_va} a n times Q matrix of PC scores for the observations in the validation data
+#'   \item \code{PC_tr} a n times Q data.frame of PC scores for the observations in the training data
+#'   \item \code{PC_va} a n times Q data.frame of PC scores for the observations in the validation data
 #' }
 #' @author Edoardo Costantini, 2023
 #'
 #' @export
 cp_pc_scores <- function(X_train, X_valid, Q) {
-    # Example inputs
-    # X_train = mtcars[1:20, -1]
-    # X_valid = mtcars[-c(1:20), -1]
-    # Q = 3
 
     # Check if all variables are numeric
     all_numeric <- all(sapply(X_train, is.numeric))
@@ -44,11 +40,8 @@ cp_pc_scores <- function(X_train, X_valid, Q) {
         # Project training and validation data on the PCs
         PC_tr <- X_train_thr %*% svd_X_train$v
         PC_va <- X_valid_thr %*% svd_X_train$v
-    }
-
-    # If some variables are not numeric (e.g., factors), use PCAmix
-    if (!all_numeric) {
-        # Perform PCAmix
+    } else {
+        # If some variables are not numeric (e.g., factors), use PCAmix
         pca_mix_out <- pca_mix(
             X_tr = X_train,
             X_va = X_valid,
@@ -66,7 +59,7 @@ cp_pc_scores <- function(X_train, X_valid, Q) {
 
     # Select the desired number of PC scores
     list(
-        PC_tr = PC_tr[, 1:Q, drop = FALSE],
-        PC_va = PC_va[, 1:Q, drop = FALSE]
+        PC_tr = as.data.frame(PC_tr[, 1:Q, drop = FALSE]),
+        PC_va = as.data.frame(PC_va[, 1:Q, drop = FALSE])
     )
 }

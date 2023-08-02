@@ -50,6 +50,11 @@ cv_choose <- function(scor, scor_lwr, scor_upr, K, fit_measure) {
     # Return the coordinates of the choice
     cv.default <- which(scor == choice, arr.ind = TRUE)
 
+    # If more than 1 coordinates have the same best value, choose the one using fewer variables because it's more efficient to compute
+    if(sum(scor == choice, na.rm = TRUE) > 1){
+        cv.default <- cv.default[cv.default[, "col"] == max(cv.default[, "col"]), , drop = FALSE]
+    }
+
     # Reverse engineer the standard error of the decision CV
     cv.default.se <- (scor - scor_lwr)[cv.default]
 

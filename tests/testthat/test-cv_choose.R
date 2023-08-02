@@ -54,3 +54,29 @@ testthat::expect_equal(as.vector(cv_choose.out$default), c(1, 1))
 
 # Check 1SE results for an F fit_measure
 testthat::expect_equal(as.vector(cv_choose.out$oneSE), c(2, 1))
+
+# Test: handles duplicated choice values ---------------------------------------
+
+# Create a matrix of (uneven) scores
+set.seed(1234)
+scor <- matrix(rnorm(9), ncol = 3, nrow = 3)
+scor_lwr <- matrix(rnorm(9, mean = 100), ncol = 3, nrow = 3)
+scor_lwr <- matrix(rnorm(9, mean = -100), ncol = 3, nrow = 3)
+
+# Define the location of the choice
+max_location <- which(scor == max(scor), arr.ind = TRUE)
+
+# Create a duplicated best value
+scor[2, 3] <- scor[max_location]
+
+# Apply function
+cv_choose.out <- cv_choose(
+  scor = scor,
+  scor_lwr = scor_lwr,
+  scor_upr = scor_lwr,
+  K = K,
+  fit_measure = "F"
+)
+
+# Check the solution with fewer predictors involved is selected
+testthat::expect_equal(as.vector(cv_choose.out$default), c(2, 3))

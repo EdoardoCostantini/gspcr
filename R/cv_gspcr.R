@@ -179,13 +179,15 @@ cv_gspcr <- function(
   }
 
   # Print any warning that might have occurred
-  cat(
-    paste0(
-      "WARNING IN ASSOCIATION MEASURE COMPUTATION\n",
-      "One or more computations of the bivariate association measures resulted in these warnings:\n",
-      paste0(paste0(1:length(warns), ". ", warns), collapse = "\n"), "\n"
+  if(length(warns) > 0){
+    cat(
+      paste0(
+        "WARNING IN ASSOCIATION MEASURE COMPUTATION\n",
+        "One or more computations of the bivariate association measures resulted in these warnings:\n",
+        paste0(paste0(1:length(warns), ". ", warns), collapse = "\n"), "\n"
+      )
     )
-  )
+  }
 
   # Define upper and lower bounds of the association
   lower <- stats::quantile(ascores, 1 - (max_features / ncol(ivs)))

@@ -218,3 +218,33 @@ testthat::expect_true(all(dv_ord_ivs_cat$lls < 0))
 
 # Null log-likelihood < Single predictor log-likelihoods are returned
 testthat::expect_true(all(dv_ord_ivs_cat$ll0 < dv_ord_ivs_cat$lls))
+
+# Test: perfect prediction has expected behavior -------------------------------
+
+# Set seed
+set.seed(20230801)
+
+# Generate some predictors
+n <- 1e2
+p <- 50
+Sigma <- matrix(.7, nrow = p, ncol = p)
+diag(Sigma) <- 1
+x <- data.frame(MASS::mvrnorm(n, rep(0, p), Sigma))
+
+# Create a dv with a perfect predictor
+y <- factor(x[, 1] < 0, labels = c("y", "n"))
+
+# Fit all bivariate models
+suppressWarnings(
+    mod_results <- est_univ_mods(
+        dv = y,
+        ivs = x,
+        fam = "binomial"
+    )
+)
+
+# Log-likelihood value is returned for the model with perfect predictor
+testthat::expect_true(is.numeric(mod_results$lls[1]))
+
+# Coefficient is returned for the the perfect predictor
+testthat::expect_true(is.numeric(mod_results$coef[1]))

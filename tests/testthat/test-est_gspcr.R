@@ -69,3 +69,30 @@ testthat::expect_equal(class(gspcr_est), c("gspcrout", "list"))
 
 # Test used active set is correct
 testthat::expect_equal(gspcr_est$active_set, active_set)
+
+# Test: perfect prediction -----------------------------------------------------
+
+# Set seed
+set.seed(20230801)
+
+# Generate some predictors
+n <- 1e2
+p <- 50
+Sigma <- matrix(.7, nrow = p, ncol = p)
+diag(Sigma) <- 1
+x <- data.frame(MASS::mvrnorm(n, rep(0, p), Sigma))
+
+# Create a dv with a perfect predictor
+y <- factor(x[, 1] < 0, labels = c("y", "n"))
+
+# Train model to tune parameters
+gscpr_fit <- gspcr::cv_gspcr(
+    dv = y,
+    ivs = x,
+    fam = "binomial",
+    fit_measure = "BIC",
+    thrs = "PR2"
+)
+
+# Output is as expected
+testthat::expect_equal(class(gscpr_fit), c("gspcrcv", "list"))

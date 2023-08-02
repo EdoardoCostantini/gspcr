@@ -134,20 +134,39 @@ cv_gspcr <- function(
   # Sample size
   n <- nrow(ivs)
 
+  # Create an empty object to store possible warnings
+  warns <- list()
+
   # Compute association measures
   if (thrs == "LLS") {
-    ascores <- cp_thrs_LLS(
-      dv = dv,
-      ivs = ivs,
-      fam = fam
+    ascores <- suppressWarnings(
+      withCallingHandlers(
+        expr = {
+          cp_thrs_LLS(
+            dv = dv,
+            ivs = ivs,
+            fam = fam
+          )
+        }, warning = function(warn) {
+          warns <<- append(warns, warn$message)
+        }
+      )
     )
   }
 
   if (thrs == "PR2") {
-    ascores <- cp_thrs_PR2(
-      dv = dv,
-      ivs = ivs,
-      fam = fam
+    ascores <- suppressWarnings(
+      withCallingHandlers(
+        expr = {
+          cp_thrs_PR2(
+            dv = dv,
+            ivs = ivs,
+            fam = fam
+          )
+        }, warning = function(warn) {
+          warns <<- append(warns, warn$message)
+        }
+      )
     )
   }
 
@@ -158,6 +177,15 @@ cv_gspcr <- function(
       s0_perc = NULL
     )
   }
+
+  # Print any warning that might have occurred
+  cat(
+    paste0(
+      "WARNING IN ASSOCIATION MEASURE COMPUTATION\n",
+      "One or more computations of the bivariate association measures resulted in these warnings:\n",
+      paste0(paste0(1:length(warns), ". ", warns), collapse = "\n"), "\n"
+    )
+  )
 
   # Define upper and lower bounds of the association
   lower <- stats::quantile(ascores, 1 - (max_features / ncol(ivs)))
@@ -235,7 +263,7 @@ cv_gspcr <- function(
         for (q in npcs_range_eff) {
           # q <- 1
           map_kfcv[q, thr, k] <- tryCatch(
-            cp_validation_fit(
+            fit_value <- cp_validation_fit(
               y_train = ytr,
               y_valid = yva,
               X_train = pc_scores$PC_tr[, 1:q, drop = FALSE],
@@ -246,15 +274,20 @@ cv_gspcr <- function(
             warning = function(w) {
               cat(
                 paste0(
-                  "Fold: ", k, "; Threshold: ", thr, "; npcs: ", q, "; resulted in the following warning: ", w, "The resulting ", fit_measure, " value was ", map_kfcv[q, thr, k], "\n\n"
+                  "WARNING IN K-FOLD LOOP\n",
+                  "Fold: ", k, "; Threshold: ", thr, "; npcs: ", q, "; resulted in the following warning:\n",
+                  "\"", w, "\"\n",
+                  "The resulting ", fit_measure, " value was ", fit_value, "\n\n"
                 )
               )
+              return(fit_value)
             },
             error = function(e) {
               cat(
                 paste0(
-                  "An error occurred when computing the value of ", fit_measure, " in fold ", k, " with threshold ", thr, " and npcs ", q, ".\n",
-                  "The error message was:", "\n", e, ".\n",
+                  "ERROR IN K-FOLD LOOP\n",
+                  "Fold: ", k, "; Threshold: ", thr, "; npcs: ", q, "; resulted in the following error:\n",
+                  "\"", e, "\"\n",
                   "The value of ", fit_measure, " that could not be computed was replaced by an NA value.\n\n"
                 )
               )

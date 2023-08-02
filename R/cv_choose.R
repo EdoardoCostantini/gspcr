@@ -52,7 +52,11 @@ cv_choose <- function(scor, scor_lwr, scor_upr, K, fit_measure) {
 
     # If more than 1 coordinates have the same best value, choose the one using fewer variables because it's more efficient to compute
     if(sum(scor == choice, na.rm = TRUE) > 1){
+        # First get the one with the smallest col
         cv.default <- cv.default[cv.default[, "col"] == max(cv.default[, "col"]), , drop = FALSE]
+
+        # Then get the one with the smallest row
+        cv.default <- cv.default[cv.default[, "row"] == min(cv.default[, "row"]), , drop = FALSE]
     }
 
     # Reverse engineer the standard error of the decision CV

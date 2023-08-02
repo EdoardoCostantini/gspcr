@@ -180,7 +180,7 @@ cv_gspcr <- function(
 
   # Print any warning that might have occurred
   if(length(warns) > 0){
-    cat(
+    message(
       paste0(
         "WARNING IN ASSOCIATION MEASURE COMPUTATION\n",
         "One or more computations of the bivariate association measures resulted in these warnings:\n",
@@ -274,7 +274,7 @@ cv_gspcr <- function(
               fit_measure = fit_measure
             ),
             warning = function(w) {
-              cat(
+              message(
                 paste0(
                   "WARNING IN K-FOLD LOOP\n",
                   "Fold: ", k, "; Threshold: ", thr, "; npcs: ", q, "; resulted in the following warning:\n",
@@ -285,7 +285,7 @@ cv_gspcr <- function(
               return(fit_value)
             },
             error = function(e) {
-              cat(
+              message(
                 paste0(
                   "ERROR IN K-FOLD LOOP\n",
                   "Fold: ", k, "; Threshold: ", thr, "; npcs: ", q, "; resulted in the following error:\n",

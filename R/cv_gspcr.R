@@ -15,15 +15,15 @@
 #' @param oneSE logical value indicating whether the results with the 1se rule should be saved
 #' @details
 #' The variables in \code{ivs} do not need to be standardized beforehand as the function handles scaling appropriately based on the measurement levels of the data.
-#' 
+#'
 #' The \code{fam} argument is used to define which model will be used when regressing the dependent variable on the principal components:
 #' - \code{gaussian}: fits a linear regression model (continuous dv)
 #' - \code{binomial}: fits a logistic regression model (binary dv)
 #' - \code{poisson}: fits a poisson regression model (count dv)
 #' - \code{baseline}: fits a baseline-category logit model (nominal dv, using [nnet::multinom()])
 #' - \code{cumulative}: fits a proportional odds logistic regression (ordinal dv, using [MASS::polr()])
-#' 
-#' The \code{thrs} argument defines the bivariate association-threshold measures used to determine the active set of predictors for a SPCR analysis. 
+#'
+#' The \code{thrs} argument defines the bivariate association-threshold measures used to determine the active set of predictors for a SPCR analysis.
 #' The following association measures are supported (measurement levels allowed reported between brackets):
 #' - \code{LLS}: simple GLM regression likelihoods (any dv with any iv)
 #' - \code{PR2}: Cox and Snell generalized R-squared is computed for the GLMs between \code{dv} and every column in \code{ivs}. Then, the square root of these values is used to obtain the threshold values. For more information about the computation of the Cox and Snell R2 see the help file for [gspcr::cp_gR2()]. When using this measure for simple linear regressions (with continuous \code{dv} and \code{ivs}) is equivalent to the regular R-squared. Therefore, it can be thought of as equivalent to the bivariate correlations between \code{dv} and \code{ivs}. (any dv with any iv)
@@ -39,7 +39,7 @@
 #' - \code{MSE}: Mean squared error compute with [MLmetrics::MSE()] (continuous dv)
 #'
 #' Details regarding the 1 standard error rule implemented here can be found in the documentation for the function [gspcr::cv_choose()].
-#' @return 
+#' @return
 #' Object of class \code{gspcr}, which is a list containing:
 #' - \code{sol_table}: data.frame reporting the threshold number, value, and the number of PCs identified by the procedure
 #' - \code{thr}: vector of threshold values of the requested type used for the K-fold cross-validation procedure
@@ -52,10 +52,10 @@
 #' - \code{scor_upr}: \eqn{npcs \times nthrs} matrix of fit-measure score upper bounds averaged across the K folds
 #' - \code{pred_map}: matrix of \eqn{p \times nthrs} logical values indicating which predictors were active for every threshold value used
 #' - \code{gspcr_call}: the function call
-#' 
+#'
 #' @author Edoardo Costantini, 2023
 #' @references
-#' 
+#'
 #' Bair, E., Hastie, T., Paul, D., & Tibshirani, R. (2006). Prediction by supervised principal components. Journal of the American Statistical Association, 101(473), 119-137.
 #'
 #' @examples
@@ -74,34 +74,32 @@
 #'
 #' # Example usage
 #' out_cont <- cv_gspcr(
-#'    dv = GSPCRexdata$y$cont,
-#'    ivs = GSPCRexdata$X$cont,
-#'    fam = "gaussian",
-#'    nthrs = 5,
-#'    npcs_range = 1:3,
-#'    K = 3,
-#'    fit_measure = "F",
-#'    thrs = "normalized",
-#'    min_features = 1,
-#'    max_features = ncol(GSPCRexdata$X$cont),
-#'    oneSE = TRUE
+#'   dv = GSPCRexdata$y$cont,
+#'   ivs = GSPCRexdata$X$cont,
+#'   fam = "gaussian",
+#'   nthrs = 5,
+#'   npcs_range = 1:3,
+#'   K = 3,
+#'   fit_measure = "F",
+#'   thrs = "normalized",
+#'   min_features = 1,
+#'   max_features = ncol(GSPCRexdata$X$cont),
+#'   oneSE = TRUE
 #' )
 #'
 #' @export
 cv_gspcr <- function(
-  dv, 
-  ivs, 
-  fam = c("gaussian", "binomial", "poisson", "baseline", "cumulative")[1],
-  thrs = c("LLS", "PR2", "normalized")[1],
-  nthrs = 10L,
-  npcs_range = 1L:3L,
-  K = 5,
-  fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
-  max_features = ncol(ivs),
-  min_features = 5,
-  oneSE = TRUE
-  ) {
-
+    dv,
+    ivs,
+    fam = c("gaussian", "binomial", "poisson", "baseline", "cumulative")[1],
+    thrs = c("LLS", "PR2", "normalized")[1],
+    nthrs = 10L,
+    npcs_range = 1L:3L,
+    K = 5,
+    fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
+    max_features = ncol(ivs),
+    min_features = 5,
+    oneSE = TRUE) {
   # If ivs is not a data.frame make it one
   if (is.matrix(ivs)) {
     ivs <- as.data.frame(ivs, stringsAsFactors = TRUE)
@@ -198,12 +196,12 @@ cv_gspcr <- function(
   # Loop over K folds
   for (k in 1:K) {
     # k <- 1
-    if(length(unique(part)) != 1){
+    if (length(unique(part)) != 1) {
       # Create fold data:
       Xtr <- ivs[part != k, , drop = FALSE]
       Xva <- ivs[part == k, , drop = FALSE]
       ytr <- dv[part != k]
-      yva <- dv[part == k]      
+      yva <- dv[part == k]
     } else {
       Xtr <- ivs
       Xva <- ivs
@@ -219,7 +217,6 @@ cv_gspcr <- function(
 
       # If there is more than 1 active variable
       if (sum(aset) > 1) {
-
         # Check how many components are available (effective number)
         Q_max_eff <- min(sum(aset), max(npcs_range))
         Q_min_eff <- min(sum(aset), min(npcs_range))
@@ -237,13 +234,34 @@ cv_gspcr <- function(
         # Compute the fit measures for the possible additive PCRs
         for (q in npcs_range_eff) {
           # q <- 1
-          map_kfcv[q, thr, k] <- cp_validation_fit(
-            y_train = ytr,
-            y_valid = yva,
-            X_train = pc_scores$PC_tr[, 1:q, drop = FALSE],
-            X_valid = pc_scores$PC_va[, 1:q, drop = FALSE],
-            fam = fam,
-            fit_measure = fit_measure
+          map_kfcv[q, thr, k] <- tryCatch(
+            cp_validation_fit(
+              y_train = ytr,
+              y_valid = yva,
+              X_train = pc_scores$PC_tr[, 1:q, drop = FALSE],
+              X_valid = pc_scores$PC_va[, 1:q, drop = FALSE],
+              fam = fam,
+              fit_measure = fit_measure
+            ),
+            warning = function(w) {
+              cat(
+                paste0(
+                  "Fold: ", k, "; Threshold: ", thr, "; npcs: ", q, "; resulted in the following warning: ", w, "The resulting ", fit_measure, " value was ", map_kfcv[q, thr, k], "\n\n"
+                )
+              )
+            },
+            error = function(e) {
+              cat(
+                paste0(
+                  "An error occurred when computing the value of ", fit_measure, " in fold ", k, " with threshold ", thr, " and npcs ", q, ".\n",
+                  "The error message was:", "\n", e, ".\n",
+                  "The value of ", fit_measure, " that could not be computed was replaced by an NA value.\n\n"
+                )
+              )
+              # If the computation fails, return NA
+              # If there is an algorithmic failure caused by weird undesired edge cases, this will force the exclusion of the solution path that caused the issue!
+              return(NA)
+            }
           )
         }
       }

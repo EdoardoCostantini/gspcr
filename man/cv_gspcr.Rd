@@ -109,17 +109,17 @@ oneSE <- TRUE
 
 # Example usage
 out_cont <- cv_gspcr(
-   dv = GSPCRexdata$y$cont,
-   ivs = GSPCRexdata$X$cont,
-   fam = "gaussian",
-   nthrs = 5,
-   npcs_range = 1:3,
-   K = 3,
-   fit_measure = "F",
-   thrs = "normalized",
-   min_features = 1,
-   max_features = ncol(GSPCRexdata$X$cont),
-   oneSE = TRUE
+  dv = GSPCRexdata$y$cont,
+  ivs = GSPCRexdata$X$cont,
+  fam = "gaussian",
+  nthrs = 5,
+  npcs_range = 1:3,
+  K = 3,
+  fit_measure = "F",
+  thrs = "normalized",
+  min_features = 1,
+  max_features = ncol(GSPCRexdata$X$cont),
+  oneSE = TRUE
 )
 
 }

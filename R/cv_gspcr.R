@@ -171,13 +171,7 @@ cv_gspcr <- function(
           # Prevent the warning from being printed.
           invokeRestart("muffleWarning")
         }
-      ),
-
-      # The error handler.
-      error = function(e) {
-        # Append to error object
-        errors <<- c(errors, e$message)
-      }
+      )
     )
   }
 
@@ -212,13 +206,7 @@ cv_gspcr <- function(
           # Prevent the warning from being printed.
           invokeRestart("muffleWarning")
         }
-      ),
-
-      # The error handler.
-      error = function(e) {
-        # Append to error object
-        errors <<- c(errors, e$message)
-      }
+      )
     )
   }
 

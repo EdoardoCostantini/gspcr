@@ -264,3 +264,19 @@ check_constants <- function(ivs) {
     ivs[, keeplist, drop = FALSE]
 
 }
+
+# Check factors do not have empty levels
+
+check_factors <- function(ivs) {
+    # Find all the factors
+    index_factors <- sapply(ivs, is.factor)
+
+    # Apply drop levels to all 
+    slim_factors <- lapply(ivs[, index_factors, drop = FALSE], droplevels)
+
+    # Replace original factors with 
+    ivs[, index_factors] <- as.data.frame(slim_factors)
+
+    # Return ivs
+    ivs
+}

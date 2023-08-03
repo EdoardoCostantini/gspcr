@@ -106,7 +106,11 @@ cv_gspcr <- function(
   }
 
   # Perform other input checks
+  if (is.factor(dv)) {
+    dv <- droplevels(dv)
+  }
   ivs <- check_constants(ivs)
+  ivs <- check_factors(ivs)
   check_fam(fam)
   check_thrs(thrs)
   check_nthrs(nthrs)
@@ -273,17 +277,17 @@ cv_gspcr <- function(
               fam = fam,
               fit_measure = fit_measure
             ),
-            warning = function(w) {
-              message(
-                paste0(
-                  "WARNING IN K-FOLD LOOP\n",
-                  "Fold: ", k, "; Threshold: ", thr, "; npcs: ", q, "; resulted in the following warning:\n",
-                  "\"", w, "\"\n",
-                  "The resulting ", fit_measure, " value was ", fit_value, "\n\n"
-                )
-              )
-              return(fit_value)
-            },
+            # warning = function(w) {
+            #   message(
+            #     paste0(
+            #       "WARNING IN K-FOLD LOOP\n",
+            #       "Fold: ", k, "; Threshold: ", thr, "; npcs: ", q, "; resulted in the following warning:\n",
+            #       "\"", w, "\"\n",
+            #       "The resulting ", fit_measure, " value was ", fit_value, "\n\n"
+            #     )
+            #   )
+            #   return(fit_value)
+            # },
             error = function(e) {
               message(
                 paste0(
@@ -292,6 +296,15 @@ cv_gspcr <- function(
                   "\"", e, "\"\n",
                   "The value of ", fit_measure, " that could not be computed was replaced by an NA value.\n\n"
                 )
+              )
+
+              # Attach error message to call
+              gspcr_call$e <- e
+
+              # Save call somewhere
+              saveRDS(
+                gspcr_call,
+                paste0("~/Downloads/", format(Sys.time(), "%Y%m%d-%H%M%S"), "-gspcr_call.rds")
               )
               # If the computation fails, return NA
               # If there is an algorithmic failure caused by weird undesired edge cases, this will force the exclusion of the solution path that caused the issue!

@@ -138,39 +138,87 @@ cv_gspcr <- function(
   # Sample size
   n <- nrow(ivs)
 
-  # Create an empty object to store possible warnings
-  warns <- list()
+  # Create an empty object to store possible errors and warnings
+  errors <- NULL
+  warnings <- NULL
 
-  # Compute association measures
   if (thrs == "LLS") {
-    ascores <- suppressWarnings(
+    ascores <- tryCatch(
       withCallingHandlers(
+        # The expression to evaluate.
         expr = {
           cp_thrs_LLS(
             dv = dv,
             ivs = ivs,
             fam = fam
           )
-        }, warning = function(warn) {
-          warns <<- append(warns, warn$message)
+        },
+
+        # The warning handler.
+        warning = function(w) {
+          # Append to warning object
+          warnings <<- c(
+            warnings,
+            # Define a meaningful error message
+            paste0(
+              "WARNING IN ASSOCIATION MEASURE COMPUTATION\n",
+              "One or more computations of the bivariate association measures resulted in these warnings:\n",
+              w$message, 
+              "\n\n"
+            )
+          )
+
+          # Prevent the warning from being printed.
+          invokeRestart("muffleWarning")
         }
-      )
+      ),
+
+      # The error handler.
+      error = function(e) {
+        # Append to error object
+        errors <<- c(errors, e$message)
+      }
     )
   }
 
+  # Compute association measures
+
   if (thrs == "PR2") {
-    ascores <- suppressWarnings(
+    ascores <- tryCatch(
       withCallingHandlers(
+        # The expression to evaluate.
         expr = {
           cp_thrs_PR2(
             dv = dv,
             ivs = ivs,
             fam = fam
           )
-        }, warning = function(warn) {
-          warns <<- append(warns, warn$message)
+        },
+
+        # The warning handler.
+        warning = function(w) {
+          # Append to warning object
+          warnings <<- c(
+            warnings,
+            # Define a meaningful error message
+            paste0(
+              "WARNING IN ASSOCIATION MEASURE COMPUTATION\n",
+              "One or more computations of the bivariate association measures resulted in these warnings:\n",
+              w$message, 
+              "\n\n"
+            )
+          )
+
+          # Prevent the warning from being printed.
+          invokeRestart("muffleWarning")
         }
-      )
+      ),
+
+      # The error handler.
+      error = function(e) {
+        # Append to error object
+        errors <<- c(errors, e$message)
+      }
     )
   }
 
@@ -179,17 +227,6 @@ cv_gspcr <- function(
       dv = dv,
       ivs = ivs,
       s0_perc = NULL
-    )
-  }
-
-  # Print any warning that might have occurred
-  if(length(warns) > 0){
-    message(
-      paste0(
-        "WARNING IN ASSOCIATION MEASURE COMPUTATION\n",
-        "One or more computations of the bivariate association measures resulted in these warnings:\n",
-        paste0(paste0(1:length(warns), ". ", warns), collapse = "\n"), "\n"
-      )
     )
   }
 
@@ -269,45 +306,56 @@ cv_gspcr <- function(
         for (q in npcs_range_eff) {
           # q <- 1
           map_kfcv[q, thr, k] <- tryCatch(
-            fit_value <- cp_validation_fit(
-              y_train = ytr,
-              y_valid = yva,
-              X_train = pc_scores$PC_tr[, 1:q, drop = FALSE],
-              X_valid = pc_scores$PC_va[, 1:q, drop = FALSE],
-              fam = fam,
-              fit_measure = fit_measure
+            withCallingHandlers(
+              # Try to compute the fit value
+              expr = {
+                cp_validation_fit(
+                  y_train = ytr,
+                  y_valid = yva,
+                  X_train = pc_scores$PC_tr[, 1:q, drop = FALSE],
+                  X_valid = pc_scores$PC_va[, 1:q, drop = FALSE],
+                  fam = fam,
+                  fit_measure = fit_measure
+                )
+              },
+
+              # If there is a warning, append it to the list of warnings
+              warning = function(w) {
+                # Store warning.
+                warnings <<- c(
+                  warnings,
+                  paste0(
+                    "WARNING IN K-FOLD LOOP\n",
+                    "Fold: ", k, "; Threshold: ", thr, "; npcs: ", q, "; resulted in the following warning:\n",
+                    "\"", w$message, "\"\n"
+                  )
+                )
+
+                # Prevent the warning from being printed.
+                invokeRestart("muffleWarning")
+              }
             ),
-            # warning = function(w) {
-            #   message(
-            #     paste0(
-            #       "WARNING IN K-FOLD LOOP\n",
-            #       "Fold: ", k, "; Threshold: ", thr, "; npcs: ", q, "; resulted in the following warning:\n",
-            #       "\"", w, "\"\n",
-            #       "The resulting ", fit_measure, " value was ", fit_value, "\n\n"
-            #     )
-            #   )
-            #   return(fit_value)
-            # },
+
+            # If there is an error, append it and return NA as a fit value
             error = function(e) {
-              message(
+              # Store error.
+              errors <<- c(
+                errors,
                 paste0(
                   "ERROR IN K-FOLD LOOP\n",
                   "Fold: ", k, "; Threshold: ", thr, "; npcs: ", q, "; resulted in the following error:\n",
-                  "\"", e, "\"\n",
+                  "\"", e$message, "\"\n",
                   "The value of ", fit_measure, " that could not be computed was replaced by an NA value.\n\n"
                 )
               )
 
-              # Attach error message to call
-              gspcr_call$e <- e
-
-              # Save call somewhere
+              # Save call somewhere (for debug - drop in production release)
               saveRDS(
                 gspcr_call,
-                paste0("~/Downloads/", format(Sys.time(), "%Y%m%d-%H%M%S"), "-gspcr_call.rds")
+                paste0("./", format(Sys.time(), "%Y%m%d-%H%M%S"), "-gspcr_call-error.rds")
               )
-              # If the computation fails, return NA
-              # If there is an algorithmic failure caused by weird undesired edge cases, this will force the exclusion of the solution path that caused the issue!
+
+              # Return NA to salvage general K-fold cross-validation
               return(NA)
             }
           )
@@ -361,6 +409,18 @@ cv_gspcr <- function(
 
   # Assign class to object
   class(out) <- c("gspcrcv", "list")
+
+  # Print warnings and errors as messages
+  if (!is.null(warnings)) {
+    message(
+      warnings
+    )
+  }
+  if (!is.null(errors)) {
+    message(
+      errors
+    )
+  }
 
   # Return gspcr object
   return(out)

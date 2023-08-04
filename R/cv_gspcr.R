@@ -98,7 +98,7 @@ cv_gspcr <- function(
     K = 5,
     fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
     max_features = ncol(ivs),
-    min_features = 5,
+    min_features = 1,
     oneSE = TRUE) {
   # If ivs is not a data.frame make it one
   if (is.matrix(ivs)) {

@@ -219,8 +219,8 @@ cv_gspcr <- function(
   }
 
   # Define upper and lower bounds of the association
-  lower <- stats::quantile(ascores, 1 - (max_features / ncol(ivs)))
-  upper <- stats::quantile(ascores, 1 - (min_features / ncol(ivs)))
+  lower <- stats::quantile(ascores, 1 - (max_features / ncol(ivs)), na.rm = TRUE)
+  upper <- stats::quantile(ascores, 1 - (min_features / ncol(ivs)), na.rm = TRUE)
 
   # Define threshold values
   thrs_values <- seq(from = lower, to = upper, length.out = nthrs)

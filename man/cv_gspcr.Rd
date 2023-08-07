@@ -14,7 +14,7 @@ cv_gspcr(
   K = 5,
   fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
   max_features = ncol(ivs),
-  min_features = 5,
+  min_features = 1,
   oneSE = TRUE
 )
 }

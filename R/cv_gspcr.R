@@ -292,7 +292,6 @@ cv_gspcr <- function(
               Q = Q_max_eff
             )
           },
-          # If there is an error, skip this threshold
           error = function(e) {
             # Store error.
             errors <<- c(
@@ -316,9 +315,9 @@ cv_gspcr <- function(
         # Compute the fit measures for the additive PCRs
         for (q in npcs_range_eff) {
           # q <- 1
+          # Compute the fit measure value
           map_kfcv[q, thr, k] <- tryCatch(
             withCallingHandlers(
-              # Try to compute the fit value
               expr = {
                 cp_validation_fit(
                   y_train = ytr,

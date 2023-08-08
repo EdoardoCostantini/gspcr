@@ -163,7 +163,7 @@ cv_gspcr <- function(
             paste0(
               "WARNING IN ASSOCIATION MEASURE COMPUTATION\n",
               "One or more computations of the bivariate association measures resulted in these warnings:\n",
-              w$message, 
+              w$message,
               "\n\n"
             )
           )
@@ -198,7 +198,7 @@ cv_gspcr <- function(
             paste0(
               "WARNING IN ASSOCIATION MEASURE COMPUTATION\n",
               "One or more computations of the bivariate association measures resulted in these warnings:\n",
-              w$message, 
+              w$message,
               "\n\n"
             )
           )
@@ -255,8 +255,8 @@ cv_gspcr <- function(
   # Loop over K folds
   for (k in 1:K) {
     # k <- 1
+    # Create fold data
     if (length(unique(part)) != 1) {
-      # Create fold data:
       Xtr <- ivs[part != k, , drop = FALSE]
       Xva <- ivs[part == k, , drop = FALSE]
       ytr <- dv[part != k]
@@ -280,7 +280,7 @@ cv_gspcr <- function(
         Q_max_eff <- min(sum(aset), max(npcs_range))
         Q_min_eff <- min(sum(aset), min(npcs_range))
 
-        # Replace max and min in range
+        # Replace max and min in range on npcs
         npcs_range_eff <- npcs_range[npcs_range <= Q_max_eff & npcs_range >= Q_min_eff]
 
         # Compute PC scores
@@ -313,7 +313,7 @@ cv_gspcr <- function(
         # If an error occured in the pc_score computation, skip this threshold
         if ("error" %in% class(pc_scores)) next
 
-        # Compute the fit measures for the possible additive PCRs
+        # Compute the fit measures for the additive PCRs
         for (q in npcs_range_eff) {
           # q <- 1
           map_kfcv[q, thr, k] <- tryCatch(

@@ -284,11 +284,34 @@ cv_gspcr <- function(
         npcs_range_eff <- npcs_range[npcs_range <= Q_max_eff & npcs_range >= Q_min_eff]
 
         # Compute PC scores
-        pc_scores <- cp_pc_scores(
-          X_train = Xtr[, aset, drop = FALSE],
-          X_valid = Xva[, aset, drop = FALSE],
-          Q = Q_max_eff
+        pc_scores <- tryCatch(
+          expr = {
+            cp_pc_scores(
+              X_train = Xtr[, aset, drop = FALSE],
+              X_valid = Xva[, aset, drop = FALSE],
+              Q = Q_max_eff
+            )
+          },
+          # If there is an error, skip this threshold
+          error = function(e) {
+            # Store error.
+            errors <<- c(
+              errors,
+              paste0(
+                "ERROR IN K-FOLD LOOP\n",
+                "Fold: ", k, "; Threshold: ", thr, "; resulted in the following error:\n",
+                "\"", e$message, "\"\n",
+                "The values of ", fit_measure, " using threshold number", thr, "could not be computed and were set to NA value so that they will be ignored.\n\n"
+              )
+            )
+
+            # Return the error
+            return(e)
+          }
         )
+
+        # If an error occured in the pc_score computation, skip this threshold
+        if ("error" %in% class(pc_scores)) next
 
         # Compute the fit measures for the possible additive PCRs
         for (q in npcs_range_eff) {

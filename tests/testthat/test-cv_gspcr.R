@@ -196,6 +196,31 @@ testthat::expect_equal(length(out_traget_npcs), 11)
 # Test the class of the output
 testthat::expect_equal(class(out_traget_npcs), c("gspcrcv", "list"))
 
+# Test: Works with wrong input number of ---------------------------------------
+
+# Excessive npc value
+ev <- ncol(GSPCRexdata$X$cont) + 1
+
+# Tune parameters
+out_wrong_npcs <- cv_gspcr(
+    dv = GSPCRexdata$y$cont,
+    ivs = GSPCRexdata$X$cont,
+    fam = "gaussian",
+    nthrs = 5,
+    npcs_range = c(1, 3, 5, ev),
+    K = 3,
+    fit_measure = "F",
+    thrs = "normalized",
+    min_features = 1,
+    max_features = ncol(GSPCRexdata$X$cont),
+    oneSE = TRUE
+)
+
+# Test ev is not in the npcs_range used
+testthat::expect_false(
+    ev %in% out_wrong_npcs$gspcr_call$npcs_range
+)
+
 # Test: Works with mixed predictor matrix input --------------------------------
 
 # Use the functions with a given method

@@ -114,7 +114,7 @@ cv_gspcr <- function(
   check_fam(fam)
   check_thrs(thrs)
   check_nthrs(nthrs)
-  check_npcs_range(npcs_range, ivs)
+  npcs_range <- check_npcs_range(npcs_range, ivs)
   check_K(K)
   check_fit_measure(fit_measure)
   max_features <- check_max_features(max_features, ivs)
@@ -157,8 +157,8 @@ cv_gspcr <- function(
         # The warning handler.
         warning = function(w) {
           # Append to warning object
-          warnings <<- c(
-            warnings,
+          warnings_list <<- c(
+            warnings_list,
             # Define a meaningful error message
             paste0(
               "WARNING IN ASSOCIATION MEASURE COMPUTATION\n",
@@ -192,8 +192,8 @@ cv_gspcr <- function(
         # The warning handler.
         warning = function(w) {
           # Append to warning object
-          warnings <<- c(
-            warnings,
+          warnings_list <<- c(
+            warnings_list,
             # Define a meaningful error message
             paste0(
               "WARNING IN ASSOCIATION MEASURE COMPUTATION\n",
@@ -332,8 +332,8 @@ cv_gspcr <- function(
               # If there is a warning, append it to the list of warnings
               warning = function(w) {
                 # Store warning.
-                warnings <<- c(
-                  warnings,
+                warnings_list <<- c(
+                  warnings_list,
                   paste0(
                     "WARNING IN K-FOLD LOOP\n",
                     "Fold: ", k, "; Threshold: ", thr, "; npcs: ", q, "; resulted in the following warning:\n",
@@ -421,9 +421,9 @@ cv_gspcr <- function(
   class(out) <- c("gspcrcv", "list")
 
   # Print warnings and errors as messages
-  if (!is.null(warnings)) {
+  if (!is.null(warnings_list)) {
     message(
-      warnings
+      warnings_list
     )
   }
   if (!is.null(errors)) {

@@ -140,7 +140,7 @@ cv_gspcr <- function(
 
   # Create an empty object to store possible errors and warnings
   errors <- NULL
-  warnings <- NULL
+  warnings_list <- NULL
 
   if (thrs == "LLS") {
     ascores <- tryCatch(

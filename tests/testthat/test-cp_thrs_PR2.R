@@ -78,3 +78,29 @@ thrs_PR2_scaled_X_sacled_y <- cp_thrs_PR2(
 testthat::expect_true(all((thrs_PR2 - thrs_PR2_scaled_X) < tol))
 testthat::expect_true(all((thrs_PR2 - thrs_PR2_sacled_y) < tol))
 testthat::expect_true(all((thrs_PR2 - thrs_PR2_scaled_X_sacled_y) < tol))
+
+# Test: very small likelihoods in computation ----------------------------------
+
+# Read data for debugging
+issue_data <- readRDS("tests/resources/issue-negative-value-data.rds")
+
+# Test the function works no errors
+ascores <- tryCatch(
+    expr = {
+        cp_thrs_PR2(
+            dv = issue_data$dv,
+            ivs = issue_data$ivs,
+            fam = issue_data$fam
+        )
+    },
+    warning = function(w) {
+        w
+    },
+    error = function(e){
+        e
+    }
+)
+
+# Test did not produce errors or warnings
+testthat::expect_false("warning" %in% class(ascores))
+testthat::expect_false("error" %in% class(ascores))

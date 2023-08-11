@@ -28,7 +28,7 @@ cp_thrs_PR2 <- function(dv, ivs, fam) {
     CNR2 <- 1 - exp(-2 / nrow(ivs) * (univ_mods$lls - univ_mods$ll0))
 
     # Safeguard against CNR2 so small that computer could make negative
-    CNR2 <- abs(CNR2)
+    CNR2[CNR2 < 0] <- 0
 
     # Give it good names
     names(CNR2) <- colnames(ivs)

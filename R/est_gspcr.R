@@ -74,8 +74,6 @@ est_gspcr <- function(object = NULL, dv, ivs, fam, active_set, ndim) {
         glm_fit = glm_fit,
         fam = fam,
         pca = PCA_out,
-        dv = dv, 
-        ivs = ivs, 
         active_set = active_set,
         ndim = ndim
     )

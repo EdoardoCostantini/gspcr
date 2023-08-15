@@ -45,11 +45,20 @@ y_hat_in_sample <- predict(
     object = gspcr_est
 )
 
+# Predict on same data manually
+y_hat_in_sample_man <- predict(
+    object = gspcr_est,
+    newdata = GSPCRexdata$X$cont[train, ]
+)
+
 # Predict new data
 y_hat_out_sample <- predict(
     object = gspcr_est,
     newdata = GSPCRexdata$X$cont[-train, ]
 )
+
+# Test prediction on same data different modes
+testthat::expect_equal(y_hat_in_sample, y_hat_in_sample_man)
 
 # Test values are numeric
 testthat::expect_true(all(is.numeric(y_hat_in_sample)))

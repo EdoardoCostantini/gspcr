@@ -2,7 +2,7 @@
 # Objective: Test estimation function
 # Author:    Edoardo Costantini
 # Created:   2023-07-27
-# Modified:  2023-07-27
+# Modified:  2023-08-15
 # Notes: 
 
 # Set a seed
@@ -35,7 +35,7 @@ gspcr_est_direct <- est_gspcr(
     dv = out$gspcr_call$dv,
     ivs = out$gspcr_call$ivs, 
     fam = out$gspcr_call$fam, 
-    active_set = names(out$pred_map[, out$sol_table[1, "thr_number"]]), 
+    active_set = names(which(out$pred_map[, out$sol_table[1, "thr_number"]])), 
     ndim = out$sol_table[1, "Q"]
 )
 

@@ -25,7 +25,7 @@ est_gspcr <- function(object = NULL, dv, ivs, fam, active_set, ndim) {
         dv = object$gspcr_call$dv
         ivs = object$gspcr_call$ivs
         fam = object$gspcr_call$fam
-        active_set = names(object$pred_map[, object$sol_table[1, "thr_number"]])
+        active_set = names(which(object$pred_map[, object$sol_table[1, "thr_number"]]))
         ndim = object$sol_table[1, "Q"]
     }
 

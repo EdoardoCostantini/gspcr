@@ -42,6 +42,7 @@
 #' Details regarding the 1 standard error rule implemented here can be found in the documentation for the function [gspcr::cv_choose()].
 #' @return
 #' Object of class \code{gspcr}, which is a list containing:
+#' - \code{solution}: a list containing the number of PCs that was selected (Q), the threshold value used, and the resulting active set for both the \code{standard} and \code{oneSE} solutions
 #' - \code{sol_table}: data.frame reporting the threshold number, value, and the number of PCs identified by the procedure
 #' - \code{thr}: vector of threshold values of the requested type used for the K-fold cross-validation procedure
 #' - \code{thr_cv}: numeric vector of length 1 indicating the threshold number that was selected by the K-fold cross-validation procedure using the default decision rule
@@ -72,6 +73,7 @@
 #' max_features <- ncol(ivs)
 #' min_features <- 1
 #' oneSE <- TRUE
+#' save_call <- TRUE
 #'
 #' # Example usage
 #' out_cont <- cv_gspcr(
@@ -85,7 +87,8 @@
 #'   thrs = "normalized",
 #'   min_features = 1,
 #'   max_features = ncol(GSPCRexdata$X$cont),
-#'   oneSE = TRUE
+#'   oneSE = TRUE,
+#'   save_call = TRUE
 #' )
 #'
 #' @export
@@ -101,8 +104,7 @@ cv_gspcr <- function(
     max_features = ncol(ivs),
     min_features = 1,
     oneSE = TRUE,
-    save_call = TRUE
-    ) {
+    save_call = TRUE) {
   # If ivs is not a data.frame make it one
   if (is.matrix(ivs)) {
     ivs <- as.data.frame(ivs, stringsAsFactors = TRUE)
@@ -412,17 +414,37 @@ cv_gspcr <- function(
 
   # Return
   out <- list(
-    sol_table   = sol_table,
-    thr         = thrs_values,
-    thr_cv      = thrs_values[cv_sol$default[2]],
-    thr_cv_1se  = thrs_values[cv_sol$oneSE[2]],
-    Q_cv        = cv_sol$default[1],
-    Q_cv_1se    = cv_sol$oneSE[1],
-    scor        = scor_list$scor,
-    scor_lwr    = scor_list$scor_lwr,
-    scor_upr    = scor_list$scor_upr,
-    pred_map    = pred_map,
-    gspcr_call  = gspcr_call
+    solution = list(
+      standard = list(
+        Q = sol_table["standard", "Q"],
+        threshold = sol_table["standard", "thr_value"],
+        active_set = names(
+          which(
+            pred_map[, sol_table["standard", "thr_number"]]
+          )
+        )
+      ),
+      oneSE = list(
+        Q = sol_table["oneSE", "Q"],
+        threshold = sol_table["oneSE", "thr_value"],
+        active_set = names(
+          which(
+            pred_map[, sol_table["oneSE", "thr_number"]]
+          )
+        )
+      )
+    ),
+    sol_table = sol_table,
+    thr = thrs_values,
+    thr_cv = sol_table["standard", "thr_value"],
+    thr_cv_1se = sol_table["oneSE", "thr_value"],
+    Q_cv = sol_table["standard", "Q"],
+    Q_cv_1se = sol_table["oneSE", "Q"],
+    scor = scor_list$scor,
+    scor_lwr = scor_list$scor_lwr,
+    scor_upr = scor_list$scor_upr,
+    pred_map = pred_map,
+    gspcr_call = gspcr_call
   )
 
   # Assign class to object

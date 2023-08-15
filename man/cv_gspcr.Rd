@@ -47,6 +47,7 @@ cv_gspcr(
 \value{
 Object of class \code{gspcr}, which is a list containing:
 \itemize{
+\item \code{solution}: a list containing the number of PCs that was selected (Q), the threshold value used, and the resulting active set for both the \code{standard} and \code{oneSE} solutions
 \item \code{sol_table}: data.frame reporting the threshold number, value, and the number of PCs identified by the procedure
 \item \code{thr}: vector of threshold values of the requested type used for the K-fold cross-validation procedure
 \item \code{thr_cv}: numeric vector of length 1 indicating the threshold number that was selected by the K-fold cross-validation procedure using the default decision rule
@@ -109,6 +110,7 @@ fit_measure <- "F"
 max_features <- ncol(ivs)
 min_features <- 1
 oneSE <- TRUE
+save_call <- TRUE
 
 # Example usage
 out_cont <- cv_gspcr(
@@ -122,7 +124,8 @@ out_cont <- cv_gspcr(
   thrs = "normalized",
   min_features = 1,
   max_features = ncol(GSPCRexdata$X$cont),
-  oneSE = TRUE
+  oneSE = TRUE,
+  save_call = TRUE
 )
 
 }

@@ -26,7 +26,7 @@ out_cont <- cv_gspcr(
 )
 
 # Test the length of the output is as expected
-testthat::expect_equal(length(out_cont), 11)
+testthat::expect_equal(length(out_cont), 12)
 
 # Test the class of the output
 testthat::expect_equal(class(out_cont), c("gspcrcv", "list"))
@@ -196,7 +196,7 @@ out_traget_npcs <- cv_gspcr(
 )
 
 # Test the length of the output is as expected
-testthat::expect_equal(length(out_traget_npcs), 11)
+testthat::expect_equal(length(out_traget_npcs), 12)
 
 # Test the class of the output
 testthat::expect_equal(class(out_traget_npcs), c("gspcrcv", "list"))
@@ -219,7 +219,7 @@ out_traget_npcs <- cv_gspcr(
 )
 
 # Test the length of the output is as expected
-testthat::expect_equal(length(out_traget_npcs), 11)
+testthat::expect_equal(length(out_traget_npcs), 12)
 
 # Test the class of the output
 testthat::expect_equal(class(out_traget_npcs), c("gspcrcv", "list"))
@@ -267,7 +267,7 @@ out_X_mix <- cv_gspcr(
 )
 
 # Test the length of the output is as expected
-testthat::expect_equal(length(out_X_mix), 11)
+testthat::expect_equal(length(out_X_mix), 12)
 
 # Test the class of the output
 testthat::expect_equal(class(out_X_mix), c("gspcrcv", "list"))

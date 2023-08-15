@@ -294,12 +294,12 @@ cv_gspcr <- function(
         npcs_range_eff <- npcs_range[npcs_range <= Q_max_eff & npcs_range >= Q_min_eff]
 
         # Compute PC scores
-        pc_scores <- tryCatch(
+        pca_mix_out <- tryCatch(
           expr = {
-            cp_pc_scores(
-              X_train = Xtr[, aset, drop = FALSE],
-              X_valid = Xva[, aset, drop = FALSE],
-              Q = Q_max_eff
+            pca_mix(
+              X_tr = Xtr[, aset, drop = FALSE],
+              X_va = Xva[, aset, drop = FALSE],
+              npcs = Q_max_eff
             )
           },
           error = function(e) {
@@ -320,7 +320,7 @@ cv_gspcr <- function(
         )
 
         # If an error occured in the pc_score computation, skip this threshold
-        if ("error" %in% class(pc_scores)) next
+        if ("error" %in% class(pca_mix_out)) next
 
         # Compute the fit measures for the additive PCRs
         for (q in npcs_range_eff) {
@@ -332,8 +332,8 @@ cv_gspcr <- function(
                 cp_validation_fit(
                   y_train = ytr,
                   y_valid = yva,
-                  X_train = pc_scores$PC_tr[, 1:q, drop = FALSE],
-                  X_valid = pc_scores$PC_va[, 1:q, drop = FALSE],
+                  X_train = pca_mix_out$PC_tr[, 1:q, drop = FALSE],
+                  X_valid = pca_mix_out$PC_va[, 1:q, drop = FALSE],
                   fam = fam,
                   fit_measure = fit_measure
                 )

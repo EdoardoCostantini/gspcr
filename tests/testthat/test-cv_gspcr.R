@@ -2,12 +2,13 @@
 # Objective: Test the cv_gspcr function
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
-# Modified:  2023-07-27
+# Modified:  2023-08-15
 # Notes: 
 
-set.seed(20230727)
-
 # Test: Continuous outcome -----------------------------------------------------
+
+# Set seed
+set.seed(20230727)
 
 # Use the functions with a given method
 out_cont <- cv_gspcr(
@@ -29,6 +30,33 @@ testthat::expect_equal(length(out_cont), 11)
 
 # Test the class of the output
 testthat::expect_equal(class(out_cont), c("gspcrcv", "list"))
+
+# Test: save call works as expected --------------------------------------------
+
+# Set seed
+set.seed(20230727)
+
+# Train model to tune parameters
+out_no_call <- cv_gspcr(
+    dv = GSPCRexdata$y$cont,
+    ivs = GSPCRexdata$X$cont,
+    fam = "gaussian",
+    nthrs = 5,
+    npcs_range = 1:5,
+    K = 3,
+    fit_measure = "F",
+    thrs = "normalized",
+    min_features = 1,
+    max_features = ncol(GSPCRexdata$X$cont),
+    oneSE = TRUE,
+    save_call = FALSE
+)
+
+# Test call is NULL
+testthat::expect_null(out_no_call$gspcr_call)
+
+# Test result is the same if call is store and not
+testthat::expect_equal(out_no_call$sol_table, out_cont$sol_table)
 
 # Test: Binary outcome ---------------------------------------------------------
 

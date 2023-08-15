@@ -13,6 +13,7 @@
 #' @param max_features numeric vector of length 1 indicating the maximum number of features that can be selected
 #' @param min_features numeric vector of length 1 indicating the minimum number of features that should be selected
 #' @param oneSE logical value indicating whether the results with the 1se rule should be saved
+#' @param save_call logical value indicating whether the call should be saved and returned in the results
 #' @details
 #' The variables in \code{ivs} do not need to be standardized beforehand as the function handles scaling appropriately based on the measurement levels of the data.
 #'
@@ -99,7 +100,9 @@ cv_gspcr <- function(
     fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
     max_features = ncol(ivs),
     min_features = 1,
-    oneSE = TRUE) {
+    oneSE = TRUE,
+    save_call = TRUE
+    ) {
   # If ivs is not a data.frame make it one
   if (is.matrix(ivs)) {
     ivs <- as.data.frame(ivs, stringsAsFactors = TRUE)
@@ -120,20 +123,25 @@ cv_gspcr <- function(
   max_features <- check_max_features(max_features, ivs)
   check_min_features(min_features, ivs)
 
-  # Save the call
-  gspcr_call <- list(
-    dv = dv,
-    ivs = ivs,
-    fam = fam,
-    thrs = thrs,
-    nthrs = nthrs,
-    npcs_range = npcs_range,
-    K = K,
-    fit_measure = fit_measure,
-    max_features = max_features,
-    min_features = min_features,
-    oneSE = oneSE
-  )
+  # Save the call if requested
+  if (save_call) {
+    gspcr_call <- list(
+      dv = dv,
+      ivs = ivs,
+      fam = fam,
+      thrs = thrs,
+      nthrs = nthrs,
+      npcs_range = npcs_range,
+      K = K,
+      fit_measure = fit_measure,
+      max_features = max_features,
+      min_features = min_features,
+      oneSE = oneSE,
+      save_call = save_call
+    )
+  } else {
+    gspcr_call <- NULL
+  }
 
   # Sample size
   n <- nrow(ivs)

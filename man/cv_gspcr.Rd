@@ -15,7 +15,8 @@ cv_gspcr(
   fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
   max_features = ncol(ivs),
   min_features = 1,
-  oneSE = TRUE
+  oneSE = TRUE,
+  save_call = TRUE
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ cv_gspcr(
 \item{min_features}{numeric vector of length 1 indicating the minimum number of features that should be selected}
 
 \item{oneSE}{logical value indicating whether the results with the 1se rule should be saved}
+
+\item{save_call}{logical value indicating whether the call should be saved and returned in the results}
 }
 \value{
 Object of class \code{gspcr}, which is a list containing:

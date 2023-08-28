@@ -13,6 +13,7 @@
 #' @param max_features numeric vector of length 1 indicating the maximum number of features that can be selected
 #' @param min_features numeric vector of length 1 indicating the minimum number of features that should be selected
 #' @param oneSE logical value indicating whether the results with the 1se rule should be saved
+#' @param save_call logical value indicating whether the call should be saved and returned in the results
 #' @details
 #' The variables in \code{ivs} do not need to be standardized beforehand as the function handles scaling appropriately based on the measurement levels of the data.
 #'
@@ -41,6 +42,7 @@
 #' Details regarding the 1 standard error rule implemented here can be found in the documentation for the function [gspcr::cv_choose()].
 #' @return
 #' Object of class \code{gspcr}, which is a list containing:
+#' - \code{solution}: a list containing the number of PCs that was selected (Q), the threshold value used, and the resulting active set for both the \code{standard} and \code{oneSE} solutions
 #' - \code{sol_table}: data.frame reporting the threshold number, value, and the number of PCs identified by the procedure
 #' - \code{thr}: vector of threshold values of the requested type used for the K-fold cross-validation procedure
 #' - \code{thr_cv}: numeric vector of length 1 indicating the threshold number that was selected by the K-fold cross-validation procedure using the default decision rule
@@ -71,6 +73,7 @@
 #' max_features <- ncol(ivs)
 #' min_features <- 1
 #' oneSE <- TRUE
+#' save_call <- TRUE
 #'
 #' # Example usage
 #' out_cont <- cv_gspcr(
@@ -84,7 +87,8 @@
 #'   thrs = "normalized",
 #'   min_features = 1,
 #'   max_features = ncol(GSPCRexdata$X$cont),
-#'   oneSE = TRUE
+#'   oneSE = TRUE,
+#'   save_call = TRUE
 #' )
 #'
 #' @export
@@ -99,7 +103,8 @@ cv_gspcr <- function(
     fit_measure = c("F", "LRT", "AIC", "BIC", "PR2", "MSE")[1],
     max_features = ncol(ivs),
     min_features = 1,
-    oneSE = TRUE) {
+    oneSE = TRUE,
+    save_call = TRUE) {
   # If ivs is not a data.frame make it one
   if (is.matrix(ivs)) {
     ivs <- as.data.frame(ivs, stringsAsFactors = TRUE)
@@ -120,20 +125,25 @@ cv_gspcr <- function(
   max_features <- check_max_features(max_features, ivs)
   check_min_features(min_features, ivs)
 
-  # Save the call
-  gspcr_call <- list(
-    dv = dv,
-    ivs = ivs,
-    fam = fam,
-    thrs = thrs,
-    nthrs = nthrs,
-    npcs_range = npcs_range,
-    K = K,
-    fit_measure = fit_measure,
-    max_features = max_features,
-    min_features = min_features,
-    oneSE = oneSE
-  )
+  # Save the call if requested
+  if (save_call) {
+    gspcr_call <- list(
+      dv = dv,
+      ivs = ivs,
+      fam = fam,
+      thrs = thrs,
+      nthrs = nthrs,
+      npcs_range = npcs_range,
+      K = K,
+      fit_measure = fit_measure,
+      max_features = max_features,
+      min_features = min_features,
+      oneSE = oneSE,
+      save_call = save_call
+    )
+  } else {
+    gspcr_call <- NULL
+  }
 
   # Sample size
   n <- nrow(ivs)
@@ -284,12 +294,12 @@ cv_gspcr <- function(
         npcs_range_eff <- npcs_range[npcs_range <= Q_max_eff & npcs_range >= Q_min_eff]
 
         # Compute PC scores
-        pc_scores <- tryCatch(
+        pca_mix_out <- tryCatch(
           expr = {
-            cp_pc_scores(
-              X_train = Xtr[, aset, drop = FALSE],
-              X_valid = Xva[, aset, drop = FALSE],
-              Q = Q_max_eff
+            pca_mix(
+              X_tr = Xtr[, aset, drop = FALSE],
+              X_va = Xva[, aset, drop = FALSE],
+              npcs = Q_max_eff
             )
           },
           error = function(e) {
@@ -310,7 +320,7 @@ cv_gspcr <- function(
         )
 
         # If an error occured in the pc_score computation, skip this threshold
-        if ("error" %in% class(pc_scores)) next
+        if ("error" %in% class(pca_mix_out)) next
 
         # Compute the fit measures for the additive PCRs
         for (q in npcs_range_eff) {
@@ -322,8 +332,8 @@ cv_gspcr <- function(
                 cp_validation_fit(
                   y_train = ytr,
                   y_valid = yva,
-                  X_train = pc_scores$PC_tr[, 1:q, drop = FALSE],
-                  X_valid = pc_scores$PC_va[, 1:q, drop = FALSE],
+                  X_train = pca_mix_out$PC_tr[, 1:q, drop = FALSE],
+                  X_valid = pca_mix_out$PC_va[, 1:q, drop = FALSE],
                   fam = fam,
                   fit_measure = fit_measure
                 )
@@ -404,17 +414,37 @@ cv_gspcr <- function(
 
   # Return
   out <- list(
-    sol_table   = sol_table,
-    thr         = thrs_values,
-    thr_cv      = thrs_values[cv_sol$default[2]],
-    thr_cv_1se  = thrs_values[cv_sol$oneSE[2]],
-    Q_cv        = cv_sol$default[1],
-    Q_cv_1se    = cv_sol$oneSE[1],
-    scor        = scor_list$scor,
-    scor_lwr    = scor_list$scor_lwr,
-    scor_upr    = scor_list$scor_upr,
-    pred_map    = pred_map,
-    gspcr_call  = gspcr_call
+    solution = list(
+      standard = list(
+        Q = sol_table["standard", "Q"],
+        threshold = sol_table["standard", "thr_value"],
+        active_set = names(
+          which(
+            pred_map[, sol_table["standard", "thr_number"]]
+          )
+        )
+      ),
+      oneSE = list(
+        Q = sol_table["oneSE", "Q"],
+        threshold = sol_table["oneSE", "thr_value"],
+        active_set = names(
+          which(
+            pred_map[, sol_table["oneSE", "thr_number"]]
+          )
+        )
+      )
+    ),
+    sol_table = sol_table,
+    thr = thrs_values,
+    thr_cv = sol_table["standard", "thr_value"],
+    thr_cv_1se = sol_table["oneSE", "thr_value"],
+    Q_cv = sol_table["standard", "Q"],
+    Q_cv_1se = sol_table["oneSE", "Q"],
+    scor = scor_list$scor,
+    scor_lwr = scor_list$scor_lwr,
+    scor_upr = scor_list$scor_upr,
+    pred_map = pred_map,
+    gspcr_call = gspcr_call
   )
 
   # Assign class to object

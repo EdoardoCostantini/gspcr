@@ -34,9 +34,18 @@ gspcr_est_out <- est_gspcr(
 gspcr_est_direct <- est_gspcr(
     dv = out$gspcr_call$dv,
     ivs = out$gspcr_call$ivs, 
-    fam = out$gspcr_call$fam, 
-    active_set = names(which(out$pred_map[, out$sol_table[1, "thr_number"]])), 
-    ndim = out$sol_table[1, "Q"]
+    fam = out$gspcr_call$fam,
+    active_set = out$solution$standard$active_set, 
+    ndim = out$solution$standard$Q
+)
+
+# Estimate GSPCR with direct input based on object
+gspcr_est_direct_solution <- est_gspcr(
+    dv = iris[, 1],
+    ivs = iris[, -1],
+    fam = "gaussian",
+    active_set = out$solution$standard$active_set,
+    ndim = out$solution$standard$Q
 )
 
 # Test methods returned the same fits
@@ -47,6 +56,10 @@ testthat::expect_equal(
 testthat::expect_equal(
     gspcr_est_out$glm_fit$deviance,
     gspcr_est_direct$glm_fit$deviance
+)
+testthat::expect_equal(
+    gspcr_est_out$glm_fit$deviance,
+    gspcr_est_direct_solution$glm_fit$deviance
 )
 
 # Test: works with custom direct input -----------------------------------------

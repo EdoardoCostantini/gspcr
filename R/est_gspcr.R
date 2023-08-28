@@ -22,11 +22,12 @@ est_gspcr <- function(object = NULL, dv, ivs, fam, active_set, ndim) {
 
     # Process object if not null
     if(!is.null(object)){
-        dv = object$gspcr_call$dv
-        ivs = object$gspcr_call$ivs
-        fam = object$gspcr_call$fam
-        active_set = names(which(object$pred_map[, object$sol_table[1, "thr_number"]]))
-        ndim = object$sol_table[1, "Q"]
+        # TODO: add check for presence of gspcr_call after including option to not save it!
+        dv <- object$gspcr_call$dv
+        ivs <- object$gspcr_call$ivs
+        fam <- object$gspcr_call$fam
+        active_set <- object$solution$standard$active_set
+        ndim <- object$solution$standard$Q
     }
 
     # Reduced data matrix (active set)
@@ -73,8 +74,6 @@ est_gspcr <- function(object = NULL, dv, ivs, fam, active_set, ndim) {
         glm_fit = glm_fit,
         fam = fam,
         pca = PCA_out,
-        dv = dv, 
-        ivs = ivs, 
         active_set = active_set,
         ndim = ndim
     )

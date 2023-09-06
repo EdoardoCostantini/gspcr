@@ -33,6 +33,28 @@ To install the latest version, run the following command in your R console:
 devtools::install_github("EdoardoCostantini/gspcr")
 ```
 
+## Usage
+
+To load the `gspcr` library in an R session and start using it:
+
+```
+library("gscpr")
+```
+
+To check an example of how to use the package, call the help file for the main function:
+
+```
+help("cv_gspcr")
+```
+
+You can also read the first draft of the package vignette by opening the file `./vignettes/main-features.html`.
+
+Check on how to cite the package with the R command:
+
+```
+citation("gscpr")
+```
+
 ## References
 
 Bair E, Hastie T, Paul D, Tibshirani R (2006). “Prediction by supervised principal components.” J. Am. Stat. Assoc., 101(473), 119-137.

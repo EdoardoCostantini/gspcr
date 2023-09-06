@@ -3,7 +3,7 @@ Title: Generalized Supervised Principal Component Regression
 Version: 0.9.3
 Authors@R: 
     person("Edoardo", "Costantini", , "costantini.edoardo@yahoo.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           comment = c(ORCID = "0000-0001-9581-9913"))
 Description: The sparse principal component regression is computed. The regularization parameters and number of components are optimized by cross-validation.
 License: MIT + file LICENSE
 Encoding: UTF-8

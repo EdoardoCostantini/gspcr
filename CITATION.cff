@@ -7,5 +7,4 @@ authors:
 title: "gspcr: Generalized Supervised Principal Component Regression"
 version: 0.9.3
 date-released: 2023-09-06
-license: MIT License
 repository-code: "https://github.com/EdoardoCostantini/gspcr"

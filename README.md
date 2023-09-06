@@ -38,7 +38,7 @@ devtools::install_github("EdoardoCostantini/gspcr")
 To load the `gspcr` library in an R session and start using it:
 
 ```
-library("gscpr")
+library("gspcr")
 ```
 
 To check an example of how to use the package, call the help file for the main function:
@@ -52,7 +52,7 @@ You can also read the first draft of the package vignette by opening the file `.
 Check on how to cite the package with the R command:
 
 ```
-citation("gscpr")
+citation("gspcr")
 ```
 
 ## References

@@ -110,3 +110,28 @@ pca_mix_out <- tryCatch(
 
 # Check is the result an error?
 testthat::expect_false("error" %in% class(pca_mix_out))
+
+# Test: treatment of ordered factor is as nominal variables --------------------
+
+# Use pca_mix on ordinal data
+pca_mix_ordinal <- tryCatch(
+    pca_mix_out_tv <- pca_mix(
+        X_tr = GSPCRexdata$X$ord,
+        X_va = GSPCRexdata$X$ord,
+        npcs = 2
+    ),
+    error = function(e) print(e)
+)
+
+# Use pca_mix on nominal data
+pca_mix_nominal <- tryCatch(
+    pca_mix_out_tv <- pca_mix(
+        X_tr = GSPCRexdata$X$cat,
+        X_va = GSPCRexdata$X$cat,
+        npcs = 2
+    ),
+    error = function(e) print(e)
+)
+
+# Check is the result an error?
+testthat::expect_equal(pca_mix_ordinal, pca_mix_nominal)

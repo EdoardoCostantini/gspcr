@@ -14,23 +14,22 @@
 #' @author Edoardo Costantini, 2023
 #'
 #' @export
-LL_newdata <- function(y_train, y_valid, X_train, X_valid, fam) {
+LL_newdata <- function(y_train, y_valid, X_train = NULL, X_valid = NULL, fam) {
 
-  ## Example inputs
-  # y_train = as.matrix(mtcars[1:20, 1])
-  # y_valid = as.matrix(mtcars[-c(1:20), 1])
-  # X_train = as.matrix(mtcars[1:20, -1])
-  # X_valid = as.matrix(mtcars[-c(1:20), -1])
-  # fam = "gaussian"
-
-  ## Body
+  # Fix empty and NULL columns if it happens
+  if (is.null(X_train)) {
+    X_train <- data.frame(X = rep(1, length(y_train)))
+  }
+  if (is.null(X_valid)) {
+    X_valid <- data.frame(X = rep(1, length(y_valid)))
+  }
 
   # Collect data in data.frames
-  train <- data.frame(y = y_train, X = X_train)
-  valid <- data.frame(y = y_valid, X = X_valid)
+  train <- data.frame(y = y_train, X_train)
+  valid <- data.frame(y = y_valid, X_valid)
 
   # Define formula
-  if (length(X_train) == 1) {
+  if (ncol(X_train) == 1 & length(unique(X_train[, 1])) == 1) {
     # Null model
     glm_formula <- stats::as.formula("y ~ 1")
   } else {

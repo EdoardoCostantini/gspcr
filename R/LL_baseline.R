@@ -26,32 +26,51 @@ LL_baseline <- function(y, x, mod) {
         predictors = x
     )
 
-    # convert to numbers if needed
+    # Convert y to a dummy code representation
     if (is.factor(y)) {
-        y <- FactoMineR::tab.disjonctif(y)
+        y_dc <- stats::model.matrix(~y)[, -1, drop = FALSE]
+    } else {
+        # Check if y is provided as a matrix of ncol(sc) columns
+        if (is.matrix(y)) {
+            if (ncol(y) == ncol(sc)) {
+                y_dc <- y
+            } else {
+                if(ncol(y) == (ncol(sc) + 1)){
+                    y_dc <- y[, -1, drop = FALSE]
+                }
+            }
+        } else {
+            # Transform y into a factor and make the dummy code representation
+            y_dc <- stats::model.matrix(~ factor(y))[, -1, drop = FALSE]
+        }
     }
 
-    # Define J
-    J <- ncol(y)
+    # Define sample size
+    n <- nrow(y_dc)
 
-    # Get rid of the baseline line for y
-    y <- y[, -1, drop = FALSE]
+    # Define J = ncat - 1 or ncol of sc
+    J <- ncol(sc)
 
     # Define a vector to store individual contributions to the likelihood
-    contr_i <- rep(NA, nrow(y))
+    contr_i <- rep(NA, n)
 
     # Compute individual contributions
-    for (i in 1:nrow(y)) {
-        contr_ij_pt1 <- rep(NA, J - 1)
-        contr_ij_pt2 <- rep(NA, J - 1)
-        for (j in 1:(J - 1)) {
-            contr_ij_pt1[j] <- y[i, j] * sc[i, j]
+    for (i in 1:n) {
+        # Define storing objects for (parts of the) individual likelihood contributions
+        contr_ij_pt1 <- rep(NA, J)
+        contr_ij_pt2 <- rep(NA, J)
+
+        # Populate the individual likelihood contribution parts
+        for (j in seq_along(1:J)) {
+            contr_ij_pt1[j] <- y_dc[i, j] * sc[i, j]
             contr_ij_pt2[j] <- exp(sc[i, j])
         }
+
+        # Create individual likelihood contributions
         contr_i[i] <- sum(contr_ij_pt1, na.rm = TRUE) - log(1 + sum(contr_ij_pt2, na.rm = TRUE))
     }
 
-    # Sum individual contribution to return the log-likelihood value
+    # Sum individual contributions to return the log-likelihood value
     ll <- sum(contr_i)
 
     # Return

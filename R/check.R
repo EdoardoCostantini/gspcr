@@ -2,7 +2,7 @@
 # Objective: Script containing functions to check correct inputs specifications
 # Author:    Edoardo Costantini
 # Created:   2023-05-31
-# Modified:  2023-05-31
+# Modified:  2023-07-27
 # Notes:
 
 # Argument: fam ----------------------------------------------------------------
@@ -105,13 +105,19 @@ check_npcs_range <- function(npcs_range, ivs) {
     # The number of npcs requested is less than the total number of columns
     is_less_than_p <- max(npcs_range) <= ncol(ivs)
     if (!is_less_than_p) {
-        stop(
+        # TODO: add this to the list of warning for the package
+        cat(
+            # Define a meaningful error message
             paste0(
-                "argument 'npcs_range' is misspecified. You cannot ask for more PCs than the number of columns in the input data 'ivs'. Get rid of (", paste(npcs_range[npcs_range > ncol(ivs)], collapse = ", "), ") from the range of PCs requested."
-            ),
-            call. = FALSE
+                "WARNING: The argument 'npcs_range' was misspecified. You cannot ask for more PCs than the number of columns in the input data 'ivs'. The values (", paste(npcs_range[npcs_range > ncol(ivs)], collapse = ", "), ") exceded the allowed range and were dropped."
+            )
         )
+        # get rid of all npcs_range values exceeding the limit
+        npcs_range <- npcs_range[!npcs_range > ncol(ivs)]
     }
+
+    # Return the npcs_range
+    return(npcs_range)
 }
 
 # Argument: K ------------------------------------------------------------------
@@ -195,13 +201,11 @@ check_max_features <- function(max_features, ivs) {
     # The number of features requested is less than or equal to the total number of columns
     is_less_than_p <- max(max_features) <= ncol(ivs)
     if (!is_less_than_p) {
-        stop(
-            paste0(
-                "argument 'max_features' is misspecified. You cannot ask for more features than the number of columns in the input data 'ivs'. Get rid of (", paste(max_features[max_features > ncol(ivs)], collapse = ", "), ") from the range of PCs requested."
-            ),
-            call. = FALSE
-        )
+        max_features <- ncol(ivs)
     }
+
+    # Return max_features as is or updated
+    max_features
 }
 
 # Argument: min_features -------------------------------------------------------
@@ -238,9 +242,47 @@ check_min_features <- function(min_features, ivs) {
     if (!is_less_than_p) {
         stop(
             paste0(
-                "argument 'min_features' is misspecified. You cannot ask for more features than the number of columns in the input data 'ivs'. Get rid of (", paste(min_features[min_features > ncol(ivs)], collapse = ", "), ") from the range of PCs requested."
+                "argument 'min_features' is misspecified. You cannot ask for more features than the number of columns in the input data 'ivs'. Lower the number of minimum features."
             ),
             call. = FALSE
         )
     }
+}
+
+# Argument: ivs -------------------------------------------------------
+
+check_constants <- function(ivs) {
+
+    # Check constants
+    keeplist <- lapply(lapply(ivs, as.numeric), stats::var) != 0
+
+    # Check at least 2 columns are kept
+    if(sum(keeplist) < 2){
+        stop(
+            paste0(
+                "The input data ivs contains only 1 column that is not a constant. GSPCR does not make sense if you have a single predictor."
+            ),
+            call. = FALSE
+        )
+    }
+
+    # Return matrix of non-costants
+    ivs[, keeplist, drop = FALSE]
+
+}
+
+# Check factors do not have empty levels
+
+check_factors <- function(ivs) {
+    # Find all the factors
+    index_factors <- sapply(ivs, is.factor)
+
+    # Apply drop levels to all 
+    slim_factors <- lapply(ivs[, index_factors, drop = FALSE], droplevels)
+
+    # Replace original factors with 
+    ivs[, index_factors] <- as.data.frame(slim_factors)
+
+    # Return ivs
+    ivs
 }

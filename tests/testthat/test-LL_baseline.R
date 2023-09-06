@@ -49,3 +49,33 @@ out_fact <- LL_baseline(
 
 # Check the values are all the same
 testthat::expect_true(ll_R - out_fact$ll < tol)
+
+# Test: Character input --------------------------------------------------------
+
+# Create matrix version of DV
+y <- as.character(mtcars_fact$gear)
+
+# Compute ll with function using a factor as input
+out_charct <- LL_baseline(
+    y = y,
+    x = mtcars_fact[, "disp", drop = FALSE],
+    mod = glm_baseline
+)
+
+# Check the values are all the same
+testthat::expect_true(ll_R - out_charct$ll < tol)
+
+# Test: Numeric input --------------------------------------------------------
+
+# Create matrix version of DV
+y <- as.numeric(mtcars_fact$gear)
+
+# Compute ll with function using a factor as input
+out_numeric <- LL_baseline(
+    y = y,
+    x = mtcars_fact[, "disp", drop = FALSE],
+    mod = glm_baseline
+)
+
+# Check the values are all the same
+testthat::expect_true(ll_R - out_numeric$ll < tol)

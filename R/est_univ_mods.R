@@ -51,9 +51,17 @@ est_univ_mods <- function(dv, ivs, fam) {
 
         # Fit simple models
         glm.fits <- lapply(1:ncol(ivs), function(j) {
-            nnet::multinom(
-                formula = dv ~ ivs[, j],
-                trace = FALSE
+            tryCatch(
+                expr = {
+                    nnet::multinom(
+                        formula = dv ~ ivs[, j],
+                        trace = FALSE
+                    )
+                },
+                error = function(e){
+                    glm0
+                }
+
             )
         })
     }

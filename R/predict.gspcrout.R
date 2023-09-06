@@ -9,40 +9,97 @@
 #' @author Edoardo Costantini, 2023
 #' @export
 predict.gspcrout <- function(object, newdata = NULL, ...) {
-
     # Use input data if newdata is empty
-    if(is.null(newdata)){
-        newdata <- object$ivs[, object$active_set]
+    if (is.null(newdata)) {
+        # Use the x_PCs that have already been computed
+        x_PC <- object$pca$PC_tr
     } else {
-        newdata <- newdata[, object$active_set]
+        # Define the new active dataset
+        newdata <- newdata[, object$active_set, drop = FALSE]
+
+        # Identify numeric variables
+        num <- sapply(newdata, is.numeric)
+
+        # Identify categorical variables
+        fac <- sapply(newdata, is.factor)
+
+        # Group quantitative variables if any
+        if (any(num)) {
+            x_quanti <- newdata[, num, drop = FALSE]
+        } else {
+            x_quanti <- NULL
+        }
+
+        # Group qualitative variables if any
+        if (any(fac)) {
+            x_quali <- newdata[, fac, drop = FALSE]
+        } else {
+            x_quali <- NULL
+        }
+
+        # Project new data on the PC space
+        x_PC <- tryCatch(
+            {
+                # Normal behavior
+                x_PC <- stats::predict(
+                    object$pca$pcamix,
+                    X.quanti = x_quanti,
+                    X.quali = x_quali
+                )
+                # TODO: The CRAN version of PCAmixdata currently has a bug where if a
+                # new dataset is provided with a categorical column having all the
+                # same values then new projections are not returned.
+                # This is undesirable.
+                # Currently, I handle the error here because the package authors are
+                # aware of the bug. They have actually fixed it in the github version.
+                # However, my package relies on the cran version.
+                # Therefore, as of right now I need the workaround implemented in
+                # this tryCatch().
+                # Whenever the PCAmixdata package maintainers update the CRAN version
+                # I can get rid of this and just keep the simple normal predict behavior.
+            },
+            error = function(err) {
+                # # Error handler message
+                # cat(
+                #     paste0(
+                #         "\n\n",
+                #         "The following error occurred when trying to project the new data on the PC axis: ",
+                #         "\n\n",
+                #         "\"",
+                #         err,
+                #         "\"",
+                #         "\n\n",
+                #         "Do not worry, this was solved by augmenting the data with an extra row before projecting it, and then getting rid of the extra row before using the projected scores in the subsequent step. If you still get an error after this, then something else went wrong.",
+                #         "\n\n",
+                #         "This was the data that caused the problem: ",
+                #         "\n\n"
+                #     )
+                # )
+
+                # # Print the data causing the problem
+                # cat("x.qunati\n")
+                # print(x_quanti)
+                # cat("\nx.quali\n")
+                # print(x_quali)
+                # cat("\n")
+
+                # Predict one at the time to avoid any problem
+                x_PC <- lapply(seq_along(1:nrow(newdata)), function(i) {
+                    stats::predict(
+                        object$pca$pcamix,
+                        X.quanti = x_quanti[i, , drop = FALSE],
+                        X.quali = x_quali[i, , drop = FALSE]
+                    )
+                })
+
+                # Put predictions together in a single matrix-like object
+                x_PC <- do.call(rbind, x_PC)
+
+                # Return the scores
+                return(x_PC)
+            }
+        )
     }
-
-    # Identify numeric variables
-    num <- names(which(sapply(newdata, is.numeric)))
-
-    # Identify categorical variables
-    fac <- names(which(sapply(newdata, is.factor)))
-
-    # Group quantitative variables if any
-    if (length(num) > 0) {
-        x_quanti <- newdata[, num, drop = FALSE]
-    } else {
-        x_quanti <- NULL
-    }
-
-    # Group qualitative variables if any
-    if (length(fac) > 0) {
-        x_quali <- newdata[, fac, drop = FALSE]
-    } else {
-        x_quali <- NULL
-    }
-
-    # Project new newdata on the PC space
-    x_PC <- stats::predict(
-        object$pca$pcamix,
-        X.quanti = x_quanti,
-        X.quali = x_quali
-    )
 
     # Assemble data
     data_glm <- data.frame(

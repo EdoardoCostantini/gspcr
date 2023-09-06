@@ -2,7 +2,7 @@
 # Objective: Test the LL_newdata function
 # Author:    Edoardo Costantini
 # Created:   2023-04-04
-# Modified:  2023-04-13
+# Modified:  2023-08-01
 # Notes: 
 
 # Test: Correct results when train = valid -------------------------------------
@@ -121,6 +121,19 @@ mod_out <- LL_newdata(
 
 # Test output object has expected length
 testthat::expect_true(length(mod_out) == 3)
+
+# Test: NULL predictor goes to null model --------------------------------------
+
+# Use the function with NULL training and validation data
+mod_out <- LL_newdata(
+    y_train = mtcars_fact[, "gear"],
+    y_valid = mtcars_fact[, "gear"],
+    X_train = NULL,
+    X_valid = NULL,
+    fam = "baseline"
+)
+
+testthat::expect_true(ncol(coef(mod_out$mod)) == 1)
 
 # Test: proportional odds model ------------------------------------------------
 

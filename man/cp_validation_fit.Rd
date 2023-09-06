@@ -11,9 +11,9 @@ cp_validation_fit(y_train, y_valid, X_train, X_valid, fam, fit_measure)
 
 \item{y_valid}{numeric vector or factor of dependent variable values from the validation set}
 
-\item{X_train}{\eqn{n \times p} data.frame of independent variables (factors allowed) from the training set. Can also be set to 1 to obtain the log-likelihood of the new data under the null model.}
+\item{X_train}{\eqn{n \times p} data.frame of independent variables (factors allowed) from the training set. Can also be set to NULL to obtain the log-likelihood of the new data under the null model.}
 
-\item{X_valid}{\eqn{n \times p} data.frame of independent variables (factors allowed) from the validation set. If \code{X_train} is set to 1 to obtain the log-likelihood of the new data under the null model, \code{X_valid} is ignored.}
+\item{X_valid}{\eqn{n \times p} data.frame of independent variables (factors allowed) from the validation set. If \code{X_train} is set to NULL to obtain the log-likelihood of the new data under the null model, \code{X_valid} is ignored.}
 
 \item{fam}{character vector of length 1 storing the description of the error distribution and link function to be used in the model (see \code{\link[=cv_gspcr]{cv_gspcr()}} for the list of possible options)}
 
@@ -30,10 +30,10 @@ The validation data set can be specified to be the same as the training data set
 }
 \examples{
 # Example inputs
-y_train = as.matrix(mtcars[1:20, 1])
-y_valid = as.matrix(mtcars[-c(1:20), 1])
-X_train = as.matrix(mtcars[1:20, -1])
-X_valid = as.matrix(mtcars[-c(1:20), -1])
+y_train = mtcars[1:20, 1]
+y_valid = mtcars[-c(1:20), 1]
+X_train = mtcars[1:20, -1]
+X_valid = mtcars[-c(1:20), -1]
 fam = "gaussian"
 fit_measure = "BIC"
 

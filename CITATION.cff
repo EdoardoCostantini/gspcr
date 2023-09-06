@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Costantini
+    given-names: Edoardo
+    orcid: https://orcid.org/0000-0001-9581-9913
+title: "gspcr: Generalized Supervised Principal Component Regression"
+version: 0.9.2.93
+date-released: 2023-09-06
+license: MIT License
+repository-code: "https://github.com/EdoardoCostantini/gspcr"

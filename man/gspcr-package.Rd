@@ -9,7 +9,7 @@
 The sparse principal component regression is computed. The regularization parameters and number of components are optimized by cross-validation.
 }
 \author{
-\strong{Maintainer}: Edoardo Costantini \email{costantini.edoardo@yahoo.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Edoardo Costantini \email{costantini.edoardo@yahoo.com} (\href{https://orcid.org/0000-0001-9581-9913}{ORCID})
 
 }
 \keyword{internal}

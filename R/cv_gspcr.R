@@ -369,12 +369,6 @@ cv_gspcr <- function(
                 )
               )
 
-              # Save call somewhere (for debug - drop in production release)
-              saveRDS(
-                gspcr_call,
-                paste0("./", format(Sys.time(), "%Y%m%d-%H%M%S"), "-gspcr_call-error.rds")
-              )
-
               # Return NA to salvage general K-fold cross-validation
               return(NA)
             }

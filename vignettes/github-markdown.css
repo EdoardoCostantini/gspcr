@@ -493,11 +493,11 @@ img {
 }
 
 /*Alternative: center Images*/
-img {
+/* img {
     display: block;
     max-width: 100%;
     margin-left: auto;
-    margin-right: auto; }
+    margin-right: auto; } */
 
 
 /*Span*/

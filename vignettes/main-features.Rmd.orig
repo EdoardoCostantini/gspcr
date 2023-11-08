@@ -26,6 +26,15 @@ opts_chunk$set(
 # Set the width of the console output to a large number (for sidewise scroll)
 options(width = 1e3)
 
+# Define a function to create good figure captions
+cap_fn <- local({
+    i <- 0
+    function(x) {
+        i <<- i + 1
+        paste("Figure ", i, ": ", x, sep = "")
+    }
+})
+
 ```
 
 SPCR regresses a dependent variable onto a few supervised principal components computed from a large set of predictors.
@@ -107,7 +116,7 @@ out$sol_table
 
 We can visually **examine the solution paths** produced by the cross-validation procedure by using the `plot()` functions.
 
-```{R}
+```{r solution_paths, fig.cap = cap_fn("Solution paths produced by `cv_gspcr`."), fig.align = "center"}
 # Plot the solution paths
 plot(out)
 
@@ -164,9 +173,7 @@ Another important aspect to consider is the **number of threshold values** that 
 This can be specified with the `nthrs` argument.
 Using the following code we can compare the solution paths obtained by the different association measures and values for a given number of PCs.
 
-```{r}
-#| label: fig-association-measures
-#| fig-cap: "Solution paths for different association measures."
+```{r fig-association-measures, fig.cap = cap_fn("Solution paths for different association measures."), fig.align = "center"}
 #| fig-width: 9
 #| fig-height: 3
 
@@ -211,9 +218,7 @@ As you can see, the solution paths are similar, although LLS tended to favor low
 We can use **different cross-validation fit measures**.
 See the help file for the list options (`?cv_gspcr`).
 
-```{r }
-#| label: fig-fit-measures
-#| fig-cap: "Solution paths for different fit measures."
+```{r fig-fit-measures, fig.cap = cap_fn("Solution paths for different fit measures."), fig.align = "center"}
 #| fig-width: 9
 #| fig-height: 6
 
@@ -258,9 +263,7 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
 As you can see, the different fit measures return equivalent solution paths.
 This is true for **any number of PCs**:
 
-```{r }
-#| label: fig-fit-measures-npc-5
-#| fig-cap: "Solution paths for different fit measures when using 5 PCs."
+```{r fig-fit-measures-npc-5, fig.cap = cap_fn("Solution paths for different fit measures when using 5 PCs."), fig.align = "center"}
 #| fig-width: 9
 #| fig-height: 6
 
@@ -304,9 +307,7 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
 We can use cross-validation to **select the number of PCs** as well.
 We can use the `npcs_range` argument to specify the range of the number of PCs to consider.
 
-```{r }
-#| label: fig-cv-npcs
-#| fig-cap: "Solution paths for different fit measures when cross-validating the number of PCs."
+```{r fig-cv-npcs, fig.cap = cap_fn("Solution paths for different fit measures when cross-validating the number of PCs."), fig.align = "center"}
 #| fig-width: 9
 #| fig-height: 6
 
@@ -345,7 +346,7 @@ data.train <- list(
 
 We can then train the model with the `superpc::superpc.train()` function and observe the solution paths.
 
-```{R}
+```{r, fig.cap = cap_fn("Solution paths obtained with `superpc`."), fig.align = "center"}
 # Train the model (computes the scores for each feature)
 train.obj <- superpc.train(
     data = data.train,
@@ -370,7 +371,7 @@ cv.obj_plot <- superpc.plotcv(cv.obj)
 
 Finally, we can specify and train `gspcr` in the same way and compare the cross-validation solution paths.
 
-```{r }
+```{r, fig.cap = cap_fn("Solution paths obtained with `gspcr`."), fig.align = "center"}
 # Train gspcr with the same specification as superpc
 gspcr_superpc <- cv_gspcr(
     dv = y,
@@ -415,9 +416,7 @@ First, let's estimate the solution paths with K-fold cross-validation.
 To keep the comparison simple, we specify two options for the number of PCs (5 and 20), but any other set of values could be used.
 We train the model with the six available fit measures stored in the object `fit_measure_vec`.
 
-```{r }
-#| label: fig-cv-check
-#| fig-cap: "Solution paths for different fit measures using K-fold CV."
+```{r fig-cv-check, fig.cap = cap_fn("Solution paths for different fit measures using K-fold CV."), fig.align = "center"}
 #| fig-width: 9
 #| fig-height: 6
 # Train the GSPCR model with two number of PCs options
@@ -456,9 +455,7 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
 
 Then, we repeat the same procedure but we set `K = 1`, to avoid K-fold cross-validation.
 
-```{r }
-#| label: fig-cv-check-no-cv
-#| fig-cap: "Solution paths for different fit measures without using K-fold CV."
+```{r fig-cv-check-no-cv, fig.cap = cap_fn("Solution paths for different fit measures without using K-fold CV."), fig.align = "center"}
 #| fig-width: 9
 #| fig-height: 6
 # Train the GSPCR model with many number of components
@@ -544,9 +541,7 @@ As you can see, using CV we find the same solution no matter what the outcome me
 The results for all fit measures except `F` struggle with accounting for measure complexity. The use of a simple 1-standard-error rule helps obviate this problem.
 First, fit the models with many possible number of components:
 
-```{r }
-#| label: fig-1se-rule
-#| fig-cap: "Solution paths for different fit measures when using the 1-standard-error rule."
+```{r fig-1se-rule, fig.cap = cap_fn("Solution paths for different fit measures when using the 1-standard-error rule."), fig.align = "center"}
 #| fig-width: 9
 #| fig-height: 6
 
@@ -633,9 +628,7 @@ To speed up the model-fitting process, it can be a good idea to find model-build
 You can use the BIC fit measure without CV to select the appropriate threshold value and the number of components.
 To do so, you can specify the number of folds to 1 and the fit measure to BIC or AIC.
 
-```{r }
-#| label: fig-no-cv
-#| fig-cap: "Solution paths obtained using fit measures that do not need K-fold CV."
+```{r fig-no-cv, fig.cap = cap_fn("Solution paths obtained using fit measures that do not need K-fold CV."), fig.align = "center"}
 #| fig-width: 9
 #| fig-height: 3
 

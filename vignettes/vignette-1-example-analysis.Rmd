@@ -1,0 +1,151 @@
+---
+title: "vignette-1-example-analysis"
+output: 
+    rmarkdown::html_vignette:
+        css: github-markdown.css
+        toc: true
+        number_sections: true
+vignette: >
+  %\VignetteIndexEntry{vignette-1-example-analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+SPCR regresses a dependent variable onto a few supervised principal components computed from a large set of predictors.
+The **steps** followed by SPCR are the following:
+
+1. Regress the dependent variable onto each column of a data set of *p* possible predictors via *p* simple linear regressions. This results in *p* bivariate association measures.
+2. Define a subset of the original *p* variables by discarding all variables whose bivariate association measures less than a chosen threshold.
+3. Use the subset of original data to estimate *q* PCs.
+4. Regress the dependent variable onto the *q* PCs.
+
+A key aspect of the method is that both the number of PCs and the threshold value used in step 2 can be determined by cross-validation.
+GSPCR **extends** SPCR by allowing the dependent variable to be of any measurement level (i.e., ratio, interval, ordinal, nominal) by introducing likelihood-based association measures (or threshold types) in step 1.
+Furthermore, GSPCR allows the predictors to be of any type by combining the PCAmix framework (Kiers, 1991; Chavent Et. Al., 2017) with SPCR in step 3.
+
+The `gspcr` R package allows to:
+
+- **tune** the of the threshold values and number of PCs in a GSPCR model;
+- **plot** the cross-validation trends used to tune the threshold value and the number of PCs to compute;
+- **estimate** the GSPCR model on a data set;
+- **predict** observations on both the training data and new, previously unseen, data
+
+Before we do anything else, let us **load the packages** we will need for this vignette.
+If you don't have these packages, please install them using `install.packages()`.
+
+
+```r
+# Load R packages
+library(gspcr)
+```
+
+# Parameter tuning
+
+We start this vignette by estimating `gspcr` in a very simple scenario with a continuous dependent variable and a set of continuous predictors. First, we store the **example dataset** `GSPCRexdata` (see the helpfile for details `?GSPCRexdata`) in two separate objects:
+
+
+```r
+# Comment goal of code
+X <- GSPCRexdata$X$cont
+y <- GSPCRexdata$y$cont
+```
+
+Then, we randomly select a **subset of the data** to use as a training set. We use 90\% of the data as training data.
+
+
+```r
+# Set a seed
+set.seed(20230415)
+
+# Sample a subset of the data
+train <- sample(x = 1:nrow(X), size = nrow(X) * .9)
+```
+
+Now we are ready to **use the** `cv_gscpr()` **function** to cross-validate the threshold value and the number of pcs to be used.
+
+
+```r
+# Train the GSPCR model
+out <- cv_gspcr(
+  dv = y[train],
+  ivs = X[train, ]
+)
+```
+
+We can then **extract** the cross-validated **solutions** from the resulting object.
+
+
+```r
+# Extract solutions
+out$sol_table
+```
+
+```
+         thr_value thr_number Q
+standard -1268.236          2 1
+oneSE    -1268.236          2 1
+```
+
+# Graphical output
+
+We can visually **examine the solution paths** produced by the cross-validation procedure by using the `plot()` functions.
+
+
+```r
+# Plot the solution paths
+plot(out)
+```
+
+<div class="figure" style="text-align: center">
+<img src="figure/fig-solution-paths-1.svg" alt="Figure 1: Solution paths produced by `cv_gspcr`."  />
+<p class="caption">Figure 1: Solution paths produced by `cv_gspcr`.</p>
+</div>
+
+In this figure, the out-of-sample fit measure obtained with a given threshold value (X-axis) and a given number of principal components is reported on the Y-axis.
+The values of the threshold considered are reported on the X-axis, and the X-axis title reports the type of threshold used, in this case, the simple regression model likelihoods.
+For a different number of components considered, a different line is reported. The number of PCs is reported on the line.
+
+Because the fit measure used by default for a continuous dependent variable is the F-statistic, we should look for the highest point on the Y-axis of this plot.
+This point represents the best K-fold cross-validation fit.
+As you see, the standard solution reported above matches the one presented in this plot.
+
+# Estimation
+
+Once the cross-validation procedure has identified the values of the threshold and the number of PCs that should be used, we can **estimate the GASPCR model** on the whole training data with the function `est_gspcr()`.
+
+
+```r
+# Estimate GSPCR on the whole training data
+gspcr_est <- est_gspcr(out)
+```
+
+# Prediction
+
+We can now **obtain predictions** for new unseen data using the `predict()` function
+
+
+```r
+# Predict new data
+y_hat <- predict(
+    object = gspcr_est,
+    newdata = X[-train, ]
+)
+
+# Look at the first six predictions
+head(y_hat)
+```
+
+```
+          8          23          26          64          70          75 
+ 0.16692084 -1.10013695  1.11181527  0.73243982  0.04385471  0.73221417 
+```
+
+# References
+
+Bair E, Hastie T, Paul D, Tibshirani R (2006). “Prediction by supervised principal components.” J. Am. Stat. Assoc., 101(473), 119-137.
+
+Chavent, M., Kuentz-Simonet, V., Labenne, A., & Saracco, J. (2014). Multivariate analysis of mixed data: The R package PCAmixdata. arXiv preprint arXiv:1411.4911.
+
+Kiers, H. A. (1991). Simple structure in component analysis techniques for mixtures of qualitative and quantitative variables. Psychometrika, 56(2), 197-212.

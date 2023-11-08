@@ -1,12 +1,12 @@
 ---
-title: "main-features"
+title: "vignette-3-alternatives"
 output: 
     rmarkdown::html_vignette:
         css: github-markdown.css
         toc: true
         number_sections: true
 vignette: >
-  %\VignetteIndexEntry{main-features}
+  %\VignetteIndexEntry{vignette-3-alternatives}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -35,299 +35,32 @@ cap_fn <- local({
     }
 })
 
+# set output device to svg
+knitr::opts_chunk$set(dev = "svg")
+
 ```
 
-SPCR regresses a dependent variable onto a few supervised principal components computed from a large set of predictors.
-The **steps** followed by SPCR are the following:
+Here we focus on the specifications of the GSPCR model. Three arguments of the `cv_gspcr()` should be specified carefully:
 
-1. Regress the dependent variable onto each column of a data set of *p* possible predictors via *p* simple linear regressions. This results in *p* bivariate association measures.
-2. Define a subset of the original *p* variables by discarding all variables whose bivariate association measures less than a chosen threshold.
-3. Use the subset of original data to estimate *q* PCs.
-4. Regress the dependent variable onto the *q* PCs.
+- Association measure
+- Fit measure
+- Number of components
 
-A key aspect of the method is that both the number of PCs and the threshold value used in step 2 can be determined by cross-validation.
-GSPCR **extends** SPCR by allowing the dependent variable to be of any measurement level (i.e., ratio, interval, ordinal, nominal) by introducing likelihood-based association measures (or threshold types) in step 1.
-Furthermore, GSPCR allows the predictors to be of any type by combining the PCAmix framework (Kiers, 1991; Chavent Et. Al., 2017) with SPCR in step 3.
-
-# Features
-
-This R package allows to:
-
-- **Parameter tuning** of the threshold values and number of PCs;
-- **Plot** the cross-validation trends used to tune the threshold value and the number of PCs to compute;
-- **Estimate** the GSPCR model data set;
-- **Predict** observations on both the training data and new, previously unseen, data
-
-## Parameter tuning
-
-Before we do anything else, let us **load the packages** we will need for this vignette.
-If you don't have these packages, please install them using `install.packages()`.
+In this vignette we consider a simple scenario with a continuous dependent variable and a set of continuous predictors. First, we load the required packages and store the **example dataset** `GSPCRexdata` (see the helpfile for details `?GSPCRexdata`) in two separate objects:
 
 ```{r setup}
 # Load R packages
-library(gspcr)      # this package!
-library(superpc)    # alternative comparison package
-library(patchwork)  # combining ggplots
+library(gspcr) # this package!
+library(superpc) # alternative comparison package
+library(patchwork) # combining ggplots
 
-```
-
-We start this vignette by estimating `gspcr` in a very simple scenario with a continuous dependent variable and a set of continuous predictors.
-First, we store the **example dataset** `GSPCRexdata` (see the helpfile for details `?GSPCRexdata`) in two objects by preparing the data, prepare the data data
-
-```{r}
 # Comment goal of code
 X <- GSPCRexdata$X$cont
 y <- GSPCRexdata$y$cont
 
 ```
 
-Then, we randomly select a **subset of the data** to use as a training set.
-We use 90\% of the data as training data.
-
-```{R}
-# Set a seed
-set.seed(20230415)
-
-# Sample a subset of the data
-train <- sample(x = 1:nrow(X), size = nrow(X) * .9)
-
-```
-
-Now we are ready to **use the** `cv_gscpr()` **function** to cross-validate the threshold value and the number of pcs to be used.
-
-```{r }
-# Train the GSPCR model
-out <- cv_gspcr(
-  dv = y[train],
-  ivs = X[train, ]
-)
-
-```
-
-We can then **extract** the cross-validated **solutions** from the resulting object.
-
-```{R}
-# Extract solutions
-out$sol_table
-
-```
-
-## Graphical output
-
-We can visually **examine the solution paths** produced by the cross-validation procedure by using the `plot()` functions.
-
-```{r fig-solution-paths, fig.cap = cap_fn("Solution paths produced by `cv_gspcr`."), fig.align = "center"}
-# Plot the solution paths
-plot(out)
-
-```
-
-In this figure, the out-of-sample fit measure obtained with a given threshold value (X-axis) and a given number of principal components is reported on the Y-axis.
-The values of the threshold considered are reported on the X-axis, and the X-axis title reports the type of threshold used, in this case, the simple regression model likelihoods.
-For a different number of components considered, a different line is reported. The number of PCs is reported on the line.
-
-Because the fit measure used by default for a continuous dependent variable is the F-statistic, we should look for the highest point on the Y-axis of this plot.
-This point represents the best K-fold cross-validation fit.
-As you see, the standard solution reported above matches the one presented in this plot.
-
-## Estimation
-
-Once the cross-validation procedure has identified the values of the threshold and the number of PCs that should be used, we can **estimate the GASPCR model** on the whole training data with the function `est_gspcr()`.
-
-```{R}
-# Estimate GSPCR on the whole training data
-gspcr_est <- est_gspcr(out)
-
-```
-
-## Prediction
-
-We can now **obtain predictions** for new unseen data using the `predict()` function
-
-```{R}
-# Predict new data
-y_hat <- predict(
-    object = gspcr_est,
-    newdata = X[-train, ]
-)
-
-# Look at the first six predictions
-head(y_hat)
-
-```
-
-# Details
-
-We can now focus on three important details and decisions that should be considered when using the `gspcrs` approach.
-
-## Association measures
-
-As described in the introduction, `gspcr` allows for the specification of **different bivariate association measures**.
-We can run `gspcr` using as a threshold type:
-
-- the log-likelihoods of simple GLMs;
-- the generalized $R^2$;
-- the normalized association measure used in the `superpc` R package.
-
-Another important aspect to consider is the **number of threshold values** that should be considered.
-This can be specified with the `nthrs` argument.
-Using the following code we can compare the solution paths obtained by the different association measures and values for a given number of PCs.
-
-```{r fig-association-measures, fig.cap = cap_fn("Solution paths for different association measures."), fig.align = "center"}
-#| fig-width: 9
-#| fig-height: 3
-
-# Define a vector of threshold types
-threshold_types <- c("LLS", "normalized", "PR2")
-
-# Train the GSPCR model with the different values
-out_trhs <- lapply(
-    X = threshold_types,
-    FUN = function(i) {
-        cv_gspcr(
-            dv = y,
-            ivs = X,
-            thrs = i,       # threshold type
-            nthrs = 20,     # number of threshold values
-            npcs_range = 1, 
-            K = 10
-        )
-    }
-)
-
-# Plot them
-plots <- lapply(out_trhs, function(i) {
-    plot(
-        x = i,
-        y = "F",
-        labels = FALSE,     # We are using a single nPC, do not need the label
-        discretize = FALSE, # Makes X-axis more readable
-        print = FALSE
-    )
-})
-
-# Patchwork ggplots
-plots[[1]] + plots[[2]] + plots[[3]]
-
-```
-
-As you can see, the solution paths are similar, although LLS tended to favor lower threshold values.
-
-## Fit measures
-
-We can use **different cross-validation fit measures**.
-See the help file for the list options (`?cv_gspcr`).
-
-```{r fig-fit-measures, fig.cap = cap_fn("Solution paths for different fit measures."), fig.align = "center"}
-#| fig-width: 9
-#| fig-height: 6
-
-# Measures
-fit_measure_vec <- c("LRT", "PR2", "MSE", "F", "AIC", "BIC")
-
-# Train the GSPCR model with the different values
-out_fit_meas <- lapply(fit_measure_vec, function(i) {
-    cv_gspcr(
-        dv = y,
-        ivs = X,
-        fit_measure = i,
-        thrs = "normalized",
-        nthrs = 20,
-        npcs_range = 1,
-        K = 10
-    )
-})
-
-# Plot them
-plots <- lapply(seq_along(fit_measure_vec), function(i) {
-    # Reverse y?
-    rev <- grepl("MSE|AIC|BIC", fit_measure_vec[i])
-
-    # Make plots
-    plot(
-        x = out_fit_meas[[i]],
-        y = fit_measure_vec[[i]],
-        labels = FALSE,
-        y_reverse = rev,
-        errorBars = FALSE,
-        discretize = FALSE,
-        print = FALSE
-    )
-})
-
-# Patchwork ggplots
-(plots[[1]] + plots[[2]] + plots[[3]]) / (plots[[4]] + plots[[5]] + plots[[6]])
-
-```
-
-As you can see, the different fit measures return equivalent solution paths.
-This is true for **any number of PCs**:
-
-```{r fig-fit-measures-npc-5, fig.cap = cap_fn("Solution paths for different fit measures when using 5 PCs."), fig.align = "center"}
-#| fig-width: 9
-#| fig-height: 6
-
-# Train the GSPCR model with the different values
-out_fit_meas <- lapply(fit_measure_vec, function(i) {
-    cv_gspcr(
-        dv = y,
-        ivs = X,
-        fit_measure = i,
-        thrs = "normalized",
-        nthrs = 20,
-        npcs_range = 5,
-        K = 10
-    )
-})
-
-# Plot them
-plots <- lapply(seq_along(fit_measure_vec), function(i) {
-    # Reverse y?
-    rev <- grepl("MSE|AIC|BIC", fit_measure_vec[i])
-
-    # Make plots
-    plot(
-        x = out_fit_meas[[i]],
-        y = fit_measure_vec[[i]],
-        labels = FALSE,
-        y_reverse = rev,
-        errorBars = FALSE,
-        discretize = FALSE,
-        print = FALSE
-    )
-})
-
-# Patchwork ggplots
-(plots[[1]] + plots[[2]] + plots[[3]]) / (plots[[4]] + plots[[5]] + plots[[6]])
-
-```
-
-## Number of components
-
-We can use cross-validation to **select the number of PCs** as well.
-We can use the `npcs_range` argument to specify the range of the number of PCs to consider.
-
-```{r fig-cv-npcs, fig.cap = cap_fn("Solution paths for different fit measures when cross-validating the number of PCs."), fig.align = "center"}
-#| fig-width: 9
-#| fig-height: 6
-
-# Train the model
-out_npcs <- cv_gspcr(
-    dv = y[train],
-    ivs = X[train, ],
-    npcs_range = c(2, 5, 10)
-)
-
-# Plot solution paths
-plot(out_npcs)
-
-```
-
-Given the choice of 2, 5, or 10 PCs, we would use 2 PCs with the second threshold value.
-
-# Alternatives and comparisons
-
-## Compare results with `superpc`
+# Compare results with `superpc`
 
 This package extends the `superpc` R package by introducing more fit measures and threshold types, which allows for the consideration of a wider range of variable types. 
 Here we want to show that the **results** obtained by `superpc` can be **replicated** by `gspcr` when using the same fit measure and threshold type.
@@ -406,7 +139,7 @@ data.frame(
 
 ```
 
-## Is K-fold cross-validation working?
+# Is K-fold cross-validation working?
 
 In this section, I want to showcase the effectiveness of using cross-validation to **select the number of PCs** for GSPCR.
 We can estimate the same solution paths for GSPCR with and without using K-fold cross-validation by changing the number of folds used.
@@ -536,7 +269,7 @@ round(t(res_no_CV), 3)
 
 As you can see, using CV we find the same solution no matter what the outcome measure, while without using CV, only the AIC, BIC, and F are able to select a low number of PCs.
 
-## 1SE solutions
+# 1SE solutions
 
 The results for all fit measures except `F` struggle with accounting for measure complexity. The use of a simple 1-standard-error rule helps obviate this problem.
 First, fit the models with many possible number of components:
@@ -622,7 +355,7 @@ round(t(res_1se), 3)
 
 ```
 
-## Alternatives to CV
+# Alternatives to CV
 
 To speed up the model-fitting process, it can be a good idea to find model-building strategies that are less time-consuming than CV.
 You can use the BIC fit measure without CV to select the appropriate threshold value and the number of components.
@@ -685,19 +418,3 @@ rbind(
 )
 
 ```
-
-# TL;DR, just give me the code!
-
-```{r TLDR, ref.label = knitr::all_labels()[!knitr::all_labels() %in% c("global_options")], echo = TRUE, eval = FALSE}
-```
-
-<!-- Remove white space generated by toc_float -->
-<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
-
-# References
-
-Bair E, Hastie T, Paul D, Tibshirani R (2006). “Prediction by supervised principal components.” J. Am. Stat. Assoc., 101(473), 119-137.
-
-Chavent, M., Kuentz-Simonet, V., Labenne, A., & Saracco, J. (2014). Multivariate analysis of mixed data: The R package PCAmixdata. arXiv preprint arXiv:1411.4911.
-
-Kiers, H. A. (1991). Simple structure in component analysis techniques for mixtures of qualitative and quantitative variables. Psychometrika, 56(2), 197-212.

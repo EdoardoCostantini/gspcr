@@ -5,17 +5,34 @@
 # Modified:  2023-11-08
 # Notes:     see https://www.kloppenborg.ca/2021/06/long-running-vignettes/
 
-# # Store current wd
+# Store current wd
 old_wd <- getwd()
 
-# # Move to the vignette forlder to simplify figure/ management
+# Define vignette names
+vignettes <- c(
+    "vignette-1-example-analysis",
+    "vignette-2-gspcr-arguments",
+    "vignette-3-alternatives"
+)
+
+# Decide which vignette to compile
+vignette_target <- vignettes#[1]
+
+# Move to the vignette forlder to simplify figure/ management
 setwd("vignettes/")
 
 # Compile the vignettes that takes a lot of time
-knitr::knit("main-features.Rmd.orig", output = "main-features.Rmd")
+lapply(vignette_target, function(X){
+    knitr::knit(
+        input = paste0(X, ".Rmd.orig"),
+        output = paste0(X, ".Rmd")
+    )
+})
 
 # Revert to original working directory
 setwd(old_wd)
 
 # Compile the vignettes
-devtools::build_rmd("vignettes/main-features.Rmd")
+lapply(vignette_target, function(X) {
+    devtools::build_rmd(paste0("vignettes/", X, ".Rmd"))
+})

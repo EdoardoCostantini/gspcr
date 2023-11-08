@@ -1,12 +1,12 @@
 ---
-title: "vignette-2-gspcr-arguments"
+title: "Vignette 2: GSPCR specification options"
 output: 
     rmarkdown::html_vignette:
         css: github-markdown.css
         toc: true
         number_sections: true
 vignette: >
-  %\VignetteIndexEntry{vignette-2-gspcr-arguments}
+  %\VignetteIndexEntry{Vignette 2: GSPCR specification options}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

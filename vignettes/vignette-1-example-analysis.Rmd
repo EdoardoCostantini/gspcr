@@ -1,12 +1,12 @@
 ---
-title: "vignette-1-example-analysis"
+title: "Vignette 1: Example analysis with GSPCR"
 output: 
     rmarkdown::html_vignette:
         css: github-markdown.css
         toc: true
         number_sections: true
 vignette: >
-  %\VignetteIndexEntry{vignette-1-example-analysis}
+  %\VignetteIndexEntry{Vignette 1: Example analysis with GSPCR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

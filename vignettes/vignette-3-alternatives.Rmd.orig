@@ -1,12 +1,12 @@
 ---
-title: "vignette-3-alternatives"
+title: "Vignette 3: Alternatives approaches"
 output: 
     rmarkdown::html_vignette:
         css: github-markdown.css
         toc: true
         number_sections: true
 vignette: >
-  %\VignetteIndexEntry{vignette-3-alternatives}
+  %\VignetteIndexEntry{Vignette 3: Alternatives approaches}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

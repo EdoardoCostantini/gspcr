@@ -1,12 +1,12 @@
 ---
-title: "vignette-3-alternatives"
+title: "Vignette 3: Alternatives approaches"
 output: 
     rmarkdown::html_vignette:
         css: github-markdown.css
         toc: true
         number_sections: true
 vignette: >
-  %\VignetteIndexEntry{vignette-3-alternatives}
+  %\VignetteIndexEntry{Vignette 3: Alternatives approaches}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -268,7 +268,7 @@ PR2     1.517          3 5
 MSE     1.517          3 5
 F       1.517          3 5
 AIC     1.517          3 5
-BIC     1.517          3 5
+BIC     0.784          2 5
 ```
 
 The solutions we would have obtained without using K-fold CV are:
@@ -373,8 +373,8 @@ round(t(res), 3)
 
 ```
     thr_value thr_number Q
-LRT     1.517          3 5
-PR2     0.784          2 5
+LRT     0.784          2 4
+PR2     0.784          2 4
 MSE     1.517          3 5
 F       2.250          4 1
 AIC     1.517          3 3
@@ -406,8 +406,8 @@ LRT     1.517          3 3
 PR2     1.517          3 3
 MSE     1.517          3 3
 F       1.517          3 1
-AIC     2.250          4 3
-BIC     1.517          3 1
+AIC     2.250          4 1
+BIC     2.250          4 2
 ```
 
 # Alternatives to CV

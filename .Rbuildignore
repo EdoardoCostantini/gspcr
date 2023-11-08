@@ -7,4 +7,3 @@ data-raw/
 ^CITATION\.cff$
 rebuild-vignettes.R
 ^(.*?)\.Rmd.orig
-vignettes/figure/

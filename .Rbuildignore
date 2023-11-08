@@ -9,3 +9,4 @@ rebuild-vignettes.R
 vignettes/main-features.Rmd.orig
 vignettes/CFA-data.Rmd.orig
 vignettes/mixed-data.Rmd.orig
+vignettes/figure/

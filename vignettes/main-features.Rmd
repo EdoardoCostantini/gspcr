@@ -2,6 +2,7 @@
 title: "main-features"
 output: 
     rmarkdown::html_vignette:
+        css: github-markdown.css
         toc: true
         number_sections: true
 vignette: >

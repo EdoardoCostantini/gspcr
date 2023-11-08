@@ -55,6 +55,20 @@ Check on how to cite the package with the R command:
 citation("gspcr")
 ```
 
+## Development
+
+### Vignettes
+
+The vignettes for this package take a lot of time to compile. As a result, I adopted a two-step workflow:
+
+1. Modify the desired vignette in the `.Rmd.orig` format
+2. Use the `rebuild-vignettes.R` script to update the actual `.Rmd` vignette files
+
+When testing, building, uploading the package, only the `.Rmd` versions of the vignettes will be compiled. These versions contain precompiled R code and plots so that the compilation time is minimized. This workflow is inspired by:
+
+- [Long-Running Vignettes for R Packages](https://www.kloppenborg.ca/2021/06/long-running-vignettes/)
+- [How to precompute package vignettes or pkgdown articles by Jeroen Ooms](https://ropensci.org/blog/2019/12/08/precompute-vignettes/)
+
 ## References
 
 Bair E, Hastie T, Paul D, Tibshirani R (2006). “Prediction by supervised principal components.” J. Am. Stat. Assoc., 101(473), 119-137.

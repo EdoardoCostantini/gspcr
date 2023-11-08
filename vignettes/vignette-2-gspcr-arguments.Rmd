@@ -1,0 +1,208 @@
+---
+title: "Vignette 2: GSPCR specification options"
+output: 
+    rmarkdown::html_vignette:
+        css: github-markdown.css
+        toc: true
+        number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Vignette 2: GSPCR specification options}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+Here we focus on the specifications of the GSPCR model. Three arguments of the `cv_gspcr()` should be specified carefully:
+
+- Association measure
+- Fit measure
+- Number of components
+
+In this vignette we consider a simple scenario with a continuous dependent variable and a set of continuous predictors. First, we load the required packages and store the **example dataset** `GSPCRexdata` (see the helpfile for details `?GSPCRexdata`) in two separate objects:
+
+
+```r
+# Load R packages
+library(gspcr) # this package!
+library(superpc) # alternative comparison package
+library(patchwork) # combining ggplots
+
+# Comment goal of code
+X <- GSPCRexdata$X$cont
+y <- GSPCRexdata$y$cont
+```
+
+
+# Association measures
+
+As described in the introduction, `gspcr` allows for the specification of **different bivariate association measures**.
+We can run `gspcr` using as a threshold type:
+
+- the log-likelihoods of simple GLMs;
+- the generalized $R^2$;
+- the normalized association measure used in the `superpc` R package.
+
+Another important aspect to consider is the **number of threshold values** that should be considered.
+This can be specified with the `nthrs` argument.
+Using the following code we can compare the solution paths obtained by the different association measures and values for a given number of PCs.
+
+
+```r
+# Define a vector of threshold types
+threshold_types <- c("LLS", "normalized", "PR2")
+
+# Train the GSPCR model with the different values
+out_trhs <- lapply(
+    X = threshold_types,
+    FUN = function(i) {
+        cv_gspcr(
+            dv = y,
+            ivs = X,
+            thrs = i,       # threshold type
+            nthrs = 20,     # number of threshold values
+            npcs_range = 1, 
+            K = 10
+        )
+    }
+)
+
+# Plot them
+plots <- lapply(out_trhs, function(i) {
+    plot(
+        x = i,
+        y = "F",
+        labels = FALSE,     # We are using a single nPC, do not need the label
+        discretize = FALSE, # Makes X-axis more readable
+        print = FALSE
+    )
+})
+
+# Patchwork ggplots
+plots[[1]] + plots[[2]] + plots[[3]]
+```
+
+<div class="figure" style="text-align: center">
+<img src="figure/fig-association-measures-1.svg" alt="Figure 1: Solution paths for different association measures."  />
+<p class="caption">Figure 1: Solution paths for different association measures.</p>
+</div>
+
+As you can see, the solution paths are similar, although LLS tended to favor lower threshold values.
+
+# Fit measures
+
+We can use **different cross-validation fit measures**.
+See the help file for the list options (`?cv_gspcr`).
+
+
+```r
+# Measures
+fit_measure_vec <- c("LRT", "PR2", "MSE", "F", "AIC", "BIC")
+
+# Train the GSPCR model with the different values
+out_fit_meas <- lapply(fit_measure_vec, function(i) {
+    cv_gspcr(
+        dv = y,
+        ivs = X,
+        fit_measure = i,
+        thrs = "normalized",
+        nthrs = 20,
+        npcs_range = 1,
+        K = 10
+    )
+})
+
+# Plot them
+plots <- lapply(seq_along(fit_measure_vec), function(i) {
+    # Reverse y?
+    rev <- grepl("MSE|AIC|BIC", fit_measure_vec[i])
+
+    # Make plots
+    plot(
+        x = out_fit_meas[[i]],
+        y = fit_measure_vec[[i]],
+        labels = FALSE,
+        y_reverse = rev,
+        errorBars = FALSE,
+        discretize = FALSE,
+        print = FALSE
+    )
+})
+
+# Patchwork ggplots
+(plots[[1]] + plots[[2]] + plots[[3]]) / (plots[[4]] + plots[[5]] + plots[[6]])
+```
+
+<div class="figure" style="text-align: center">
+<img src="figure/fig-fit-measures-1.svg" alt="Figure 2: Solution paths for different fit measures."  />
+<p class="caption">Figure 2: Solution paths for different fit measures.</p>
+</div>
+
+As you can see, the different fit measures return equivalent solution paths.
+This is true for **any number of PCs**:
+
+
+```r
+# Train the GSPCR model with the different values
+out_fit_meas <- lapply(fit_measure_vec, function(i) {
+    cv_gspcr(
+        dv = y,
+        ivs = X,
+        fit_measure = i,
+        thrs = "normalized",
+        nthrs = 20,
+        npcs_range = 5,
+        K = 10
+    )
+})
+
+# Plot them
+plots <- lapply(seq_along(fit_measure_vec), function(i) {
+    # Reverse y?
+    rev <- grepl("MSE|AIC|BIC", fit_measure_vec[i])
+
+    # Make plots
+    plot(
+        x = out_fit_meas[[i]],
+        y = fit_measure_vec[[i]],
+        labels = FALSE,
+        y_reverse = rev,
+        errorBars = FALSE,
+        discretize = FALSE,
+        print = FALSE
+    )
+})
+
+# Patchwork ggplots
+(plots[[1]] + plots[[2]] + plots[[3]]) / (plots[[4]] + plots[[5]] + plots[[6]])
+```
+
+<div class="figure" style="text-align: center">
+<img src="figure/fig-fit-measures-npc-5-1.svg" alt="Figure 3: Solution paths for different fit measures when using 5 PCs."  />
+<p class="caption">Figure 3: Solution paths for different fit measures when using 5 PCs.</p>
+</div>
+
+# Number of components
+
+We can use cross-validation to **select the number of PCs** as well.
+We can use the `npcs_range` argument to specify the range of the number of PCs to consider.
+
+
+```r
+# Train the model
+out_npcs <- cv_gspcr(
+    dv = y,
+    ivs = X,
+    npcs_range = c(2, 5, 10)
+)
+
+# Plot solution paths
+plot(out_npcs)
+```
+
+<div class="figure" style="text-align: center">
+<img src="figure/fig-cv-npcs-1.svg" alt="Figure 4: Solution paths for different fit measures when cross-validating the number of PCs."  />
+<p class="caption">Figure 4: Solution paths for different fit measures when cross-validating the number of PCs.</p>
+</div>
+
+Given the choice of 2, 5, or 10 PCs, we would use 2 PCs with the second threshold value.

@@ -5,3 +5,7 @@ data-raw/
 ^doc$
 ^Meta$
 ^CITATION\.cff$
+rebuild-vignettes.R
+^(.*?)\.Rmd.orig
+^(.*?)\.css
+vignettes/figure/

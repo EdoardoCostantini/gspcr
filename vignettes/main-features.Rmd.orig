@@ -116,7 +116,7 @@ out$sol_table
 
 We can visually **examine the solution paths** produced by the cross-validation procedure by using the `plot()` functions.
 
-```{r solution_paths, fig.cap = cap_fn("Solution paths produced by `cv_gspcr`."), fig.align = "center"}
+```{r fig-solution-paths, fig.cap = cap_fn("Solution paths produced by `cv_gspcr`."), fig.align = "center"}
 # Plot the solution paths
 plot(out)
 
@@ -346,7 +346,7 @@ data.train <- list(
 
 We can then train the model with the `superpc::superpc.train()` function and observe the solution paths.
 
-```{r, fig.cap = cap_fn("Solution paths obtained with `superpc`."), fig.align = "center"}
+```{r fig-comp-superpc-solution-path, fig.cap = cap_fn("Solution paths obtained with `superpc`."), fig.align = "center"}
 # Train the model (computes the scores for each feature)
 train.obj <- superpc.train(
     data = data.train,
@@ -371,7 +371,7 @@ cv.obj_plot <- superpc.plotcv(cv.obj)
 
 Finally, we can specify and train `gspcr` in the same way and compare the cross-validation solution paths.
 
-```{r, fig.cap = cap_fn("Solution paths obtained with `gspcr`."), fig.align = "center"}
+```{r fig-comp-gspcr-solution-path, fig.cap = cap_fn("Solution paths obtained with `gspcr`."), fig.align = "center"}
 # Train gspcr with the same specification as superpc
 gspcr_superpc <- cv_gspcr(
     dv = y,

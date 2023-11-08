@@ -105,7 +105,7 @@ plot(out)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="figure/solution_paths-1.png" alt="Figure 1: Solution paths produced by `cv_gspcr`."  />
+<img src="figure/fig-solution-paths-1.png" alt="Figure 1: Solution paths produced by `cv_gspcr`."  />
 <p class="caption">Figure 1: Solution paths produced by `cv_gspcr`.</p>
 </div>
 
@@ -369,7 +369,10 @@ cv.obj <- superpc.cv(
 cv.obj_plot <- superpc.plotcv(cv.obj)
 ```
 
-![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png)
+<div class="figure" style="text-align: center">
+<img src="figure/fig-comp-superpc-solution-path-1.png" alt="Figure 6: Solution paths obtained with `superpc`."  />
+<p class="caption">Figure 6: Solution paths obtained with `superpc`.</p>
+</div>
 
 Finally, we can specify and train `gspcr` in the same way and compare the cross-validation solution paths.
 
@@ -396,7 +399,10 @@ plot(
 )
 ```
 
-![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png)
+<div class="figure" style="text-align: center">
+<img src="figure/fig-comp-gspcr-solution-path-1.png" alt="Figure 7: Solution paths obtained with `gspcr`."  />
+<p class="caption">Figure 7: Solution paths obtained with `gspcr`.</p>
+</div>
 
 We can also see that the thresholds values computed are exactly the same:
 
@@ -480,8 +486,8 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
 ```
 
 <div class="figure" style="text-align: center">
-<img src="figure/fig-cv-check-1.png" alt="Figure 6: Solution paths for different fit measures using K-fold CV."  />
-<p class="caption">Figure 6: Solution paths for different fit measures using K-fold CV.</p>
+<img src="figure/fig-cv-check-1.png" alt="Figure 8: Solution paths for different fit measures using K-fold CV."  />
+<p class="caption">Figure 8: Solution paths for different fit measures using K-fold CV.</p>
 </div>
 
 Then, we repeat the same procedure but we set `K = 1`, to avoid K-fold cross-validation.
@@ -522,8 +528,8 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
 ```
 
 <div class="figure" style="text-align: center">
-<img src="figure/fig-cv-check-no-cv-1.png" alt="Figure 7: Solution paths for different fit measures without using K-fold CV."  />
-<p class="caption">Figure 7: Solution paths for different fit measures without using K-fold CV.</p>
+<img src="figure/fig-cv-check-no-cv-1.png" alt="Figure 9: Solution paths for different fit measures without using K-fold CV."  />
+<p class="caption">Figure 9: Solution paths for different fit measures without using K-fold CV.</p>
 </div>
 
 You can already see from the plots that when using LRT, MSE, and PR2 as fit measures, without cross-validation we would end up selecting the highest number of PCs provided (20 in this case).
@@ -636,8 +642,8 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
 ```
 
 <div class="figure" style="text-align: center">
-<img src="figure/fig-1se-rule-1.png" alt="Figure 8: Solution paths for different fit measures when using the 1-standard-error rule."  />
-<p class="caption">Figure 8: Solution paths for different fit measures when using the 1-standard-error rule.</p>
+<img src="figure/fig-1se-rule-1.png" alt="Figure 10: Solution paths for different fit measures when using the 1-standard-error rule."  />
+<p class="caption">Figure 10: Solution paths for different fit measures when using the 1-standard-error rule.</p>
 </div>
 
 Then, extract the solutions obtained by each:
@@ -748,8 +754,8 @@ plots[[1]] + plots[[2]] + plots[[3]]
 ```
 
 <div class="figure" style="text-align: center">
-<img src="figure/fig-no-cv-1.png" alt="Figure 9: Solution paths obtained using fit measures that do not need K-fold CV."  />
-<p class="caption">Figure 9: Solution paths obtained using fit measures that do not need K-fold CV.</p>
+<img src="figure/fig-no-cv-1.png" alt="Figure 11: Solution paths obtained using fit measures that do not need K-fold CV."  />
+<p class="caption">Figure 11: Solution paths obtained using fit measures that do not need K-fold CV.</p>
 </div>
 
 You can also look at the solutions:

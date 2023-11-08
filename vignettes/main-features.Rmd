@@ -10,11 +10,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-<!--html_preserve--><script>
-  addClassKlippyTo("pre.r, pre.markdown");
-  addKlippy('right', 'top', 'auto', '1', 'Copy code', 'Copied!');
-</script><!--/html_preserve-->
-
 
 
 SPCR regresses a dependent variable onto a few supervised principal components computed from a large set of predictors.

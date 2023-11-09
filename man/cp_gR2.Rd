@@ -7,9 +7,9 @@
 cp_gR2(ll_n, ll_f, n)
 }
 \arguments{
-\item{ll_n}{numeric vector of length 1 (or an object of class "logLik") storing the log-likelihood of the null (restricted) model}
+\item{ll_n}{numeric vector of length 1 (or an object of class 'logLik') storing the log-likelihood of the null (restricted) model}
 
-\item{ll_f}{numeric vector of length 1 (or an object of class "logLik") storing the log-likelihood of the full model}
+\item{ll_f}{numeric vector of length 1 (or an object of class 'logLik') storing the log-likelihood of the full model}
 
 \item{n}{numeric vector of length 1 storing the sample size of the data used to estimate the models}
 }

@@ -2,8 +2,8 @@
 #'
 #' Computes the likelihood ratio expressed as a difference between the log-likelihoods of observed data under two nested competing models.
 #'
-#' @param ll_restricted numeric vector of length 1 (or an object of class "logLik") storing the log-likelihood of the observed data under the restricted model
-#' @param ll_full numeric vector of length 1 (or an object of class "logLik") storing the log-likelihood of the observed data under the full model
+#' @param ll_restricted numeric vector of length 1 (or an object of class 'logLik') storing the log-likelihood of the observed data under the restricted model
+#' @param ll_full numeric vector of length 1 (or an object of class 'logLik') storing the log-likelihood of the observed data under the full model
 #' @details
 #' Note that:
 #' - The full model is always the model with more estimated parameters, the model with more predictor variables.

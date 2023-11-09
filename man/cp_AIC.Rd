@@ -7,7 +7,7 @@
 cp_AIC(ll, k)
 }
 \arguments{
-\item{ll}{numeric vector of length 1 (or an object of class "logLik") storing the log-likelihood of the model of interest}
+\item{ll}{numeric vector of length 1 (or an object of class 'logLik') storing the log-likelihood of the model of interest}
 
 \item{k}{numeric vector of length 1 storing the number of parameters estimated by the model}
 }

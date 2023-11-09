@@ -6,7 +6,7 @@
 \alias{gspcr-package}
 \title{gspcr: Generalized Supervised Principal Component Regression}
 \description{
-The sparse principal component regression is computed. The regularization parameters and number of components are optimized by cross-validation.
+A package to estimate supervised principal component regression with continuous, binary, and categorical outcomes.
 }
 \author{
 \strong{Maintainer}: Edoardo Costantini \email{costantini.edoardo@yahoo.com} (\href{https://orcid.org/0000-0001-9581-9913}{ORCID})

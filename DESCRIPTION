@@ -4,7 +4,9 @@ Version: 0.9.3
 Authors@R: 
     person("Edoardo", "Costantini", , "costantini.edoardo@yahoo.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9581-9913"))
-Description: A package to estimate supervised principal component regression with continuous, binary, and categorical outcomes.
+Description: A package to estimate supervised principal component regression 
+    (SPCR; Bair Et. Al., 2006, <doi.org/10.1198/016214505000000628>) with continuous, binary, and 
+    categorical variables as outcomes and predictors.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

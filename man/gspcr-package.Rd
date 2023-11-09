@@ -6,7 +6,7 @@
 \alias{gspcr-package}
 \title{gspcr: Generalized Supervised Principal Component Regression}
 \description{
-A package to estimate supervised principal component regression with continuous, binary, and categorical outcomes.
+A package to estimate supervised principal component regression (SPCR; Bair Et. Al., 2006, <doi.org/10.1198/016214505000000628>) with continuous, binary, and categorical variables as outcomes and predictors.
 }
 \author{
 \strong{Maintainer}: Edoardo Costantini \email{costantini.edoardo@yahoo.com} (\href{https://orcid.org/0000-0001-9581-9913}{ORCID})

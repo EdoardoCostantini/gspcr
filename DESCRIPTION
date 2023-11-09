@@ -1,6 +1,6 @@
 Package: gspcr
 Title: Generalized Supervised Principal Component Regression
-Version: 0.9.3
+Version: 0.9.4
 Authors@R: 
     person("Edoardo", "Costantini", , "costantini.edoardo@yahoo.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9581-9913"))

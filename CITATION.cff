@@ -5,6 +5,6 @@ authors:
     given-names: Edoardo
     orcid: https://orcid.org/0000-0001-9581-9913
 title: "gspcr: Generalized Supervised Principal Component Regression"
-version: 0.9.3
+version: 0.9.4
 date-released: 2023-09-06
 repository-code: "https://github.com/EdoardoCostantini/gspcr"

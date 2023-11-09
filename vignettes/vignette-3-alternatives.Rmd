@@ -76,7 +76,7 @@ cv.obj_plot <- superpc.plotcv(cv.obj)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="figure/fig-comp-superpc-solution-path-1.svg" alt="Figure 1: Solution paths obtained with `superpc`."  />
+<img src="fig-comp-superpc-solution-path-1.svg" alt="Figure 1: Solution paths obtained with `superpc`."  />
 <p class="caption">Figure 1: Solution paths obtained with `superpc`.</p>
 </div>
 
@@ -106,7 +106,7 @@ plot(
 ```
 
 <div class="figure" style="text-align: center">
-<img src="figure/fig-comp-gspcr-solution-path-1.svg" alt="Figure 2: Solution paths obtained with `gspcr`."  />
+<img src="fig-comp-gspcr-solution-path-1.svg" alt="Figure 2: Solution paths obtained with `gspcr`."  />
 <p class="caption">Figure 2: Solution paths obtained with `gspcr`.</p>
 </div>
 
@@ -192,7 +192,7 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
 ```
 
 <div class="figure" style="text-align: center">
-<img src="figure/fig-cv-check-1.svg" alt="Figure 3: Solution paths for different fit measures using K-fold CV."  />
+<img src="fig-cv-check-1.svg" alt="Figure 3: Solution paths for different fit measures using K-fold CV."  />
 <p class="caption">Figure 3: Solution paths for different fit measures using K-fold CV.</p>
 </div>
 
@@ -234,7 +234,7 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
 ```
 
 <div class="figure" style="text-align: center">
-<img src="figure/fig-cv-check-no-cv-1.svg" alt="Figure 4: Solution paths for different fit measures without using K-fold CV."  />
+<img src="fig-cv-check-no-cv-1.svg" alt="Figure 4: Solution paths for different fit measures without using K-fold CV."  />
 <p class="caption">Figure 4: Solution paths for different fit measures without using K-fold CV.</p>
 </div>
 
@@ -348,7 +348,7 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
 ```
 
 <div class="figure" style="text-align: center">
-<img src="figure/fig-1se-rule-1.svg" alt="Figure 5: Solution paths for different fit measures when using the 1-standard-error rule."  />
+<img src="fig-1se-rule-1.svg" alt="Figure 5: Solution paths for different fit measures when using the 1-standard-error rule."  />
 <p class="caption">Figure 5: Solution paths for different fit measures when using the 1-standard-error rule.</p>
 </div>
 
@@ -460,7 +460,7 @@ plots[[1]] + plots[[2]] + plots[[3]]
 ```
 
 <div class="figure" style="text-align: center">
-<img src="figure/fig-no-cv-1.svg" alt="Figure 6: Solution paths obtained using fit measures that do not need K-fold CV."  />
+<img src="fig-no-cv-1.svg" alt="Figure 6: Solution paths obtained using fit measures that do not need K-fold CV."  />
 <p class="caption">Figure 6: Solution paths obtained using fit measures that do not need K-fold CV.</p>
 </div>
 

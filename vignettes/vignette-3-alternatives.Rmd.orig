@@ -20,7 +20,8 @@ opts_chunk$set(
     echo = TRUE,
     warning = FALSE,
     message = FALSE,
-    comment = ""
+    comment = "",
+    fig.path = ""
 )
 
 # Set the width of the console output to a large number (for sidewise scroll)

@@ -6,7 +6,7 @@
 \alias{gspcr-package}
 \title{gspcr: Generalized Supervised Principal Component Regression}
 \description{
-Generalization of supervised principal component regression (SPCR; Bair Et. Al., 2006, \doi{10.1198/016214505000000628}) to support continuous, binary, and discrete variables as outcomes and predictors (inspired by the 'superpc' R package \url{https://cran.r-project.org/package=superpc}).
+Generalization of supervised principal component regression (SPCR; Bair et al., 2006, \doi{10.1198/016214505000000628}) to support continuous, binary, and discrete variables as outcomes and predictors (inspired by the 'superpc' R package \url{https://cran.r-project.org/package=superpc}).
 }
 \author{
 \strong{Maintainer}: Edoardo Costantini \email{costantini.edoardo@yahoo.com} (\href{https://orcid.org/0000-0001-9581-9913}{ORCID})

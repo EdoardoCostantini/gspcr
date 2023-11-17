@@ -1,6 +1,6 @@
 # Generalized Supervised Principal Component regression
 
-An R package implementing a version of the Supervised Principal Component regression (SPCR, Bair Et. Al., 2006) that allows for any measurement level of the dependent and independent variables.
+An R package implementing a version of the Supervised Principal Component regression (SPCR, Bair et al., 2006) that allows for any measurement level of the dependent and independent variables.
 This package builds upon the method implemented in the R package [`superpc`](https://github.com/jedazard/superpc).
 
 ## Details
@@ -15,7 +15,7 @@ The *steps* followed by SPCR are the following:
 
 A key aspect of the method is that both the number of PCs and the threshold value can be determined by cross-validation.
 GSPCR *extends* SPCR by allowing the dependent variable to be of any measurement level (i.e., ratio, interval, ordinal, nominal) by introducing likelihood-based thresholds for the univariate regressions in step 1.
-Furthermore, GSPCR allows the predictors to be of any type by combining the PCAmix framework (Kiers, 1991; Chavent Et. Al., 2017) with SPCR in step 3.
+Furthermore, GSPCR allows the predictors to be of any type by combining the PCAmix framework (Kiers, 1991; Chavent et al., 2017) with SPCR in step 3.
 
 ## Features
 

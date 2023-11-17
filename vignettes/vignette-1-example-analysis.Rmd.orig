@@ -51,7 +51,7 @@ The **steps** followed by SPCR are the following:
 
 A key aspect of the method is that both the number of PCs and the threshold value used in step 2 can be determined by cross-validation.
 GSPCR **extends** SPCR by allowing the dependent variable to be of any measurement level (i.e., ratio, interval, ordinal, nominal) by introducing likelihood-based association measures (or threshold types) in step 1.
-Furthermore, GSPCR allows the predictors to be of any type by combining the PCAmix framework (Kiers, 1991; Chavent Et. Al., 2017) with SPCR in step 3.
+Furthermore, GSPCR allows the predictors to be of any type by combining the PCAmix framework (Kiers, 1991; Chavent et al., 2017) with SPCR in step 3.
 
 The `gspcr` R package allows to:
 

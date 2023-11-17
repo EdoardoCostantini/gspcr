@@ -105,12 +105,11 @@ check_npcs_range <- function(npcs_range, ivs) {
     # The number of npcs requested is less than the total number of columns
     is_less_than_p <- max(npcs_range) <= ncol(ivs)
     if (!is_less_than_p) {
-        # TODO: add this to the list of warning for the package
-        cat(
-            # Define a meaningful error message
+        warning(
             paste0(
-                "WARNING: The argument 'npcs_range' was misspecified. You cannot ask for more PCs than the number of columns in the input data 'ivs'. The values (", paste(npcs_range[npcs_range > ncol(ivs)], collapse = ", "), ") exceded the allowed range and were dropped."
-            )
+                "argument 'npcs_range' was misspecified. You cannot ask for more PCs than the number of columns in the input data 'ivs'. The values (", paste(npcs_range[npcs_range > ncol(ivs)], collapse = ", "), ") exceded the allowed range and were dropped."
+            ),
+            call. = FALSE
         )
         # get rid of all npcs_range values exceeding the limit
         npcs_range <- npcs_range[!npcs_range > ncol(ivs)]
@@ -271,17 +270,41 @@ check_constants <- function(ivs) {
 
 }
 
-# Check factors do not have empty levels
+# Empty levels in factors ------------------------------------------------------
 
 check_factors <- function(ivs) {
     # Find all the factors
     index_factors <- sapply(ivs, is.factor)
 
-    # Apply drop levels to all 
-    slim_factors <- lapply(ivs[, index_factors, drop = FALSE], droplevels)
+    # Check if there are empty levels
+    index_empty <- sapply(
+        ivs[, index_factors, drop = FALSE],
+        function(x) {
+            any(table(x) == 0)
+        }
+    )
 
-    # Replace original factors with 
-    ivs[, index_factors] <- as.data.frame(slim_factors)
+    # What factors have empty categories
+    index <- names(index_factors) %in% names(index_empty)
+
+    # Check if any factors met the condition
+    if (any(index)) {
+
+        # Return an informative message
+        warning(
+            "Some factors in the data provided as 'ivs' had empty categories. The empty categories were dropped but you might want to check your input data.",
+            call. = FALSE
+        )
+
+        # Apply drop levels to all
+        slim_factors <- lapply(
+            ivs[, index, drop = FALSE],
+            droplevels
+        )
+
+        # Replace original factors with
+        ivs[, index_factors] <- as.data.frame(slim_factors)
+    }
 
     # Return ivs
     ivs

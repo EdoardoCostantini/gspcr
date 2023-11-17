@@ -2,7 +2,7 @@
 # Objective: Test pca_mix.R function
 # Author:    Edoardo Costantini
 # Created:   2023-05-02
-# Modified:  2023-05-23
+# Modified:  2023-11-17
 # Notes: 
 
 # Define tolerance
@@ -98,18 +98,14 @@ testthat::expect_true(all(abs(cors_va) - 1 < tol))
 train <- sample(1:nrow(iris))[1:100]
 valid <- -train
 
-# Use pca_mix on training and validation
-pca_mix_out <- tryCatch(
-    pca_mix_out_tv <- pca_mix(
+# Check runs without errors
+testthat::expect_no_error(
+    pca_mix(
         X_tr = iris[train, ],
         X_va = iris[valid, ],
         npcs = 1
-    ),
-    error = function(e) print(e)
+    )
 )
-
-# Check is the result an error?
-testthat::expect_false("error" %in% class(pca_mix_out))
 
 # Test: treatment of ordered factor is as nominal variables --------------------
 
@@ -120,7 +116,7 @@ pca_mix_ordinal <- tryCatch(
         X_va = GSPCRexdata$X$ord,
         npcs = 2
     ),
-    error = function(e) print(e)
+    error = function(e) e
 )
 
 # Use pca_mix on nominal data
@@ -130,7 +126,7 @@ pca_mix_nominal <- tryCatch(
         X_va = GSPCRexdata$X$cat,
         npcs = 2
     ),
-    error = function(e) print(e)
+    error = function(e) e
 )
 
 # Check is the result an error?

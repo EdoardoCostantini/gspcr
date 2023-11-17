@@ -2,7 +2,7 @@
 # Objective: Script to generate some example data for the package
 # Author:    Edoardo Costantini
 # Created:   2023-03-16
-# Modified:  2023-06-06
+# Modified:  2023-11-17
 # Notes:     After updating the script and the RDS file, to update the data in 
 #            the package you need to run again usethis::use_data(GSPCRexdata) call
 
@@ -220,7 +220,7 @@ orthmat <- function(X, verbose = FALSE) {
     for (i in 2:ncol(X)) {
         for (j in 1:(i - 1)) {
             if (verbose == TRUE) {
-                print(paste0("Adjusting piar ", i, "-", j))
+                message(paste0("Adjusting pair ", i, "-", j))
             }
             A <- X[, j]
             b <- X[, i]

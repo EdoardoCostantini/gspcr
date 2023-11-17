@@ -108,7 +108,8 @@ check_npcs_range <- function(npcs_range, ivs) {
         warning(
             paste0(
                 "argument 'npcs_range' was misspecified. You cannot ask for more PCs than the number of columns in the input data 'ivs'. The values (", paste(npcs_range[npcs_range > ncol(ivs)], collapse = ", "), ") exceded the allowed range and were dropped."
-            )
+            ),
+            call. = FALSE
         )
         # get rid of all npcs_range values exceeding the limit
         npcs_range <- npcs_range[!npcs_range > ncol(ivs)]

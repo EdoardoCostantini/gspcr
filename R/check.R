@@ -105,11 +105,9 @@ check_npcs_range <- function(npcs_range, ivs) {
     # The number of npcs requested is less than the total number of columns
     is_less_than_p <- max(npcs_range) <= ncol(ivs)
     if (!is_less_than_p) {
-        # TODO: add this to the list of warning for the package
-        cat(
-            # Define a meaningful error message
+        warning(
             paste0(
-                "WARNING: The argument 'npcs_range' was misspecified. You cannot ask for more PCs than the number of columns in the input data 'ivs'. The values (", paste(npcs_range[npcs_range > ncol(ivs)], collapse = ", "), ") exceded the allowed range and were dropped."
+                "argument 'npcs_range' was misspecified. You cannot ask for more PCs than the number of columns in the input data 'ivs'. The values (", paste(npcs_range[npcs_range > ncol(ivs)], collapse = ", "), ") exceded the allowed range and were dropped."
             )
         )
         # get rid of all npcs_range values exceeding the limit

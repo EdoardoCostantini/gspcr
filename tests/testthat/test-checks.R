@@ -10,7 +10,7 @@
 # Returns message when when too many pcs are demanded
 expect_warning(
     check_npcs_range(
-        npcs_range = 1:10,
+        npcs_range = c(1, 3, 7),
         ivs = iris
     ),
     regexp = NULL
@@ -19,7 +19,7 @@ expect_warning(
 # Returns the right correction when too many pcs are demanded
 suppressWarnings(
     expect_equal(
-        1:ncol(ivs),
+        1:ncol(iris),
         check_npcs_range(
             npcs_range = 1:10,
             ivs = iris

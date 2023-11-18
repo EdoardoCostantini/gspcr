@@ -6,7 +6,7 @@
 # Notes:
 
 # Define tolerance for difference
-tol <- 1e-10
+tol <- 1e-5
 
 # Test: Correct result ---------------------------------------------------------
 

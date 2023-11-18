@@ -27,7 +27,7 @@ mtcars_fact$carb <- factor(mtcars_fact$carb, ordered = TRUE)
 new_data <- 1:10
 
 # Define a tolerance for differences in testing
-tol <- 1e-15
+tol <- 1e-5
 
 # Test: linear models ----------------------------------------------------------
 

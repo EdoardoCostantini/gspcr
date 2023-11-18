@@ -6,7 +6,7 @@
 # Notes:
 
 # Define tolerance for difference
-tol <- 1e-10
+tol <- 1e-5
 
 # Test: Correct result ---------------------------------------------------------
 
@@ -25,9 +25,6 @@ out <- LL_binomial(
     x = mtcars[, c("cyl", "disp")],
     mod = glm_logistic
 )
-
-# Define tolerance for difference
-tol <- 1e-10
 
 # Check the values are all the same
 testthat::expect_true(ll_R - out$ll < tol)

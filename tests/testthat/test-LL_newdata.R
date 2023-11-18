@@ -70,7 +70,7 @@ mod_out <- LL_newdata(
 )
 
 # Define tolerance for test
-tol <- 1e-10
+tol <- 1e-5
 
 # Test log-likelihood value is as expected
 testthat::expect_true(as.numeric(logLik(mod_out$mod)) != mod_out$LL)

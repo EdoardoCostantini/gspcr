@@ -271,7 +271,6 @@ check_constants <- function(ivs) {
 }
 
 # Empty levels in factors ------------------------------------------------------
-
 check_factors <- function(ivs) {
     # Find all the factors
     index_factors <- sapply(ivs, is.factor)
@@ -284,26 +283,28 @@ check_factors <- function(ivs) {
         }
     )
 
-    # What factors have empty categories
-    index <- names(index_factors) %in% names(index_empty)
+    # Continue if there are any factors
+    if (any(index_factors)) {
+        # What factors have empty categories
+        index <- names(index_factors) %in% names(which(index_empty))
 
-    # Check if any factors met the condition
-    if (any(index)) {
+        # Check if any factors met the condition
+        if (any(index)) {
+            # Return an informative message
+            warning(
+                "Some factors in the data provided as 'ivs' had empty categories. The empty categories were dropped but you might want to check your input data.",
+                call. = FALSE
+            )
 
-        # Return an informative message
-        warning(
-            "Some factors in the data provided as 'ivs' had empty categories. The empty categories were dropped but you might want to check your input data.",
-            call. = FALSE
-        )
+            # Apply drop levels to all
+            slim_factors <- lapply(
+                ivs[, index, drop = FALSE],
+                droplevels
+            )
 
-        # Apply drop levels to all
-        slim_factors <- lapply(
-            ivs[, index, drop = FALSE],
-            droplevels
-        )
-
-        # Replace original factors with
-        ivs[, index_factors] <- as.data.frame(slim_factors)
+            # Replace original factors with
+            ivs[, index_factors] <- as.data.frame(slim_factors)
+        }
     }
 
     # Return ivs

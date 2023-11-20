@@ -335,7 +335,19 @@ x <- data.frame(MASS::mvrnorm(n, rep(0, p), Sigma))
 # Create a dv with a perfect predictor
 y <- factor(x[, 1] < 0, labels = c("y", "n"))
 
-# There are warnings
+# There are warnings without perfect predictor
+testthat::expect_warning(
+    gscpr_fit <- gspcr::cv_gspcr(
+        dv = y,
+        ivs = x[, -1],
+        fam = "binomial",
+        fit_measure = "BIC",
+        thrs = "PR2"
+    ),
+    regexp = NA
+)
+
+# There are warnings with perfect predictor
 testthat::expect_warning(
     gscpr_fit <- gspcr::cv_gspcr(
         dv = y,

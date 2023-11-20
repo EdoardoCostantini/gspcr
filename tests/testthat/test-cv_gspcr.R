@@ -335,14 +335,13 @@ x <- data.frame(MASS::mvrnorm(n, rep(0, p), Sigma))
 # Create a dv with a perfect predictor
 y <- factor(x[, 1] < 0, labels = c("y", "n"))
 
-# Train model to tune parameters
-gscpr_fit <- gspcr::cv_gspcr(
-    dv = y,
-    ivs = x,
-    fam = "binomial",
-    fit_measure = "BIC",
-    thrs = "PR2"
+# There are warnings
+testthat::expect_warning(
+    gscpr_fit <- gspcr::cv_gspcr(
+        dv = y,
+        ivs = x,
+        fam = "binomial",
+        fit_measure = "BIC",
+        thrs = "PR2"
+    )
 )
-
-# Output is as expected
-testthat::expect_equal(class(gscpr_fit), c("gspcrcv", "list"))

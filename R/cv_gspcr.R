@@ -446,9 +446,7 @@ cv_gspcr <- function(
 
   # Print warnings and errors as messages
   if (!is.null(warnings_list)) {
-    message(
-      warnings_list
-    )
+    lapply(warnings_list, warning, call. = FALSE)
   }
   if (!is.null(errors)) {
     message(

@@ -83,7 +83,7 @@ plots[[1]] + plots[[2]] + plots[[3]]
 ```
 
 <div class="figure" style="text-align: center">
-<img src="fig-association-measures-1.svg" alt="Figure 1: Solution paths for different association measures."  />
+<img src="fig-association-measures-1.png" alt="Figure 1: Solution paths for different association measures."  />
 <p class="caption">Figure 1: Solution paths for different association measures.</p>
 </div>
 
@@ -134,7 +134,7 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
 ```
 
 <div class="figure" style="text-align: center">
-<img src="fig-fit-measures-1.svg" alt="Figure 2: Solution paths for different fit measures."  />
+<img src="fig-fit-measures-1.png" alt="Figure 2: Solution paths for different fit measures."  />
 <p class="caption">Figure 2: Solution paths for different fit measures.</p>
 </div>
 
@@ -178,7 +178,7 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
 ```
 
 <div class="figure" style="text-align: center">
-<img src="fig-fit-measures-npc-5-1.svg" alt="Figure 3: Solution paths for different fit measures when using 5 PCs."  />
+<img src="fig-fit-measures-npc-5-1.png" alt="Figure 3: Solution paths for different fit measures when using 5 PCs."  />
 <p class="caption">Figure 3: Solution paths for different fit measures when using 5 PCs.</p>
 </div>
 
@@ -201,7 +201,7 @@ plot(out_npcs)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="fig-cv-npcs-1.svg" alt="Figure 4: Solution paths for different fit measures when cross-validating the number of PCs."  />
+<img src="fig-cv-npcs-1.png" alt="Figure 4: Solution paths for different fit measures when cross-validating the number of PCs."  />
 <p class="caption">Figure 4: Solution paths for different fit measures when cross-validating the number of PCs.</p>
 </div>
 

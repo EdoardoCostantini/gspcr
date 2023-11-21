@@ -36,9 +36,6 @@ cap_fn <- local({
     }
 })
 
-# set output device to svg
-knitr::opts_chunk$set(dev = "svg")
-
 ```
 
 SPCR regresses a dependent variable onto a few supervised principal components computed from a large set of predictors.
@@ -114,7 +111,7 @@ out$sol_table
 
 We can visually **examine the solution paths** produced by the cross-validation procedure by using the `plot()` functions.
 
-```{r fig-solution-paths, fig.cap = cap_fn("Solution paths produced by `cv_gspcr`."), fig.align = "center", fig.dim = c(10, 5)}
+```{r fig-solution-paths, fig.cap = cap_fn("Solution paths produced by `cv_gspcr`."), fig.align = "center", fig.dim = c(8, 4)}
 # Plot the solution paths
 plot(out)
 

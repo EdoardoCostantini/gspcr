@@ -99,7 +99,7 @@ plot(out)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="fig-solution-paths-1.svg" alt="Figure 1: Solution paths produced by `cv_gspcr`."  />
+<img src="fig-solution-paths-1.png" alt="Figure 1: Solution paths produced by `cv_gspcr`."  />
 <p class="caption">Figure 1: Solution paths produced by `cv_gspcr`.</p>
 </div>
 

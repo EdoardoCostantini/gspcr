@@ -2,7 +2,7 @@
 # Objective: Test est_univ_mods.R function
 # Author:    Edoardo Costantini
 # Created:   2023-04-13
-# Modified:  2023-04-20
+# Modified:  2023-11-21
 # Notes: 
 
 # Need to evaluate the combo of these data types
@@ -11,9 +11,6 @@ ivs_types <- names(GSPCRexdata$X)
 
 # Make the combinations
 est_univ_mods_conds <- expand.grid(dv_types, ivs_types)
-
-# Look at the combinations and think what should be tested
-est_univ_mods_conds
 
 # Test: continuous dv, continuous preds ----------------------------------------
 

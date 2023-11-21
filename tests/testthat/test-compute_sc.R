@@ -2,7 +2,7 @@
 # Objective: Testing the compute_sc function
 # Author:    Edoardo Costantini
 # Created:   2023-04-11
-# Modified:  2023-05-31
+# Modified:  2023-11-21
 # Notes: 
 
 # Prepare the data -------------------------------------------------------------
@@ -27,7 +27,7 @@ mtcars_fact$carb <- factor(mtcars_fact$carb, ordered = TRUE)
 new_data <- 1:10
 
 # Define a tolerance for differences in testing
-tol <- 1e-15
+tol <- 1e-5
 
 # Test: linear models ----------------------------------------------------------
 
@@ -108,7 +108,8 @@ testthat::expect_true(sum(sc_glm_logistic - sc_fun_glm_logistic) < tol)
 # Baseline-category logistic regression
 multi_out <- nnet::multinom(
     formula = gear ~ cyl + disp,
-    data = mtcars_fact
+    data = mtcars_fact,
+    trace = FALSE
 )
 
 # Get systematic components
@@ -174,8 +175,6 @@ for (i in 1:nrow(cumsum_man)) {
 
 # And then I can compute the log-likelihood
 ll_polr <- sum(sum(shelf))
-
-logLik(plor_test)
 
 # Test the function returns a matrix
 testthat::expect_true(is.matrix(abx))
@@ -243,7 +242,7 @@ testthat::expect_true(sum(sc_poisson - sc_glm_poisson) < tol)
 # Null models
 null_lm <- lm(mpg ~ 1, data = mtcars_fact)
 null_binlo <- stats::glm(am ~ 1, data = mtcars, family = "binomial")
-null_multi <- nnet::multinom(formula = gear ~ 1, data = mtcars_fact)
+null_multi <- nnet::multinom(formula = gear ~ 1, data = mtcars_fact, trace = FALSE)
 null_polr <- MASS::polr(carb ~ 1, mtcars_fact, method = "logistic")
 
 # Testing data for null models

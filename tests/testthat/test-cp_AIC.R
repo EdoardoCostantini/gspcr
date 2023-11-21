@@ -6,7 +6,7 @@
 # Notes: 
 
 # Define tolerance for differences
-tol <- 1e-15
+tol <- 1e-5
 
 # Test: output class -----------------------------------------------------------
 

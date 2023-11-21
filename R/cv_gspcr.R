@@ -171,10 +171,8 @@ cv_gspcr <- function(
             warnings_list,
             # Define a meaningful error message
             paste0(
-              "WARNING IN ASSOCIATION MEASURE COMPUTATION\n",
-              "One or more computations of the bivariate association measures resulted in these warnings:\n",
-              w$message,
-              "\n\n"
+              "Screening - One or more bivariate association measure had warning: ",
+              "\"", w$message, "\""
             )
           )
 
@@ -206,10 +204,8 @@ cv_gspcr <- function(
             warnings_list,
             # Define a meaningful error message
             paste0(
-              "WARNING IN ASSOCIATION MEASURE COMPUTATION\n",
-              "One or more computations of the bivariate association measures resulted in these warnings:\n",
-              w$message,
-              "\n\n"
+              "Screening - One or more bivariate association measure had warning: ",
+              "\"", w$message, "\""
             )
           )
 
@@ -308,9 +304,9 @@ cv_gspcr <- function(
               errors,
               paste0(
                 "ERROR IN K-FOLD LOOP\n",
-                "Fold: ", k, "; Threshold: ", thr, "; resulted in the following error:\n",
+                "Tuning - in fold: ", k, ", threshold: ", thr, " resulted in error:\n",
                 "\"", e$message, "\"\n",
-                "The values of ", fit_measure, " using threshold number", thr, "could not be computed and were set to NA value so that they will be ignored.\n\n"
+                "The values of ", fit_measure, " using threshold number", thr, "could not be computed and were set to NA value so that they will be ignored."
               )
             )
 
@@ -345,9 +341,14 @@ cv_gspcr <- function(
                 warnings_list <<- c(
                   warnings_list,
                   paste0(
-                    "WARNING IN K-FOLD LOOP\n",
-                    "Fold: ", k, "; Threshold: ", thr, "; npcs: ", q, "; resulted in the following warning:\n",
-                    "\"", w$message, "\"\n"
+                    "Tuning - in fold: ",
+                    k,
+                    ", threshold: ", 
+                    thr,
+                    ", npcs: ",
+                    q,
+                    " had warning: ",
+                    "\"", w$message, "\""
                   )
                 )
 
@@ -363,7 +364,7 @@ cv_gspcr <- function(
                 errors,
                 paste0(
                   "ERROR IN K-FOLD LOOP\n",
-                  "Fold: ", k, "; Threshold: ", thr, "; npcs: ", q, "; resulted in the following error:\n",
+                  "Tuning - in fold: ", k, ", threshold: ", thr, ", npcs ", q, " resulted in error:\n",
                   "\"", e$message, "\"\n",
                   "The value of ", fit_measure, " that could not be computed was replaced by an NA value.\n\n"
                 )
@@ -446,9 +447,7 @@ cv_gspcr <- function(
 
   # Print warnings and errors as messages
   if (!is.null(warnings_list)) {
-    message(
-      warnings_list
-    )
+    lapply(warnings_list, warning, call. = FALSE)
   }
   if (!is.null(errors)) {
     message(

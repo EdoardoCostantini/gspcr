@@ -36,16 +36,7 @@ cap_fn <- local({
     }
 })
 
-# set output device to svg
-knitr::opts_chunk$set(dev = "svg")
-
 ```
-
-Here we focus on the specifications of the GSPCR model. Three arguments of the `cv_gspcr()` should be specified carefully:
-
-- Association measure
-- Fit measure
-- Number of components
 
 In this vignette we consider a simple scenario with a continuous dependent variable and a set of continuous predictors. First, we load the required packages and store the **example dataset** `GSPCRexdata` (see the helpfile for details `?GSPCRexdata`) in two separate objects:
 
@@ -55,9 +46,12 @@ library(gspcr) # this package!
 library(superpc) # alternative comparison package
 library(patchwork) # combining ggplots
 
-# Comment goal of code
+# Load data
 X <- GSPCRexdata$X$cont
 y <- GSPCRexdata$y$cont
+
+# Define names of measures to compare
+fit_measure_vec <- c("LRT", "PR2", "MSE", "F", "AIC", "BIC")
 
 ```
 
@@ -80,7 +74,7 @@ data.train <- list(
 
 We can then train the model with the `superpc::superpc.train()` function and observe the solution paths.
 
-```{r fig-comp-superpc-solution-path, fig.cap = cap_fn("Solution paths obtained with `superpc`."), fig.align = "center"}
+```{r fig-comp-superpc-solution-path, fig.cap = cap_fn("Solution paths obtained with `superpc`."), fig.align = "center", fig.dim = c(8, 4)}
 # Train the model (computes the scores for each feature)
 train.obj <- superpc.train(
     data = data.train,
@@ -105,7 +99,7 @@ cv.obj_plot <- superpc.plotcv(cv.obj)
 
 Finally, we can specify and train `gspcr` in the same way and compare the cross-validation solution paths.
 
-```{r fig-comp-gspcr-solution-path, fig.cap = cap_fn("Solution paths obtained with `gspcr`."), fig.align = "center"}
+```{r fig-comp-gspcr-solution-path, fig.cap = cap_fn("Solution paths obtained with `gspcr`."), fig.align = "center", fig.dim = c(8, 4)}
 # Train gspcr with the same specification as superpc
 gspcr_superpc <- cv_gspcr(
     dv = y,
@@ -150,7 +144,7 @@ First, let's estimate the solution paths with K-fold cross-validation.
 To keep the comparison simple, we specify two options for the number of PCs (5 and 20), but any other set of values could be used.
 We train the model with the six available fit measures stored in the object `fit_measure_vec`.
 
-```{r fig-cv-check, fig.cap = cap_fn("Solution paths for different fit measures using K-fold CV."), fig.align = "center"}
+```{r fig-cv-check, fig.cap = cap_fn("Solution paths for different fit measures using K-fold CV."), fig.align = "center", fig.dim = c(12, 8)}
 #| fig-width: 9
 #| fig-height: 6
 # Train the GSPCR model with two number of PCs options
@@ -189,7 +183,7 @@ plots <- lapply(seq_along(fit_measure_vec), function(i) {
 
 Then, we repeat the same procedure but we set `K = 1`, to avoid K-fold cross-validation.
 
-```{r fig-cv-check-no-cv, fig.cap = cap_fn("Solution paths for different fit measures without using K-fold CV."), fig.align = "center"}
+```{r fig-cv-check-no-cv, fig.cap = cap_fn("Solution paths for different fit measures without using K-fold CV."), fig.align = "center", fig.dim = c(12, 8)}
 #| fig-width: 9
 #| fig-height: 6
 # Train the GSPCR model with many number of components
@@ -275,7 +269,7 @@ As you can see, using CV we find the same solution no matter what the outcome me
 The results for all fit measures except `F` struggle with accounting for measure complexity. The use of a simple 1-standard-error rule helps obviate this problem.
 First, fit the models with many possible number of components:
 
-```{r fig-1se-rule, fig.cap = cap_fn("Solution paths for different fit measures when using the 1-standard-error rule."), fig.align = "center"}
+```{r fig-1se-rule, fig.cap = cap_fn("Solution paths for different fit measures when using the 1-standard-error rule."), fig.align = "center", fig.dim = c(12, 8)}
 #| fig-width: 9
 #| fig-height: 6
 
@@ -362,7 +356,7 @@ To speed up the model-fitting process, it can be a good idea to find model-build
 You can use the BIC fit measure without CV to select the appropriate threshold value and the number of components.
 To do so, you can specify the number of folds to 1 and the fit measure to BIC or AIC.
 
-```{r fig-no-cv, fig.cap = cap_fn("Solution paths obtained using fit measures that do not need K-fold CV."), fig.align = "center"}
+```{r fig-no-cv, fig.cap = cap_fn("Solution paths obtained using fit measures that do not need K-fold CV."), fig.align = "center", fig.dim = c(12, 4)}
 #| fig-width: 9
 #| fig-height: 3
 

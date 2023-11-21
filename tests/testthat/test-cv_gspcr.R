@@ -5,6 +5,9 @@
 # Modified:  2023-11-21
 # Notes: 
 
+# Define tolerance
+tol <- 1e-5
+
 # Test: Continuous outcome -----------------------------------------------------
 
 # Set seed

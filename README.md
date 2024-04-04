@@ -57,6 +57,24 @@ citation("gspcr")
 
 ## Development
 
+### Tests
+
+This software uses **unit tests** to test whether the functions behave as expected. These tests are performed by using the `test()` function from the `devtools` R package.
+The workflow is the one established by the `testthat` R package.
+To run these tests:
+
+1. Install the `devtools` R package, if you do not have it already.
+
+    ``` r
+    install.packages("devtools")
+    ```
+
+2. Then, you can test with the following command in the R console:
+
+    ``` r
+    devtools::check()
+    ```
+
 ### Vignettes
 
 The vignettes for this package take a lot of time to compile. As a result, I adopted a two-step workflow:

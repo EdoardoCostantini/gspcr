@@ -302,8 +302,8 @@ check_factors <- function(ivs) {
                 droplevels
             )
 
-            # Replace original factors with
-            ivs[, index_factors] <- as.data.frame(slim_factors)
+            # Replace original factors with empty catories with slim versions
+            ivs[, index] <- as.data.frame(slim_factors)
         }
     }
 

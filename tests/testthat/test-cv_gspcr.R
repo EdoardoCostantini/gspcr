@@ -378,12 +378,14 @@ testthat::expect_warning(
 )
 
 # There are warnings with perfect predictor
-testthat::expect_warning(
-    gscpr_fit <- gspcr::cv_gspcr(
-        dv = y,
-        ivs = x,
-        fam = "binomial",
-        fit_measure = "BIC",
-        thrs = "PR2"
+suppressWarnings(
+    testthat::expect_warning(
+        gscpr_fit <- gspcr::cv_gspcr(
+            dv = y,
+            ivs = x,
+            fam = "binomial",
+            fit_measure = "BIC",
+            thrs = "PR2"
+        )
     )
 )

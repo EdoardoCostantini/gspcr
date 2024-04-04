@@ -238,13 +238,13 @@ cv_gspcr <- function(
   colnames(pred_map) <- round(thrs_values, 3)
 
   # If two thresholds are giving the same active set reduce the burden
-  pred_map <- pred_map[, !duplicated(t(pred_map))]
+  pred_map <- pred_map[, !duplicated(t(pred_map)), drop = FALSE]
 
   # Get rid of thresholds that are keeping too few predictors
-  pred_map <- pred_map[, colSums(pred_map) >= min_features]
+  pred_map <- pred_map[, colSums(pred_map) >= min_features, drop = FALSE]
 
   # Get rid of thresholds that are keeping too many predictors
-  pred_map <- pred_map[, colSums(pred_map) <= max_features]
+  pred_map <- pred_map[, colSums(pred_map) <= max_features, drop = FALSE]
 
   # And update the effective number of the thresholds considered
   nthrs_eff <- ncol(pred_map)

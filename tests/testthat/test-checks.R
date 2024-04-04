@@ -30,18 +30,26 @@ suppressWarnings(
 # Test check_factors -----------------------------------------------------------
 
 # Consider a dataset with a factor with empty levels
-df_empty <- cbind(iris[1:100, ], Species2 = iris[51:150, "Species"])
+df_empty <- cbind(
+    iris[1:100, ],
+    Species2 = iris[51:150, "Species"], # Only two levels
+    Species3 = iris[c(1:30, 50:80, 100:138), "Species"] # All three levels
+)
 
 # Returns message when when empty categories are there
 expect_warning(
-    check_factors(ivs = df_empty),
+    df_empty_checked <- check_factors(ivs = df_empty),
     regexp = NULL
 )
 
 # Categories are dropped
-suppressWarnings(
-    expect_equal(
-        nlevels(check_factors(ivs = df_empty)$Species),
-        2
-    )
+expect_equal(
+    nlevels(df_empty_checked$Species),
+    2
+)
+
+# Values stayed the same
+expect_equal(
+    sapply(df_empty[, -c(1:4)], as.character),
+    sapply(df_empty_checked[, -c(1:4)], as.character)
 )
